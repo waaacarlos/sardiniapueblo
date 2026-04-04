@@ -1,18 +1,18 @@
 import logging
-
+import unicodedata
+import re
 
 logger = logging.getLogger(__name__)
 
 
 # Region: Strings
-def only_alphanumeric(text):
-    text_filtered = ""
-    for i in text:
-        if i in "0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM":
-            text_filtered += i
-        else:
-            text_filtered += " "
-    return text_filtered
+APOSTROFI = "'\u2019\u2018\u02BC\u0060\u00B4"
+
+
+def normalize(testo):
+    senza_accenti = unicodedata.normalize("NFD", testo)
+    senza_accenti = "".join(c for c in senza_accenti if unicodedata.category(c) != "Mn")
+    return re.sub(f"[{re.escape(APOSTROFI)}]", " ", senza_accenti)
 
 
 def remove_double_spaces(text):

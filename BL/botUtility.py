@@ -5,7 +5,8 @@ import traceback
 from telegram import Update
 from telegram.constants import ParseMode
 
-from DB import dbuser, dbcities
+from BL import citiesUtility
+from DB import dbuser
 from Entities.User import TGUser
 from Resources.config import LOG
 from Resources.messages import messages
@@ -38,26 +39,14 @@ class Message:
                 await self.context.bot.send_message(LOG, str(e))
             if self.text == "/start":
                 await self.send_message(messages("hello"))
-            else:  # TODO spostare in file di logica
-                city = await dbcities.found_city(self.text)
-                if city:
-                    logging.info(f"Found city: {city['id']}")
-                    result = await dbcities.add_city(city['id'], self.chat_id)
-                    if result:
-                        s = messages("city_found")
-                        await self.send_message(
-                            s.format(
-                                city['nome'],
-                                city['nome_originale'],
-                                city['url'],
-                                city['popolazione'],
-                                format(city['superficie'], ".2f")
-                            )
-                        )
-                    else:
-                        await self.send_message("Già scoperta!")  # TODO stringa lingue
-                else:
-                    await self.send_message("Non ho trovato questo paese.")  # TODO stringa lingue
+            elif self.text == "/help":
+                await self.send_message(messages("help"))
+            elif self.text == "/reset":
+                msg_to_send = await citiesUtility.reset_user(self.chat_id)
+                await self.send_message(msg_to_send)
+            else:
+                msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
+                await self.send_message(msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")

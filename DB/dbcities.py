@@ -18,3 +18,8 @@ async def add_city(city: str, chat_id: int):
         RETURNING player
     """
     return await fetchrow(query, chat_id, city)
+
+
+async def remove_all_from_chatid(chat_id: int):
+    query = "DELETE FROM cities_found WHERE player = $1"
+    return await fetchrow(query, chat_id)
