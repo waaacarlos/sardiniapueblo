@@ -19,6 +19,6 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd /home/azureuser/projects/sardiniapueblo
-          git pull origin master
+          git pull origin main
           sudo systemctl restart startpy.service
           EOF
