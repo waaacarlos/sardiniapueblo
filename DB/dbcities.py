@@ -5,7 +5,7 @@ async def found_city(city: str):
     query = """
     SELECT *
     FROM cities
-    where trim(upper(nome)) = $1 
+    where nome_norm = $1 
     """
     return await fetchrow(query, city.strip().upper())
 

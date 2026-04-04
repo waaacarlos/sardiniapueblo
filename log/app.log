@@ -1,333 +1,309 @@
-2026-04-02 00:06:40 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:06:40 INFO [telegram.ext.Application] Application started
-2026-04-02 00:06:40 INFO [root] Bot started
-2026-04-02 00:06:47 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:06:53 INFO [results] handlechat latency chat=184959894 took 5615.2 ms
-2026-04-02 00:06:53 ERROR [telegram.ext.Application] No error handlers are registered, logging exception.
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 305, in _request_wrapper
-    code, payload = await self.do_request(
-                    ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 257, in do_request
-    data = request_data.json_parameters if request_data else None
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_requestdata.py", line 85, in json_parameters
-    if param.json_value is not None
-       ^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_requestparameter.py", line 80, in json_value
-    return json.dumps(self.value)
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
-    return _default_encoder.encode(obj)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
-    chunks = self.iterencode(o, _one_shot=True)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
-    return _iterencode(o, 0)
-           ^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
-    raise TypeError(f'Object of type {o.__class__.__name__} '
-TypeError: Object of type coroutine is not JSON serializable
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 39, in handlechat
-    await self.send_message(citiesUtility.found_city(self.text))
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 49, in send_message
-    message = await self.context.bot.send_message(self.chat_id, text)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 3118, in send_message
-    return await super().send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 1123, in send_message
-    return await self._send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 630, in _send_message
-    result = await super()._send_message(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 820, in _send_message
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 704, in _post
-    return await self._do_post(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
-    return await super()._do_post(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 733, in _do_post
-    result = await request.post(
-             ^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 198, in post
-    result = await self._request_wrapper(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 317, in _request_wrapper
-    raise NetworkError(f"Unknown error in HTTP implementation: {exc!r}") from exc
-telegram.error.NetworkError: Unknown error in HTTP implementation: TypeError('Object of type coroutine is not JSON serializable')
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_application.py", line 1182, in __create_task_callback
-    return await coroutine  # type: ignore[misc]
-           ^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 41, in handlechat
-    await self.context.bot.send_message(LOG, traceback.format_exc())
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 3118, in send_message
-    return await super().send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 1123, in send_message
-    return await self._send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 630, in _send_message
-    result = await super()._send_message(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 820, in _send_message
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 704, in _post
-    return await self._do_post(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
-    return await super()._do_post(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 733, in _do_post
-    result = await request.post(
-             ^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 198, in post
-    result = await self._request_wrapper(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
-    raise exception
-telegram.error.BadRequest: Message is too long
-2026-04-02 00:07:22 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:07:22 INFO [telegram.ext.Application] Application started
-2026-04-02 00:07:22 INFO [root] Bot started
-2026-04-02 00:07:53 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:07:53 INFO [telegram.ext.Application] Application started
-2026-04-02 00:07:53 INFO [root] Bot started
-2026-04-02 00:08:00 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:08:10 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:08:10 INFO [telegram.ext.Application] Application started
-2026-04-02 00:08:10 INFO [root] Bot started
-2026-04-02 00:08:13 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:08:14 INFO [root] Fetching row 
+2026-04-04 20:17:43 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:17:43 INFO [telegram.ext.Application] Application started
+2026-04-04 20:17:43 INFO [root] Bot started
+2026-04-04 20:17:57 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:17:58 INFO [results] handlechat latency chat=184959894 took 468.0 ms
+2026-04-04 20:18:41 INFO [results] handlechat latency chat=184959894 took 527.0 ms
+2026-04-04 20:19:04 INFO [root] Fetching row 
     SELECT *
     FROM cities
-    where trim(upper(nome)) = $1 
+    where nome_norm = $1 
     
-2026-04-02 00:08:31 ERROR [root] Message text is empty
-2026-04-02 00:08:31 INFO [results] handlechat latency chat=184959894 took 17863.5 ms
-2026-04-02 00:08:48 INFO [root] Fetching row 
+2026-04-04 20:19:04 INFO [results] handlechat latency chat=184959894 took 555.8 ms
+2026-04-04 20:19:48 INFO [results] handlechat latency chat=184959894 took 524.0 ms
+2026-04-04 20:19:53 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:19:53 INFO [telegram.ext.Application] Application started
+2026-04-04 20:19:53 INFO [root] Bot started
+2026-04-04 20:19:54 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:19:55 INFO [results] handlechat latency chat=184959894 took 286.1 ms
+2026-04-04 20:20:42 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:20:42 INFO [telegram.ext.Application] Application started
+2026-04-04 20:20:42 INFO [root] Bot started
+2026-04-04 20:20:43 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:20:43 INFO [results] handlechat latency chat=184959894 took 359.4 ms
+2026-04-04 20:20:50 INFO [root] Fetching row 
     SELECT *
     FROM cities
-    where trim(upper(nome)) = $1 
+    where nome_norm = $1 
     
-2026-04-02 00:08:55 ERROR [root] Message text is empty
-2026-04-02 00:08:55 INFO [results] handlechat latency chat=184959894 took 6746.0 ms
-2026-04-02 00:13:12 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:13:12 INFO [telegram.ext.Application] Application started
-2026-04-02 00:13:12 INFO [root] Bot started
-2026-04-02 00:13:16 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:13:16 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:13:16 INFO [results] handlechat latency chat=184959894 took 352.4 ms
-2026-04-02 00:13:41 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:13:41 INFO [results] handlechat latency chat=184959894 took 344.9 ms
-2026-04-02 00:13:41 ERROR [telegram.ext.Application] No error handlers are registered, logging exception.
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 305, in _request_wrapper
-    code, payload = await self.do_request(
-                    ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_httpxrequest.py", line 257, in do_request
-    data = request_data.json_parameters if request_data else None
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_requestdata.py", line 85, in json_parameters
-    if param.json_value is not None
-       ^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_requestparameter.py", line 80, in json_value
-    return json.dumps(self.value)
-           ^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
-    return _default_encoder.encode(obj)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
-    chunks = self.iterencode(o, _one_shot=True)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
-    return _iterencode(o, 0)
-           ^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
-    raise TypeError(f'Object of type {o.__class__.__name__} '
-TypeError: Object of type Record is not JSON serializable
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 39, in handlechat
-    await self.send_message(message)
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 49, in send_message
-    message = await self.context.bot.send_message(self.chat_id, text)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 3118, in send_message
-    return await super().send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 1123, in send_message
-    return await self._send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 630, in _send_message
-    result = await super()._send_message(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 820, in _send_message
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 704, in _post
-    return await self._do_post(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
-    return await super()._do_post(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 733, in _do_post
-    result = await request.post(
-             ^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 198, in post
-    result = await self._request_wrapper(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 317, in _request_wrapper
-    raise NetworkError(f"Unknown error in HTTP implementation: {exc!r}") from exc
-telegram.error.NetworkError: Unknown error in HTTP implementation: TypeError('Object of type Record is not JSON serializable')
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_application.py", line 1182, in __create_task_callback
-    return await coroutine  # type: ignore[misc]
-           ^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/BL/botUtility.py", line 41, in handlechat
-    await self.context.bot.send_message(LOG, traceback.format_exc())
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 3118, in send_message
-    return await super().send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 1123, in send_message
-    return await self._send_message(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 630, in _send_message
-    result = await super()._send_message(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 820, in _send_message
-    result = await self._post(
-             ^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 704, in _post
-    return await self._do_post(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/ext/_extbot.py", line 370, in _do_post
-    return await super()._do_post(
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/_bot.py", line 733, in _do_post
-    result = await request.post(
-             ^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 198, in post
-    result = await self._request_wrapper(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/waaacarlos/PycharmProjects/sardiniapueblo/.venv/lib/python3.12/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
-    raise exception
-telegram.error.BadRequest: Message is too long
-2026-04-02 00:14:31 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:14:31 INFO [telegram.ext.Application] Application started
-2026-04-02 00:14:31 INFO [root] Bot started
-2026-04-02 00:14:42 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:14:42 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:25:33 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:25:33 INFO [telegram.ext.Application] Application started
-2026-04-02 00:25:33 INFO [root] Bot started
-2026-04-02 00:25:55 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:25:55 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:25:55 INFO [root] Found city: I752
-2026-04-02 00:25:56 INFO [results] handlechat latency chat=184959894 took 566.6 ms
-2026-04-02 00:25:59 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:25:59 INFO [root] Found city: I752
-2026-04-02 00:26:00 INFO [results] handlechat latency chat=184959894 took 401.2 ms
-2026-04-02 00:27:26 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:27:26 INFO [telegram.ext.Application] Application started
-2026-04-02 00:27:26 INFO [root] Bot started
-2026-04-02 00:27:30 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:27:30 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:27:30 INFO [root] Found city: I752
-2026-04-02 00:27:31 INFO [results] handlechat latency chat=184959894 took 370.2 ms
-2026-04-02 00:28:06 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:28:06 INFO [telegram.ext.Application] Application started
-2026-04-02 00:28:06 INFO [root] Bot started
-2026-04-02 00:28:11 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:28:11 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:28:11 INFO [root] Found city: I752
-2026-04-02 00:28:11 INFO [root] Fetching row 
-        INSERT INTO cities_found (player, city)
-        VALUES ($1, $2)
-        ON CONFLICT DO NOTHING
-        RETURNING utente_id
-    
-2026-04-02 00:28:11 ERROR [DB.dbservice] Error fetching 
-        INSERT INTO cities_found (player, city)
-        VALUES ($1, $2)
-        ON CONFLICT DO NOTHING
-        RETURNING utente_id
-    : column "utente_id" does not exist
-2026-04-02 00:28:11 INFO [results] handlechat latency chat=184959894 took 781.1 ms
-2026-04-02 00:30:09 INFO [DB.dbservice] Database pool initialized
-2026-04-02 00:30:09 INFO [telegram.ext.Application] Application started
-2026-04-02 00:30:09 INFO [root] Bot started
-2026-04-02 00:30:18 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
-2026-04-02 00:30:18 INFO [root] Fetching row 
-    SELECT *
-    FROM cities
-    where trim(upper(nome)) = $1 
-    
-2026-04-02 00:30:18 INFO [root] Found city: I752
-2026-04-02 00:30:18 INFO [root] Fetching row 
+2026-04-04 20:20:50 INFO [root] Found city: E992
+2026-04-04 20:20:50 INFO [root] Fetching row 
         INSERT INTO cities_found (player, city)
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING
         RETURNING player
     
-2026-04-02 00:30:18 INFO [results] handlechat latency chat=184959894 took 676.0 ms
-2026-04-02 00:30:35 INFO [root] Fetching row 
+2026-04-04 20:20:50 INFO [results] handlechat latency chat=184959894 took 623.3 ms
+2026-04-04 20:20:57 INFO [root] Fetching row 
     SELECT *
     FROM cities
-    where trim(upper(nome)) = $1 
+    where nome_norm = $1 
     
-2026-04-02 00:30:35 INFO [root] Found city: I752
-2026-04-02 00:30:35 INFO [root] Fetching row 
+2026-04-04 20:20:57 INFO [root] Found city: M278
+2026-04-04 20:20:57 INFO [root] Fetching row 
         INSERT INTO cities_found (player, city)
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING
         RETURNING player
     
-2026-04-02 00:30:35 INFO [results] handlechat latency chat=184959894 took 552.6 ms
+2026-04-04 20:20:58 ERROR [root] Can't parse entities: unexpected end of name token at byte offset 11
+2026-04-04 20:20:58 INFO [results] handlechat latency chat=184959894 took 787.4 ms
+2026-04-04 20:21:37 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:21:37 INFO [root] Found city: M278
+2026-04-04 20:21:37 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:21:37 INFO [results] handlechat latency chat=184959894 took 482.1 ms
+2026-04-04 20:22:48 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:22:49 INFO [telegram.ext.Application] Application started
+2026-04-04 20:22:49 INFO [root] Bot started
+2026-04-04 20:23:00 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:23:01 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:23:01 INFO [root] Found city: L998
+2026-04-04 20:23:01 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:23:01 ERROR [root] Can't parse entities: unexpected end of name token at byte offset 11
+2026-04-04 20:23:01 INFO [results] handlechat latency chat=184959894 took 971.7 ms
+2026-04-04 20:23:39 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:23:39 INFO [telegram.ext.Application] Application started
+2026-04-04 20:23:39 INFO [root] Bot started
+2026-04-04 20:23:46 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:23:46 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:23:46 INFO [root] Found city: B264
+2026-04-04 20:23:46 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:25:01 ERROR [root] Can't parse entities: unexpected end of name token at byte offset 11
+2026-04-04 20:25:01 INFO [results] handlechat latency chat=184959894 took 74623.1 ms
+2026-04-04 20:33:01 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:33:02 INFO [telegram.ext.Application] Application started
+2026-04-04 20:33:02 INFO [root] Bot started
+2026-04-04 20:33:08 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:33:12 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:33:12 INFO [root] Found city: G962
+2026-04-04 20:33:12 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:33:14 ERROR [root] Can't parse entities: unsupported start tag "br" at byte offset 87
+2026-04-04 20:33:14 INFO [results] handlechat latency chat=184959894 took 6201.0 ms
+2026-04-04 20:34:06 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:34:06 INFO [telegram.ext.Application] Application started
+2026-04-04 20:34:06 INFO [root] Bot started
+2026-04-04 20:34:11 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:34:11 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:34:11 INFO [root] Found city: G225
+2026-04-04 20:34:11 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:34:14 ERROR [root] Replacement index 3 out of range for positional args tuple
+2026-04-04 20:34:14 INFO [results] handlechat latency chat=184959894 took 3669.4 ms
+2026-04-04 20:34:54 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:34:54 INFO [telegram.ext.Application] Application started
+2026-04-04 20:34:54 INFO [root] Bot started
+2026-04-04 20:34:57 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:34:57 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:34:57 INFO [root] Found city: G178
+2026-04-04 20:34:57 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:34:57 INFO [results] handlechat latency chat=184959894 took 572.8 ms
+2026-04-04 20:35:02 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:35:02 INFO [root] Found city: L503
+2026-04-04 20:35:02 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:35:02 INFO [results] handlechat latency chat=184959894 took 381.4 ms
+2026-04-04 20:35:12 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:35:12 INFO [root] Found city: I312
+2026-04-04 20:35:12 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:35:13 INFO [results] handlechat latency chat=184959894 took 563.4 ms
+2026-04-04 20:36:05 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:36:05 INFO [root] Found city: A368
+2026-04-04 20:36:05 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:36:06 ERROR [root] Can't parse entities: empty attribute name in the tag "a" at byte offset 3
+2026-04-04 20:36:06 INFO [results] handlechat latency chat=184959894 took 819.9 ms
+2026-04-04 20:37:00 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:37:00 INFO [results] handlechat latency chat=184959894 took 461.5 ms
+2026-04-04 20:37:20 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:37:20 INFO [root] Found city: L488
+2026-04-04 20:37:20 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:37:20 INFO [results] handlechat latency chat=184959894 took 524.5 ms
+2026-04-04 20:38:34 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:38:34 INFO [telegram.ext.Application] Application started
+2026-04-04 20:38:34 INFO [root] Bot started
+2026-04-04 20:38:35 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:38:35 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:38:35 INFO [root] Found city: I734
+2026-04-04 20:38:35 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:38:35 INFO [results] handlechat latency chat=184959894 took 552.2 ms
+2026-04-04 20:39:10 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:39:10 INFO [root] Found city: I294
+2026-04-04 20:39:10 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:39:11 INFO [results] handlechat latency chat=184959894 took 526.8 ms
+2026-04-04 20:39:19 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:39:19 INFO [root] Found city: I271
+2026-04-04 20:39:19 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:39:24 INFO [results] handlechat latency chat=184959894 took 5857.4 ms
+2026-04-04 20:42:47 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:42:47 INFO [root] Found city: D344
+2026-04-04 20:42:47 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:42:48 INFO [results] handlechat latency chat=184959894 took 579.2 ms
+2026-04-04 20:43:26 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:43:26 INFO [results] handlechat latency chat=184959894 took 488.8 ms
+2026-04-04 20:43:53 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:43:53 INFO [root] Found city: A355
+2026-04-04 20:43:53 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:43:54 INFO [results] handlechat latency chat=184959894 took 594.1 ms
+2026-04-04 20:44:48 INFO [DB.dbservice] Database pool initialized
+2026-04-04 20:44:48 INFO [telegram.ext.Application] Application started
+2026-04-04 20:44:48 INFO [root] Bot started
+2026-04-04 20:44:54 INFO [root] Fetching row SELECT 1 FROM users WHERE id = 184959894
+2026-04-04 20:44:55 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:44:55 INFO [results] handlechat latency chat=184959894 took 419.6 ms
+2026-04-04 20:45:10 INFO [root] Fetching row 
+    SELECT *
+    FROM cities
+    where nome_norm = $1 
+    
+2026-04-04 20:45:10 INFO [root] Found city: A663
+2026-04-04 20:45:10 INFO [root] Fetching row 
+        INSERT INTO cities_found (player, city)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+        RETURNING player
+    
+2026-04-04 20:45:10 INFO [results] handlechat latency chat=184959894 took 478.7 ms

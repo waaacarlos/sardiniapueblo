@@ -1,0 +1,6 @@
+{
+  "hello": "Benvenut! \uD83C\uDFDD\uFE0F\n\nIl gioco è semplice: prova a scrivere tutti i comuni della Sardegna che conosci!\n\nScrivi i nomi che ti vengono in mente e io terrò traccia dei tuoi progressi \uD83D\uDCCD\nMan mano che scopri nuovi paesi (o li senti nominare), torna qui e aggiungili! Perché non inizi da dove sei nato o dove abiti?",
+  "city_found": "<a href=\"{2}\">{0}</a> <b>trovata!</b>\n<i>{1}</i>\nPopolazione: {3} abitanti\nSuperficie: {4} kmq",
+  "found_count": "Hai scoperto {0} paesi su 377!",
+  "cities_missing_count": "Ti mancano {0} paesi da scoprire ancora!"
+}

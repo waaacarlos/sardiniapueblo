@@ -5,11 +5,10 @@ import traceback
 from telegram import Update
 from telegram.constants import ParseMode
 
-from DB import dbuser
+from DB import dbuser, dbcities
 from Entities.User import TGUser
 from Resources.config import LOG
-from BL import citiesUtility
-
+from Resources.messages import messages
 
 results_logger = logging.getLogger("results")
 
@@ -37,16 +36,28 @@ class Message:
                 await self.context.bot.forward_message(LOG, self.chat_id, self.message_id)
             except Exception as e:
                 await self.context.bot.send_message(LOG, str(e))
-            city = await citiesUtility.found_city(self.text)
-            if city:
-                logging.info(f"Found city: {city['id']}")
-                result = await citiesUtility.add_city(city['id'], self.chat_id)
-                if result:
-                    await self.send_message(f"<b>{city['nome']} aggiunto!</b>")
+            if self.text == "/start":
+                await self.send_message(messages("hello"))
+            else:  # TODO spostare in file di logica
+                city = await dbcities.found_city(self.text)
+                if city:
+                    logging.info(f"Found city: {city['id']}")
+                    result = await dbcities.add_city(city['id'], self.chat_id)
+                    if result:
+                        s = messages("city_found")
+                        await self.send_message(
+                            s.format(
+                                city['nome'],
+                                city['nome_originale'],
+                                city['url'],
+                                city['popolazione'],
+                                format(city['superficie'], ".2f")
+                            )
+                        )
+                    else:
+                        await self.send_message("Già scoperta!")  # TODO stringa lingue
                 else:
-                    await self.send_message("Già inserito")
-            else:
-                await self.send_message("Not Found")
+                    await self.send_message("Non ho trovato questo paese.")  # TODO stringa lingue
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")
