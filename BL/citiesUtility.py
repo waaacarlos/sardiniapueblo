@@ -1,7 +1,8 @@
 import logging
 
 from BL.utility import normalize
-from DB import dbcities
+from DB import dbcities, dbuser
+from Resources import constants
 from Resources.messages import messages
 
 
@@ -22,8 +23,10 @@ async def search_city(text, chat_id):
             msg_to_send = messages("city_found") + city_info
         else:
             msg_to_send = messages("already_found") + city_info
+        points = await dbuser.get_player_points(chat_id)
+        if points > 1:
+            msg_to_send += "\n\n" + messages("found_count").format(points)
     else:
-
         msg_to_send = messages("not_found")
     return msg_to_send
 
@@ -31,3 +34,12 @@ async def search_city(text, chat_id):
 async def reset_user(chat_id):
     await dbcities.remove_all_from_chatid(chat_id)
     return messages("reset")
+
+
+async def list_cities(chat_id):  # da paginare?
+    cities = await dbcities.found_cities(chat_id)
+    msg_to_send = messages("cities_found")
+    for city in cities:
+        msg_to_send += f"{cities.index(city) + 1}. {city['nome']}\n"
+    msg_to_send += f"\n{messages("cities_missing_count").format(constants.CITIES_COUNT - len(cities))}"
+    return msg_to_send

@@ -6,5 +6,6 @@
   "cities_missing_count": "Ti mancano {0} paesi da scoprire ancora!",
   "already_found": "Hai già scoperto questo paese.\n",
   "not_found": "Non ho trovato nessun paese con questo nome. Assicurati che non sia una frazione!",
-  "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i paesi da capo."
+  "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i paesi da capo.",
+  "cities_found": "Questo è l'elenco dei paesi che hai già trovato:\n"
 }

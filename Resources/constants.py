@@ -8,3 +8,5 @@ doupdate = " DO UPDATE SET "
 updatequery = "UPDATE {0} SET {1} WHERE {2}"
 
 deletequery = "DELETE FROM {0} WHERE {1}"
+
+CITIES_COUNT = 377

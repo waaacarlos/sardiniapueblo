@@ -44,6 +44,9 @@ class Message:
             elif self.text == "/reset":
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
+            elif self.text == "/list":
+                msg_to_send = await citiesUtility.list_cities(self.chat_id)
+                await self.send_message(msg_to_send)
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send)
