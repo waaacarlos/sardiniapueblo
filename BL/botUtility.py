@@ -2,13 +2,15 @@ import time
 import logging
 import traceback
 
-from telegram import Update
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.constants import ParseMode
+from telegram.ext import CallbackContext
 
 from BL import citiesUtility
 from DB import dbuser
 from Entities.User import TGUser
 from Resources.config import LOG
+from Resources.constants import PROVINCES
 from Resources.messages import messages
 
 results_logger = logging.getLogger("results")
@@ -45,8 +47,8 @@ class Message:
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
             elif self.text == "/list":
-                msg_to_send = await citiesUtility.list_cities(self.chat_id)
-                await self.send_message(msg_to_send)
+                msg_to_send = await self.get_list()
+                await self.send_message_with_provinces(msg_to_send)
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send)
@@ -58,7 +60,64 @@ class Message:
             duration_ms = (time.time() - start_time) * 1000
             results_logger.info("handlechat latency chat=%s took %.1f ms", self.chat_id, duration_ms)
 
+    async def get_list(self, province="CA"):
+        return await citiesUtility.list_cities(self.chat_id, province)
+
     async def send_message(self, text):
-        message = await self.context.bot.send_message(self.chat_id, text, parse_mode=ParseMode.HTML)
+        message = await self.context.bot.send_message(
+            self.chat_id, text, parse_mode=ParseMode.HTML
+        )
+        await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
+        return message.message_id
+
+    async def send_message_with_provinces(self, text):
+        message = await self.context.bot.send_message(
+            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=create_keyboard_province('CA')
+        )
+        await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
+        return message.message_id
+
+
+def create_keyboard_province(selected=None):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[
+            InlineKeyboardButton(
+                text=i,
+                callback_data=i,
+                style='success' if i == selected else 'primary'
+            ) for i in PROVINCES.keys()]]
+    )
+
+
+class AnswerQuery(Message):
+    def __init__(self, update: Update, context: CallbackContext, queryid=None, querydata=None):
+        super(AnswerQuery, self).__init__(update, context)
+        self.query_id = int(queryid or update.callback_query.id)
+        self.query_data = querydata or update.callback_query.data
+        self.update = update
+
+    async def handlecallback(self):
+        try:
+            await self.context.bot.send_message(LOG, "Callbackquery: {0}".format(self.query_data))
+            msg_to_send = await self.get_list(self.query_data)
+            await self.edit_message_with_provinces(msg_to_send, self.query_data)
+        except Exception as ex:
+            await self.context.bot.send_message(LOG, traceback.format_exc())
+            raise ex
+
+    async def edit_message_with_provinces(self, text, province="CA"):
+        keyboard_province = create_keyboard_province(province)
+        if keyboard_province == self.update.callback_query.message.reply_markup:
+            await self.context.bot.answer_callback_query(
+                callback_query_id=self.query_id, text=messages('already_selected')
+            )
+            return None
+        message = await self.context.bot.edit_message_text(
+            chat_id=self.chat_id,
+            text=text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard_province,
+            message_id=self.message_id
+        )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id

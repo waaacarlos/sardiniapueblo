@@ -10,3 +10,14 @@ updatequery = "UPDATE {0} SET {1} WHERE {2}"
 deletequery = "DELETE FROM {0} WHERE {1}"
 
 CITIES_COUNT = 377
+
+PROVINCES = {
+    "CA": 'città metropolitana di Cagliari',
+    "SS": 'città metropolitana di Sassari',
+    "OR": 'provincia di Oristano',
+    "NU": 'provincia di Nuoro',
+    "CI": 'provincia di Sulcis Iglesiente',
+    "OG": 'provincia di Ogliastra',
+    "VS": 'provincia di Medio Campidano',
+    "OT": 'provincia di Gallura Nord-Est Sardegna'
+}

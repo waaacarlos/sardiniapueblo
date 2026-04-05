@@ -2,8 +2,8 @@ import asyncio
 import logging
 
 from telegram import Update
-from telegram.ext import MessageHandler, filters, ApplicationBuilder
-from BL.botUtility import Message
+from telegram.ext import MessageHandler, filters, ApplicationBuilder, CallbackQueryHandler
+from BL.botUtility import Message, AnswerQuery
 from Resources.config import TOKEN, LOG
 from Resources.logging_setup import setup_logging
 
@@ -16,6 +16,12 @@ async def onchatmessage(update: Update, context):
     context.application.create_task(message.handlechat())
 
 
+async def oncallbackquery(update: Update, context):
+    message = AnswerQuery(update, context)
+    await message.async_init()
+    context.application.create_task(message.handlecallback())
+
+
 async def get_updates():
     setup_logging()
     await init_db()
@@ -23,6 +29,7 @@ async def get_updates():
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(MessageHandler(filters.TEXT, onchatmessage))
+    app.add_handler(CallbackQueryHandler(oncallbackquery))
 
     await app.initialize()
     await app.start()

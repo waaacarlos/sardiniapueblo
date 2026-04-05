@@ -12,8 +12,10 @@ async def search_city(text, chat_id):
     if city:
         logging.info(f"Found city: {city['id']}")
         city_info = messages("city").format(
+            city['url'],
             city['nome'],
-            city['nome_originale'], city['url'],
+            city['nome_originale'],
+            city['nome_provincia'],
             f"{city['popolazione']:_}".replace("_", "."),
             format(city['superficie'], "_.2f").replace(".", ","),
             city['altitudine']
@@ -36,10 +38,18 @@ async def reset_user(chat_id):
     return messages("reset")
 
 
-async def list_cities(chat_id):  # da paginare?
-    cities = await dbcities.found_cities(chat_id)
-    msg_to_send = messages("cities_found")
+async def list_cities(chat_id, province="CA"):  # da paginare?
+    cities = await dbcities.found_cities(chat_id, province)
+    msg_to_send = messages("cities_found").format(constants.PROVINCES[province])
+    counter = 0
     for city in cities:
-        msg_to_send += f"{cities.index(city) + 1}. {city['nome']}\n"
-    msg_to_send += f"\n{messages("cities_missing_count").format(constants.CITIES_COUNT - len(cities))}"
+        counter += 1
+        city_name = city['all_names']
+        if '*' in city_name:
+            city_name = f"<tg-spoiler>{city_name}</tg-spoiler>"
+        msg_to_send += f"{counter}. {city_name}\n"
+    msg_to_send += f"\n{messages("cities_missing_count").format(
+        len(cities) - len([i for i in cities if '*' not in i['all_names']]),
+        constants.PROVINCES[province]
+    )}"
     return msg_to_send
