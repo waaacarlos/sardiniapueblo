@@ -36,4 +36,4 @@ async def get_player_points(chatid: int):
     from player_points
     where player = $1
     """
-    return await fetchval(query, chatid)
+    return await fetchval(query, chatid) or 0
