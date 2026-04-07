@@ -3,10 +3,11 @@
   "city_found": "<b>Nuovo paese trovato!</b>\n",
   "city": "\n<b><a href=\"{0}\">{1}</a></b> <i>{2}</i>\n{3}\n<i>{4} abitanti, {5} kmq, {6}m.</i>",
   "found_count": "Hai scoperto {0} paesi su 377!",
-  "cities_missing_count": "Ti mancano {0} paesi della {1} da scoprire ancora!",
+  "cities_missing_count": "Ti mancano {0} paesi della {1} da scoprire ancora!\nSeparazione per lettera: /list\nSeparazione per provincia: /list_provinces",
   "already_found": "Hai già scoperto questo paese.\n",
   "not_found": "Non ho trovato nessun paese con questo nome. Assicurati che non sia una frazione!",
   "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i paesi da capo.",
-  "cities_found": "Questo è l'elenco dei paesi della <b>{0}</b> che hai già trovato:\n",
+  "cities_found_by_prov": "Questo è l'elenco dei paesi della <b>{0}</b> che hai già trovato:\n",
+  "cities_found": "Questo è l'elenco dei paesi che hai già trovato:\n",
   "already_selected": "Hai già selezionato questa provincia."
 }

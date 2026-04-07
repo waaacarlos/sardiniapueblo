@@ -26,7 +26,7 @@ async def remove_all_from_chatid(chat_id: int):
     return await fetchrow(query, chat_id)
 
 
-async def found_cities(chat_id: int, province: str):
+async def found_cities_by_prov(chat_id: int, province: str):
     query = """
         SELECT 
          CASE when c.id in (
@@ -41,3 +41,21 @@ async def found_cities(chat_id: int, province: str):
         order by nome
     """
     return await fetch(query, chat_id, province)
+
+
+async def found_cities_by_letter(chat_id: int, letter: str):
+    query = """
+        SELECT 
+         CASE when c.id in (
+            select city
+            from cities_found
+            where cities_found.player = $1)
+            then nome
+            else repeat('*', length(nome))
+            end as all_names,
+            provincia
+        FROM cities c
+        where starts_with(nome, $2) 
+        order by nome
+    """
+    return await fetch(query, chat_id, letter)

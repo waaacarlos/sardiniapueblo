@@ -46,9 +46,12 @@ class Message:
             elif self.text == "/reset":
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
-            elif self.text == "/list":
-                msg_to_send = await self.get_list()
+            elif self.text == "/list_provinces":
+                msg_to_send = await self.get_list_by_province()
                 await self.send_message_with_provinces(msg_to_send)
+            elif self.text == "/list":
+                msg_to_send = await self.get_list_by_letter()
+                await self.send_message_with_letters(msg_to_send)
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send)
@@ -60,8 +63,11 @@ class Message:
             duration_ms = (time.time() - start_time) * 1000
             results_logger.info("handlechat latency chat=%s took %.1f ms", self.chat_id, duration_ms)
 
-    async def get_list(self, province="CA"):
-        return await citiesUtility.list_cities(self.chat_id, province)
+    async def get_list_by_province(self, province="CA"):
+        return await citiesUtility.list_cities_by_prov(self.chat_id, province)
+
+    async def get_list_by_letter(self, letter="A"):
+        return await citiesUtility.list_cities_by_letter(self.chat_id, letter)
 
     async def send_message(self, text):
         message = await self.context.bot.send_message(
@@ -77,15 +83,32 @@ class Message:
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
 
+    async def send_message_with_letters(self, text):
+        message = await self.context.bot.send_message(
+            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=create_keyboard_alphabetic('A')
+        )
+        await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
+        return message.message_id
+
 
 def create_keyboard_province(selected=None):
+    keys_ = [InlineKeyboardButton(text=i, callback_data=i, style='success' if i == selected else 'primary') for i in
+             PROVINCES.keys()]
     return InlineKeyboardMarkup(
-        inline_keyboard=[[
-            InlineKeyboardButton(
-                text=i,
-                callback_data=i,
-                style='success' if i == selected else 'primary'
-            ) for i in PROVINCES.keys()]]
+        inline_keyboard=[keys_[:4], keys_[4:]]
+    )
+
+
+def create_keyboard_alphabetic(selected=None):
+    keys_ = [
+        InlineKeyboardButton(text=i, callback_data=i, style='success' if i == selected else 'primary') for i in
+        [
+                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J', 'L',
+                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Z'
+        ]
+    ]
+    return InlineKeyboardMarkup(
+        inline_keyboard=[keys_[:7], keys_[7:14], keys_[14:]]
     )
 
 
@@ -99,8 +122,12 @@ class AnswerQuery(Message):
     async def handlecallback(self):
         try:
             await self.context.bot.send_message(LOG, "Callbackquery: {0}".format(self.query_data))
-            msg_to_send = await self.get_list(self.query_data)
-            await self.edit_message_with_provinces(msg_to_send, self.query_data)
+            if len(self.query_data) == 2:
+                msg_to_send = await self.get_list_by_province(self.query_data)
+                await self.edit_message_with_provinces(msg_to_send, self.query_data)
+            elif len(self.query_data) == 1:
+                msg_to_send = await self.get_list_by_letter(self.query_data)
+                await self.edit_message_with_letter(msg_to_send, self.query_data)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             raise ex
@@ -117,6 +144,23 @@ class AnswerQuery(Message):
             text=text,
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard_province,
+            message_id=self.message_id
+        )
+        await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
+        return message.message_id
+
+    async def edit_message_with_letter(self, text, letter="CA"):
+        keyboard_letter = create_keyboard_alphabetic(letter)
+        if keyboard_letter == self.update.callback_query.message.reply_markup:
+            await self.context.bot.answer_callback_query(
+                callback_query_id=self.query_id, text=messages('already_selected')
+            )
+            return None
+        message = await self.context.bot.edit_message_text(
+            chat_id=self.chat_id,
+            text=text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard_letter,
             message_id=self.message_id
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
