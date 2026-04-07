@@ -1,4 +1,7 @@
 # query commands
+import json
+from pathlib import Path
+
 insertquery = "INSERT INTO {0} {2} VALUES ({1})"
 conflict = " ON CONFLICT "
 onconstraint = " ON CONSTRAINT {0} "
@@ -21,3 +24,4 @@ PROVINCES = {
     "VS": 'provincia di Medio Campidano',
     "OT": 'provincia di Gallura Nord-Est Sardegna'
 }
+

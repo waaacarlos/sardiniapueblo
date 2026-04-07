@@ -1,15 +1,15 @@
 import json
-from pathlib import Path
-from DB import dbachievements, dbuser
 
-ACHIEVEMENTS = json.loads(Path("achievements.json").read_text())
+from DB import dbachievements, dbuser
+from Resources.config import ABS_FILE_PATH
 
 
 async def check_achievement(player, event=None):
     player_unlocked = await dbachievements.get_player_achievements(player)
     unlocked = []
+    achievements = get_achievements()
 
-    for key, ach in ACHIEVEMENTS.items():
+    for key, ach in achievements.items():
         if event and not ach['category'] == 'write':
             continue
         if key in player_unlocked:
@@ -37,3 +37,7 @@ async def check_achievement(player, event=None):
             raise Exception(f"Unknown category {ach['category']}")
 
     return unlocked
+
+
+def get_achievements():
+    return json.load(open(ABS_FILE_PATH + "Resources/achievements.json"))
