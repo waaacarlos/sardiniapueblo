@@ -85,6 +85,12 @@
       "Gonnostramatza"
     ]
   },
+  "antonello_lai": {
+    "title": "Antonello Lai",
+    "description": "Trova 50 comuni.",
+    "category": "progress",
+    "threshold": 50
+  },
   "bosa": {
     "title": "Quando piove lasciano piovere",
     "description": "Trova Bosa.",
@@ -258,6 +264,26 @@
     "category": "progress",
     "threshold": 30
   },
+  "festa_paesana": {
+    "title": "Cando faghen sa festa in Oliana",
+    "description": "Trova Mamoiada, Bitti, Sarule, Fonni e Orgosolo.",
+    "category": "city",
+    "cities": [
+      "Mamoiada", "Bitti", "Sarule", "Orgosolo"
+    ]
+  },
+  "geppi_cucciari": {
+    "title": "Geppi Cucciari",
+    "description": "Trova Macomer.",
+    "category": "city",
+    "cities": ["Macomer"]
+  },
+  "gennaro_longobardi": {
+    "title": "Gennaro Longobardi",
+    "description": "Trova 150 comuni.",
+    "category": "progress",
+    "threshold": 150
+  },
   "gesturi": {
     "title": "La Giara",
     "description": "Trova Gesturi.",
@@ -288,6 +314,12 @@
       "La Maddalena"
     ]
   },
+  "judicadu": {
+    "title": "Su Judicadu",
+    "description": "Trova tutti i comuni della provincia di Oristano.",
+    "category": "province",
+    "province": "OR"
+  },
   "nuoro": {
     "title": "E comunque si dice Nùoro e non Nuòro",
     "description": "Trova Nuoro.",
@@ -307,7 +339,7 @@
   "pedrinxao": {
     "title": "Perdinxão",
     "description": "Trova tutti i comuni del Medio Campidano.",
-    "category": "city_province",
+    "category": "province",
     "province": "VS"
   },
   "pompu": {
@@ -354,6 +386,12 @@
       "Alghero",
       "Olbia"
     ]
+  },
+  "turritania": {
+    "title": "Turritania",
+    "description": "Trova tutti i comuni della città metropolitana di Sassari",
+    "category": "province",
+    "province": "SS"
   },
   "tutti_i_santi": {
     "title": "Tutti i santi",

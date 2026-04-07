@@ -9,13 +9,13 @@ async def check_achievement(player, event=None):
     unlocked = []
     achievements = get_achievements()
 
+    points = await dbuser.get_player_points(player)
     for key, ach in achievements.items():
         if event and not ach['category'] == 'write':
             continue
         if key in player_unlocked:
             continue
         if ach['category'] == 'progress':
-            points = await dbuser.get_player_points(player)
             if points >= ach['threshold']:
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
@@ -24,7 +24,7 @@ async def check_achievement(player, event=None):
             if counter_cities_found >= len(ach['cities']):
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
-        elif ach['category'] == 'city_province':
+        elif ach['category'] == 'province':
             counter_cities_found = await dbachievements.check_prov_achievements(player, ach['province'])
             if not counter_cities_found:
                 unlocked.append(ach)

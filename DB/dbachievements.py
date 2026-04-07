@@ -31,12 +31,12 @@ async def check_cities_achievements(chat_id: int, cities: tuple):
     return await fetchval(query, chat_id, cities) or 0
 
 
-async def check_prov_achievements(chat_id: int, province):
+async def check_prov_achievements(chat_id, province):
     query = """
     SELECT count(*)
     FROM cities c
     LEFT JOIN cities_found cf ON c.id = cf.city AND cf.player = $1
-    WHERE c.provincia = '$2'
+    WHERE c.provincia = $2
     AND cf.city IS NULL;
     """
     return await fetchval(query, chat_id, province) or 0
