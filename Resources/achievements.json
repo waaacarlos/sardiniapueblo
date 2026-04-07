@@ -1,77 +1,54 @@
 {
-  "chi_ben_comincia": {
-    "title": "Chi ben comincia",
-    "description": "Trova un comune.",
-    "category": "progress",
-    "threshold": 1
-  },
-  "esploratore": {
-    "title": "Esploratore",
-    "description": "Trova 30 comuni.",
-    "category": "progress",
-    "threshold": 30
-  },
-  "giro_di_boa": {
-    "title": "Giro di boa",
-    "description": "Trova 179 comuni.",
-    "category": "progress",
-    "threshold": 179
-  },
-  "giuliano_marongiu": {
-    "title": "Giuliano Marongiu",
-    "description": "Trova 100 comuni.",
-    "category": "progress",
-    "threshold": 100
-  },
-  "emanuele_dessi": {
-    "title": "Emanuele Dessì",
-    "description": "Trova 200 comuni.",
-    "category": "progress",
-    "threshold": 200
-  },
-  "doddore_meloni": {
-    "title": "Doddore Meloni",
-    "description": "Trova 300 comuni.",
-    "category": "progress",
-    "threshold": 300
-  },
-  "eleonora_darborea": {
-    "title": "Eleonora d'Arborea",
-    "description": "Trova tutti i comuni.",
-    "category": "progress",
-    "threshold": 377
-  },
-  "duplicate": {
-    "title": "E dringhidi",
-    "description": "Scrivi un comune già trovato.",
-    "category": "write",
-    "event": "duplicate"
-  },
-  "sa_bidda": {
-    "title": "Sa bidda 'e s'aqua bruta",
-    "description": "Trova Uta.",
+  "a_vapore": {
+    "title": "A vapore!",
+    "description": "Trova tutti i comuni toccati dalle ferrovie del Trenino Verde.",
     "category": "city",
     "cities": [
-      "Uta"
-    ]
-  },
-  "vorrei_la_passaword": {
-    "title": "Vorrei la passaword",
-    "description": "Trova Ortacesus.",
-    "category": "city",
-    "cities": [
-      "Ortacesus"
-    ]
-  },
-  "capoluoghi_storici": {
-    "title": "Capoluoghi storici",
-    "description": "Trova i 4 capoluoghi storici.",
-    "category": "city",
-    "cities": [
-      "Cagliari",
-      "Oristano",
-      "Nuoro",
-      "Sassari"
+      "Mandas",
+      "Orroli",
+      "Nurri",
+      "Villanova Tulo",
+      "Esterzili",
+      "Sadali",
+      "Seulo",
+      "Seui",
+      "Ussassai",
+      "Gairo",
+      "Villagrande Strisaili",
+      "Arzana",
+      "Elini",
+      "Tortolì",
+      "Serri",
+      "Isili",
+      "Nurallao",
+      "Laconi",
+      "Meana Sardo",
+      "Belvì",
+      "Aritzo",
+      "Desulo",
+      "Tonara",
+      "Sorgono",
+      "Macomer",
+      "Sindia",
+      "Tinnura",
+      "Tresnuraghes",
+      "Cuglieri",
+      "Magomadas",
+      "Bosa",
+      "Sassari",
+      "Osilo",
+      "Nulvi",
+      "Martis",
+      "Laerru",
+      "Perfugas",
+      "Bortigiadas",
+      "Aggius",
+      "Tempio Pausania",
+      "Luras",
+      "Calangianus",
+      "Sant'Antonio di Gallura",
+      "Arzachena",
+      "Palau"
     ]
   },
   "a_volte_ritornano": {
@@ -89,22 +66,42 @@
       "Villacidro"
     ]
   },
-  "nuoro": {
-    "title": "E comunque si dice Nùoro e non Nuòro",
-    "description": "Trova Nuoro.",
+  "alghero": {
+    "title": "Parles català?",
+    "description": "Trova Alghero.",
     "category": "city",
     "cities": [
-      "Nuoro"
+      "Alghero"
     ]
   },
-  "isolani": {
-    "title": "Isolani",
-    "description": "Trova i comuni che stanno sulle isole.",
+  "all_the_gonnos": {
+    "title": "All the Gonnos",
+    "description": "Trova tutti i comuni che iniziano con Gonnos.",
     "category": "city",
     "cities": [
-      "Sant'Antioco",
-      "Calasetta",
-      "La Maddalena"
+      "Gonnoscodina",
+      "Gonnosfanadiga",
+      "Gonnosnò",
+      "Gonnostramatza"
+    ]
+  },
+  "bosa": {
+    "title": "Quando piove lasciano piovere",
+    "description": "Trova Bosa.",
+    "category": "city",
+    "cities": [
+      "Bosa"
+    ]
+  },
+  "capoluoghi_storici": {
+    "title": "Capoluoghi storici",
+    "description": "Trova i 4 capoluoghi storici.",
+    "category": "city",
+    "cities": [
+      "Cagliari",
+      "Oristano",
+      "Nuoro",
+      "Sassari"
     ]
   },
   "carlo_felice": {
@@ -158,99 +155,11 @@
       "Porto Torres"
     ]
   },
-  "a_vapore": {
-    "title": "A vapore!",
-    "description": "Trova tutti i comuni toccati dalle ferrovie del Trenino Verde.",
-    "category": "city",
-    "cities": [
-      "Mandas",
-      "Orroli",
-      "Nurri",
-      "Villanova Tulo",
-      "Esterzili",
-      "Sadali",
-      "Seulo",
-      "Seui",
-      "Ussassai",
-      "Gairo",
-      "Villagrande Strisaili",
-      "Arzana",
-      "Elini",
-      "Tortolì",
-      "Serri",
-      "Isili",
-      "Nurallao",
-      "Laconi",
-      "Meana Sardo",
-      "Belvì",
-      "Aritzo",
-      "Desulo",
-      "Tonara",
-      "Sorgono",
-      "Macomer",
-      "Sindia",
-      "Tinnura",
-      "Tresnuraghes",
-      "Cuglieri",
-      "Magomadas",
-      "Bosa",
-      "Sassari",
-      "Osilo",
-      "Nulvi",
-      "Martis",
-      "Laerru",
-      "Perfugas",
-      "Bortigiadas",
-      "Aggius",
-      "Tempio Pausania",
-      "Luras",
-      "Calangianus",
-      "Sant'Antonio di Gallura",
-      "Arzachena",
-      "Palau"
-    ]
-  },
-  "pompu": {
-    "title": "Un posto molto lontano",
-    "description": "Trova Pompu.",
-    "category": "city",
-    "cities": [
-      "Pompu"
-    ]
-  },
-  "tutti_i_santi": {
-    "title": "Tutti i santi",
-    "description": "Trova tutti i comuni con \"San\" nel nome.",
-    "category": "city",
-    "cities": [
-      "Abbasanta",
-      "Loiri Porto San Paolo",
-      "Luogosanto",
-      "Nughedu San Nicolò",
-      "Nughedu Santa Vittoria",
-      "Quartu Sant'Elena",
-      "San Basilio",
-      "San Gavino Monreale",
-      "San Giovanni Suergiu",
-      "San Nicolò d'Arcidano",
-      "San Nicolò Gerrei",
-      "San Sperate",
-      "San Teodoro",
-      "San Vero Milis",
-      "San Vito",
-      "Santa Giusta",
-      "Santa Maria Coghinas",
-      "Santa Teresa Gallura",
-      "Sant'Andrea Frius",
-      "Sant'Anna Arresi",
-      "Sant'Antioco",
-      "Sant'Antonio di Gallura",
-      "Santu Lussurgiu",
-      "Baratili San Pietro",
-      "Villa San Pietro",
-      "Villa Sant'Antonio",
-      "Settimo San Pietro"
-    ]
+  "chi_ben_comincia": {
+    "title": "Chi ben comincia",
+    "description": "Trova un comune.",
+    "category": "progress",
+    "threshold": 1
   },
   "ciuff_ciuff": {
     "title": "Ciuff ciuff",
@@ -301,27 +210,6 @@
       "Uta"
     ]
   },
-  "si_vola": {
-    "title": "Si vola",
-    "description": "Trova i tre aeroporti.",
-    "category": "city",
-    "cities": [
-      "Elmas",
-      "Alghero",
-      "Olbia"
-    ]
-  },
-  "si_salpa": {
-    "title": "Si salpa",
-    "description": "Trova i 4 porti (escluso Arbatax).",
-    "category": "city",
-    "cities": [
-      "Cagliari",
-      "Porto Torres",
-      "Olbia",
-      "Golfo Aranci"
-    ]
-  },
   "costa_orientale": {
     "title": "Sulla costa orientale",
     "description": "Trova tutti i comuni sulla SS125var.",
@@ -340,13 +228,35 @@
       "Bari Sardo"
     ]
   },
-  "serramanna": {
-    "title": "Paese di artisti",
-    "description": "Trova Serramanna.",
-    "category": "city",
-    "cities": [
-      "Serramanna"
-    ]
+  "doddore_meloni": {
+    "title": "Doddore Meloni",
+    "description": "Trova 300 comuni.",
+    "category": "progress",
+    "threshold": 300
+  },
+  "duplicate": {
+    "title": "E dringhidi",
+    "description": "Scrivi un comune già trovato.",
+    "category": "write",
+    "event": "duplicate"
+  },
+  "eleonora_darborea": {
+    "title": "Eleonora d'Arborea",
+    "description": "Trova tutti i comuni.",
+    "category": "progress",
+    "threshold": 377
+  },
+  "emanuele_dessi": {
+    "title": "Emanuele Dessì",
+    "description": "Trova 200 comuni.",
+    "category": "progress",
+    "threshold": 200
+  },
+  "esploratore": {
+    "title": "Esploratore",
+    "description": "Trova 30 comuni.",
+    "category": "progress",
+    "threshold": 30
   },
   "gesturi": {
     "title": "La Giara",
@@ -354,6 +264,36 @@
     "category": "city",
     "cities": [
       "Gesturi"
+    ]
+  },
+  "giro_di_boa": {
+    "title": "Giro di boa",
+    "description": "Trova 179 comuni.",
+    "category": "progress",
+    "threshold": 179
+  },
+  "giuliano_marongiu": {
+    "title": "Giuliano Marongiu",
+    "description": "Trova 100 comuni.",
+    "category": "progress",
+    "threshold": 100
+  },
+  "isolani": {
+    "title": "Isolani",
+    "description": "Trova i comuni che stanno sulle isole.",
+    "category": "city",
+    "cities": [
+      "Sant'Antioco",
+      "Calasetta",
+      "La Maddalena"
+    ]
+  },
+  "nuoro": {
+    "title": "E comunque si dice Nùoro e non Nuòro",
+    "description": "Trova Nuoro.",
+    "category": "city",
+    "cities": [
+      "Nuoro"
     ]
   },
   "pabillonis": {
@@ -364,15 +304,89 @@
       "Pabillonis"
     ]
   },
-  "all_the_gonnos": {
-    "title": "All the Gonnos",
-    "description": "Trova tutti i comuni che iniziano con Gonnos.",
+  "pedrinxao": {
+    "title": "Perdinxão",
+    "description": "Trova tutti i comuni del Medio Campidano.",
+    "category": "city_province",
+    "province": "VS"
+  },
+  "pompu": {
+    "title": "Un posto molto lontano",
+    "description": "Trova Pompu.",
     "category": "city",
     "cities": [
-      "Gonnoscodina",
-      "Gonnosfanadiga",
-      "Gonnosnò",
-      "Gonnostramatza"
+      "Pompu"
+    ]
+  },
+  "sa_bidda": {
+    "title": "Sa bidda 'e s'aqua bruta",
+    "description": "Trova Uta.",
+    "category": "city",
+    "cities": [
+      "Uta"
+    ]
+  },
+  "serramanna": {
+    "title": "Paese di artisti",
+    "description": "Trova Serramanna.",
+    "category": "city",
+    "cities": [
+      "Serramanna"
+    ]
+  },
+  "si_salpa": {
+    "title": "Si salpa",
+    "description": "Trova i 4 porti (escluso Arbatax).",
+    "category": "city",
+    "cities": [
+      "Cagliari",
+      "Porto Torres",
+      "Olbia",
+      "Golfo Aranci"
+    ]
+  },
+  "si_vola": {
+    "title": "Si vola",
+    "description": "Trova i tre aeroporti.",
+    "category": "city",
+    "cities": [
+      "Elmas",
+      "Alghero",
+      "Olbia"
+    ]
+  },
+  "tutti_i_santi": {
+    "title": "Tutti i santi",
+    "description": "Trova tutti i comuni con \"San\" nel nome.",
+    "category": "city",
+    "cities": [
+      "Abbasanta",
+      "Loiri Porto San Paolo",
+      "Luogosanto",
+      "Nughedu San Nicolò",
+      "Nughedu Santa Vittoria",
+      "Quartu Sant'Elena",
+      "San Basilio",
+      "San Gavino Monreale",
+      "San Giovanni Suergiu",
+      "San Nicolò d'Arcidano",
+      "San Nicolò Gerrei",
+      "San Sperate",
+      "San Teodoro",
+      "San Vero Milis",
+      "San Vito",
+      "Santa Giusta",
+      "Santa Maria Coghinas",
+      "Santa Teresa Gallura",
+      "Sant'Andrea Frius",
+      "Sant'Anna Arresi",
+      "Sant'Antioco",
+      "Sant'Antonio di Gallura",
+      "Santu Lussurgiu",
+      "Baratili San Pietro",
+      "Villa San Pietro",
+      "Villa Sant'Antonio",
+      "Settimo San Pietro"
     ]
   },
   "villa": {
@@ -401,26 +415,12 @@
       "Villaurbana"
     ]
   },
-  "bosa": {
-    "title": "Quando piove lasciano piovere",
-    "description": "Trova Bosa.",
+  "vorrei_la_passaword": {
+    "title": "Vorrei la passaword",
+    "description": "Trova Ortacesus.",
     "category": "city",
     "cities": [
-      "Bosa"
+      "Ortacesus"
     ]
-  },
-  "alghero": {
-    "title": "Parles català?",
-    "description": "Trova Alghero.",
-    "category": "city",
-    "cities": [
-      "Alghero"
-    ]
-  },
-  "pedrinxao": {
-    "title": "Perdinxão",
-    "description": "Trova tutti i comuni del Medio Campidano.",
-    "category": "city_province",
-    "province": "VS"
   }
 }
