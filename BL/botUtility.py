@@ -1,3 +1,4 @@
+import asyncio
 import time
 import logging
 import traceback
@@ -6,7 +7,7 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
 
-from BL import citiesUtility
+from BL import citiesUtility, achievementUtility
 from DB import dbuser
 from Entities.User import TGUser
 from Resources.config import LOG
@@ -34,6 +35,7 @@ class Message:
 
     async def handlechat(self):
         start_time = time.time()
+        achievements_unlocked = []
         try:
             try:
                 await self.context.bot.forward_message(LOG, self.chat_id, self.message_id)
@@ -55,6 +57,14 @@ class Message:
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send)
+                if messages("already_found") in msg_to_send:
+                    achievements_unlocked.extend(
+                        await achievementUtility.check_achievement(self.chat_id, "duplicate")
+                    )
+            achievements_unlocked.extend(await achievementUtility.check_achievement(self.chat_id))
+            for ach in achievements_unlocked:
+                await self.send_achievement(ach['title'], ach['description'])
+                await asyncio.sleep(1)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")
@@ -75,6 +85,10 @@ class Message:
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
+
+    async def send_achievement(self, title, description):
+        msg_to_send = messages("achievement_unlocked").format(title, description)
+        await self.send_message(msg_to_send)
 
     async def send_message_with_provinces(self, text):
         message = await self.context.bot.send_message(

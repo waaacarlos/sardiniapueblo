@@ -9,5 +9,6 @@
   "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i comuni da capo.",
   "cities_found_by_prov": "Questo è l'elenco dei comuni della <b>{0}</b> che hai già trovato:\n",
   "cities_found": "Questo è l'elenco dei comuni che hai già trovato:\n",
-  "already_selected": "Hai già selezionato questa provincia."
+  "already_selected": "Hai già selezionato questa provincia.",
+  "achievement_unlocked": "<blockquote><b>{0}</b>\n<i>{1}</i></blockquote>\nObiettivo sbloccato!"
 }
