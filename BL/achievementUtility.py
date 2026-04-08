@@ -40,4 +40,5 @@ async def check_achievement(player, event=None):
 
 
 def get_achievements():
-    return json.load(open(ABS_FILE_PATH + "Resources/achievements.json"))
+    with open(ABS_FILE_PATH + "Resources/achievements.json") as f:
+        return json.load(f)

@@ -16,9 +16,11 @@ def messages(message, language=LANGUAGE):
 
 def get_dictionary(language):
     try:
-        return json.load(open(ABS_FILE_PATH + "Resources/Languages/{0}.json".format(language)))
+        with open(f"{ABS_FILE_PATH}Resources/Languages/{language}.json") as f:
+            return json.load(f)
     except:
-        return json.load(open(ABS_FILE_PATH + "Resources/Languages/it.json"))
+        with open(ABS_FILE_PATH + "Resources/Languages/it.json"):
+            return json.load(f)
 
 
 def get_emoji(message):
