@@ -632,5 +632,258 @@
       "Sassari",
       "Olbia"
     ]
+  },
+  "miglia_romane": {
+    "title": "Miglia romane",
+    "description": "Trova Quartucciu, Quartu Sant'Elena, Sestu, Settimo San Pietro, Decimomannu e Decimoputzu.",
+    "category": "city",
+    "cities": [
+      "Quartucciu",
+      "Quartu Sant'Elena",
+      "Sestu",
+      "Settimo San Pietro",
+      "Decimomannu",
+      "Decimoputzu"
+    ]
+  },
+  "sindia": {
+    "title": "Il piede in tre scarpe",
+    "description": "Trova il comune che sta su tre territori.",
+    "category": "city",
+    "cities": [
+      "Sindia"
+    ]
+  },
+  "09040": {
+    "title": "CAP 09040",
+    "description": "Trova tutti i comuni che hanno 09040 come CAP.",
+    "category": "city",
+    "cities": [
+      "Soleminis",
+      "Donori",
+      "Serdiana",
+      "Goni",
+      "San Nicolò Gerrei",
+      "Villasalto",
+      "Furtei",
+      "San Basilio",
+      "Segariu",
+      "Siurgus Donigala",
+      "Armungia",
+      "Ballao",
+      "Villaputzu",
+      "Burcei",
+      "Castiadas",
+      "San Vito",
+      "Silius",
+      "Gesico",
+      "Guamaggiore",
+      "Guasila",
+      "Mandas",
+      "Ortacesus",
+      "Sant'Andrea Frius",
+      "Selegas",
+      "Barrali",
+      "Suelli",
+      "Senorbì"
+    ]
+  },
+  "09090": {
+    "title": "CAP 09090",
+    "description": "Trova tutti i comuni che hanno 09090 come CAP.",
+    "category": "city",
+    "cities": [
+      "Flussio",
+      "Magomadas",
+      "Modolo",
+      "Montresta",
+      "Sagama",
+      "Suni",
+      "Tinnura",
+      "Laconi",
+      "Palmas Arborea",
+      "Albagiara",
+      "Gonnosnò",
+      "Baradili",
+      "Curcuris",
+      "Gonnoscodina",
+      "Masullas",
+      "Sini",
+      "Morgongiori",
+      "Pau",
+      "Simala",
+      "Siris",
+      "Usellus",
+      "Baressa",
+      "Villa Verde"
+    ]
+  },
+  "09010": {
+    "title": "CAP 09010",
+    "description": "Trova tutti i comuni che hanno 09010 come CAP.",
+    "category": "city",
+    "cities": [
+      "Decimoputzu",
+      "Domus de Maria",
+      "Villaspeciosa",
+      "Vallermosa",
+      "Buggerru",
+      "Fluminimaggiore",
+      "Gonnesa",
+      "Musei",
+      "Giba",
+      "Masainas",
+      "Piscinas",
+      "Sant'Anna Arresi",
+      "Narcao",
+      "Nuxis",
+      "Perdaxius",
+      "Siliqua",
+      "Portoscuso",
+      "San Giovanni Suergiu",
+      "Santadi",
+      "Villamassargia",
+      "Villaperuccio",
+      "Tratalias"
+    ]
+  },
+  "08020": {
+    "title": "CAP 08020",
+    "description": "Trova tutti i comuni che hanno 08020 come CAP.",
+    "category": "city",
+    "cities": [
+      "Onanì",
+      "Oniferi",
+      "Orotelli",
+      "Orune",
+      "Ottana",
+      "Sarule",
+      "Gavoi",
+      "Lodine",
+      "Ollolai",
+      "Olzai",
+      "Ovodda",
+      "Lula",
+      "Galtellì",
+      "Irgoli",
+      "Loculi",
+      "Lodè",
+      "Onifai",
+      "Posada",
+      "Osidda",
+      "Tiana",
+      "Torpè"
+    ]
+  },
+  "07010": {
+    "title": "CAP 07010",
+    "description": "Trova tutti i comuni che hanno 07010 come CAP.",
+    "category": "city",
+    "cities": [
+      "Anela",
+      "Bottidda",
+      "Bultei",
+      "Benetutti",
+      "Burgos",
+      "Esporlatu",
+      "Illorai",
+      "Nule",
+      "Ardara",
+      "Ittireddu",
+      "Cossoine",
+      "Giave",
+      "Mara",
+      "Nughedu San Nicolò",
+      "Tula",
+      "Monteleone Rocca Doria",
+      "Romana",
+      "Semestene"
+    ]
+  },
+  "09080": {
+    "title": "CAP 09080",
+    "description": "Trova tutti i comuni che hanno 09080 come CAP.",
+    "category": "city",
+    "cities": [
+      "Asuni",
+      "Bidonì",
+      "Boroneddu",
+      "Neoneli",
+      "Nughedu Santa Vittoria",
+      "Soddì",
+      "Siamanna",
+      "Allai",
+      "Villaurbana",
+      "Nureci",
+      "Mogorella",
+      "Senis",
+      "Villa Sant'Antonio",
+      "Assolo",
+      "Sorradile",
+      "Tadasuni",
+      "Siapiccia",
+      "Ulà Tirso"
+    ]
+  },
+  "09070": {
+    "title": "CAP 09070",
+    "description": "Trova tutti i comuni che hanno 09070 come CAP.",
+    "category": "city",
+    "cities": [
+      "Norbello",
+      "Paulilatino",
+      "Bauladu",
+      "Milis",
+      "Nurachi",
+      "Riola Sardo",
+      "San Vero Milis",
+      "Aidomaggiore",
+      "Zeddiani",
+      "Zerfaliu",
+      "Narbolia",
+      "Bonarcado",
+      "Seneghe",
+      "Baratili San Pietro",
+      "Siamaggiore",
+      "Tramatza"
+    ]
+  },
+  "08040": {
+    "title": "CAP 08040",
+    "description": "Trova tutti i comuni che hanno 08040 come CAP.",
+    "category": "city",
+    "cities": [
+      "Loceri",
+      "Lotzorai",
+      "Talana",
+      "Urzulei",
+      "Ussassai",
+      "Triei",
+      "Elini",
+      "Gairo",
+      "Girasole",
+      "Ilbono",
+      "Osini",
+      "Arzana",
+      "Ulassai",
+      "Baunei",
+      "Cardedu"
+    ]
+  },
+  "07030": {
+    "title": "CAP 07030",
+    "description": "Trova tutti i comuni che hanno 07030 come CAP.",
+    "category": "city",
+    "cities": [
+      "Bulzi", "Chiaramonti", "Erula", "Martis", "Santa Maria Coghinas", "Bortigiadas", "Sant'Antonio di Gallura", "Viddalba", "Laerru", "Badesi", "Tergu", "Cargeghe", "Florinas", "Muros"
+    ]
+  },
+  "09020": {
+    "title": "CAP 09020",
+    "description": "Trova tutti i comuni che hanno 09020 come CAP.",
+    "category": "city",
+    "cities": [
+     "Ussana", "Samatzai", "Collinas", "Genuri", "Las Plassas", "Pauli Arbarei", "Villamar", "Turri", "Ussaramanna", "Villanovaforru", "Villanovafranca", "Siddi", "Gesturi", "Pimentel"
+    ]
   }
 }

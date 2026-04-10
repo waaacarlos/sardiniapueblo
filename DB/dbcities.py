@@ -3,10 +3,13 @@ from DB.dbservice import fetchrow, fetch
 
 async def found_city(city: str):
     query = """
-    SELECT c.*, p.title as nome_provincia
+    SELECT c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, 
+            p.title as nome_provincia, string_agg(t.nome, ', ') AS territorio
     FROM cities c
     JOIN provinces p on c.provincia = p.id
+    JOIN territori t on t.comuni = c.id
     where nome_norm = $1 
+    group by c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, nome_provincia
     """
     return await fetchrow(query, city.strip().upper())
 
