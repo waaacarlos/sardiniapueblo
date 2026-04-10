@@ -96,11 +96,36 @@
     "description": "Trova i comuni barbaricini.",
     "category": "city",
     "cities": [
-      "Bitti", "Oliena", "Lodine", "Sarule", "Austis", "Dorgali",
-      "Orani", "Lula", "Meana Sardo", "Orotelli", "Gavoi", "Onanì",
-      "Tonara", "Belvì", "Orgosolo", "Sorgono", "Olzai", "Ottana",
-      "Desulo", "Mamoiada", "Ovodda", "Nuoro", "Tiana", "Atzara",
-      "Ollolai", "Gadoni", "Oniferi", "Fonni", "Ortueri", "Orune"
+      "Bitti",
+      "Oliena",
+      "Lodine",
+      "Sarule",
+      "Austis",
+      "Dorgali",
+      "Orani",
+      "Lula",
+      "Meana Sardo",
+      "Orotelli",
+      "Gavoi",
+      "Onanì",
+      "Tonara",
+      "Belvì",
+      "Orgosolo",
+      "Sorgono",
+      "Olzai",
+      "Ottana",
+      "Desulo",
+      "Mamoiada",
+      "Ovodda",
+      "Nuoro",
+      "Tiana",
+      "Atzara",
+      "Ollolai",
+      "Gadoni",
+      "Oniferi",
+      "Fonni",
+      "Ortueri",
+      "Orune"
     ]
   },
   "bosa": {
@@ -271,7 +296,7 @@
     "threshold": 200
   },
   "esploratore": {
-    "title": "Esploratore",
+    "title": "Maria Giovanna Cherchi",
     "description": "Trova 30 comuni.",
     "category": "progress",
     "threshold": 30
@@ -281,14 +306,19 @@
     "description": "Trova Mamoiada, Bitti, Sarule, Fonni e Orgosolo.",
     "category": "city",
     "cities": [
-      "Mamoiada", "Bitti", "Sarule", "Orgosolo"
+      "Mamoiada",
+      "Bitti",
+      "Sarule",
+      "Orgosolo"
     ]
   },
   "geppi_cucciari": {
     "title": "Geppi Cucciari",
     "description": "Trova Macomer.",
     "category": "city",
-    "cities": ["Macomer"]
+    "cities": [
+      "Macomer"
+    ]
   },
   "gennaro_longobardi": {
     "title": "Gennaro Longobardi",
@@ -370,12 +400,13 @@
       "Uta"
     ]
   },
-  "scala_di_giocca":{
+  "scala_di_giocca": {
     "title": "Scala di Giocca",
     "description": "Trova Ossi e Tissi.",
     "category": "city",
     "cities": [
-      "Ossi", "Tissi"
+      "Ossi",
+      "Tissi"
     ]
   },
   "serramanna": {
@@ -479,6 +510,127 @@
     "category": "city",
     "cities": [
       "Ortacesus"
+    ]
+  },
+  "mare": {
+    "title": "Piedi bagnati",
+    "description": "Trova tutti i comuni costieri.",
+    "category": "city",
+    "cities": [
+      "Aglientu",
+      "Alghero",
+      "Arborea",
+      "Arbus",
+      "Arzachena",
+      "Arzana",
+      "Badesi",
+      "Bari Sardo",
+      "Baunei",
+      "Bosa",
+      "Budoni",
+      "Buggerru",
+      "Cabras",
+      "Cagliari",
+      "Calasetta",
+      "Capoterra",
+      "Cardedu",
+      "Carloforte",
+      "Castelsardo",
+      "Castiadas",
+      "Cuglieri",
+      "Domus de Maria",
+      "Dorgali",
+      "Fluminimaggiore",
+      "Gairo",
+      "Giba",
+      "Golfo Aranci",
+      "Gonnesa",
+      "Iglesias",
+      "La Maddalena",
+      "Lanusei",
+      "Loceri",
+      "Loiri Porto San Paolo",
+      "Lotzorai",
+      "Magomadas",
+      "Maracalagonis",
+      "Masainas",
+      "Muravera",
+      "Narbolia",
+      "Olbia",
+      "Oristano",
+      "Orosei",
+      "Palau",
+      "Portoscuso",
+      "Porto Torres",
+      "Posada",
+      "Pula",
+      "Quartu Sant'Elena",
+      "Riola Sardo",
+      "San Giovanni Suergiu",
+      "Santa Giusta",
+      "Sant'Anna Arresi",
+      "Sant'Antioco",
+      "Santa Teresa Gallura",
+      "San Teodoro",
+      "San Vero Milis",
+      "Sarroch",
+      "Sassari",
+      "Siniscola",
+      "Sinnai",
+      "Sorso",
+      "Stintino",
+      "Terralba",
+      "Tertenia",
+      "Teulada",
+      "Tortolì",
+      "Tresnuraghes",
+      "Trinità d'Agultu e Vignola",
+      "Valledoria",
+      "Villanova Monteleone",
+      "Villaputzu",
+      "Villasimius"
+    ]
+  },
+  "tre_lettere": {
+    "title": "Ne bastano tre!",
+    "description": "Trova tutti i comuni con tre lettere.",
+    "category": "city",
+    "cities": [
+      "Lei",
+      "Pau",
+      "Uri",
+      "Uta"
+    ]
+  },
+  "nome_lungo": {
+    "title": "Che lungo!",
+    "description": "Trova il comune con il nome più lungo.",
+    "category": "city",
+    "cities": [
+      "Trinità d'Agultu e Vignola"
+    ]
+  },
+  "cabras": {
+    "title": "A piedi scalzi",
+    "description": "Trova Cabras.",
+    "category": "city",
+    "cities": [
+      "Cabras"
+    ]
+  },
+  "arst": {
+    "title": "Muoviamo la Sardegna",
+    "description": "Trova i comuni delle sedi automobilistiche ARST.",
+    "category": "city",
+    "cities": [
+      "Cagliari",
+      "Iglesias",
+      "Guspini",
+      "Oristano",
+      "Nuoro",
+      "Lanusei",
+      "Sassari",
+      "Olbia"
     ]
   }
 }
