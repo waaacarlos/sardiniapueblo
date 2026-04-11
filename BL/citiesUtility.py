@@ -15,7 +15,7 @@ async def search_city(text, chat_id):
             city['url'],
             city['nome'],
             city['nome_originale'],
-            city['territorio'],
+            city['territorio'] or '',
             city['nome_provincia'],
             f"{city['popolazione']:_}".replace("_", "."),
             format(city['superficie'], "_.2f").replace(".", ","),

@@ -37,3 +37,12 @@ async def get_player_points(chatid: int):
     where player = $1
     """
     return await fetchval(query, chatid) or 0
+
+
+async def get_user_details(chatid: int):
+    query = """
+    SELECT *
+    FROM users
+    WHERE id = $1
+    """
+    return await fetchrow(query, chatid) or []
