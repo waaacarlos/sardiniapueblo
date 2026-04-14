@@ -29,7 +29,20 @@ async def remove_all_from_chatid(chat_id: int):
     return await fetchrow(query, chat_id)
 
 
-async def found_cities_by_prov(chat_id: int, province: str):
+async def found_player_cities(chat_id: int):
+    query = """
+        SELECT c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, 
+                provincia, string_agg(t.nome, ', ') AS territorio
+        FROM cities c
+        LEFT JOIN territori t on t.comuni = c.id
+        JOIN cities_found cf on cf.city = c.id
+        where player = $1
+        group by c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, provincia
+    """
+    return await fetch(query, chat_id)
+
+
+async def found_player_cities_by_prov(chat_id: int, province: str):
     query = """
         SELECT 
          CASE when c.id in (
@@ -46,7 +59,7 @@ async def found_cities_by_prov(chat_id: int, province: str):
     return await fetch(query, chat_id, province)
 
 
-async def found_cities_by_letter(chat_id: int, letter: str):
+async def found_player_cities_by_letter(chat_id: int, letter: str):
     query = """
         SELECT 
          CASE when c.id in (

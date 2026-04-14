@@ -40,7 +40,7 @@ async def reset_user(chat_id):
 
 
 async def list_cities_by_letter(chat_id, letter='A'):
-    cities = await dbcities.found_cities_by_letter(chat_id, letter)
+    cities = await dbcities.found_player_cities_by_letter(chat_id, letter)
     msg_to_send = messages("cities_found")
     counter = 0
     for city in cities:
@@ -57,7 +57,7 @@ async def list_cities_by_letter(chat_id, letter='A'):
 
 
 async def list_cities_by_prov(chat_id, province="CA"):  # da paginare?
-    cities = await dbcities.found_cities_by_prov(chat_id, province)
+    cities = await dbcities.found_player_cities_by_prov(chat_id, province)
     msg_to_send = messages("cities_found_by_prov").format(constants.PROVINCES[province])
     counter = 0
     for city in cities:
