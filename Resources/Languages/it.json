@@ -10,5 +10,6 @@
   "cities_found_by_prov": "Questo è l'elenco dei comuni della <b>{0}</b> che hai già trovato:\n",
   "cities_found": "Questo è l'elenco dei comuni che hai già trovato:\n",
   "already_selected": "Hai già selezionato questa provincia.",
-  "achievement_unlocked": "<blockquote><b>{0}</b>\n<i>{1}</i></blockquote>\nObiettivo sbloccato!"
+  "achievement_unlocked": "<blockquote><b>{0}</b>\n<i>{1}</i></blockquote>\nObiettivo sbloccato!",
+  "stats": "Vedi i tuoi progressi <a href=\"{0}\">qui!</a>"
 }

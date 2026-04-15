@@ -10,6 +10,7 @@ from telegram.ext import CallbackContext
 from BL import citiesUtility, achievementUtility
 from DB import dbuser
 from Entities.User import TGUser
+from Resources import constants
 from Resources.config import LOG
 from Resources.constants import PROVINCES
 from Resources.messages import messages
@@ -25,6 +26,7 @@ class Message:
         self.chat_id = update.effective_chat.id
         self.message_id = update.effective_message.message_id
         self.text = update.effective_message.text
+        self.statsurl = constants.STATSURL.format(update.effective_chat.id)
 
     async def async_init(self):
         await self.add_user()
@@ -54,9 +56,12 @@ class Message:
             elif self.text == "/list":
                 msg_to_send = await self.get_list_by_letter()
                 await self.send_message_with_letters(msg_to_send)
+            elif self.text == "/stats":
+                msg_to_send = messages("stats").format(self.statsurl)
+                await self.send_message(msg_to_send)
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
-                await self.send_message(msg_to_send)
+                await self.send_message(msg_to_send, send_stats=True)
                 if messages("already_found") in msg_to_send:
                     achievements_unlocked.extend(
                         await achievementUtility.check_achievement(self.chat_id, "duplicate")
@@ -79,9 +84,10 @@ class Message:
     async def get_list_by_letter(self, letter="A"):
         return await citiesUtility.list_cities_by_letter(self.chat_id, letter)
 
-    async def send_message(self, text):
+    async def send_message(self, text, send_stats=False):
         message = await self.context.bot.send_message(
-            self.chat_id, text, parse_mode=ParseMode.HTML
+            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton(text="Statistiche", url=self.statsurl)]]) if send_stats else None
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id

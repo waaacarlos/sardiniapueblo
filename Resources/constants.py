@@ -1,5 +1,6 @@
 # query commands
 import json
+import os
 from pathlib import Path
 
 insertquery = "INSERT INTO {0} {2} VALUES ({1})"
@@ -25,3 +26,4 @@ PROVINCES = {
     "OT": 'provincia di Gallura Nord-Est Sardegna'
 }
 
+STATSURL = os.environ.get("IP_ADDRESS") + ":5001/?playerId={0}"

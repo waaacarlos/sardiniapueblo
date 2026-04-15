@@ -11,7 +11,7 @@ def messages(message, language=LANGUAGE):
     try:
         return dictionary[message]  # TODO EMOJI # get_emoji(message) +
     except KeyError:
-        return get_emoji(message) + str(message) if language == LANGUAGE else messages(LANGUAGE, message)
+        return str(message) if language == LANGUAGE else messages(LANGUAGE, message)
 
 
 def get_dictionary(language):
