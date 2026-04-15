@@ -115,12 +115,13 @@ async def get_achievements(auth=Depends(require_auth)):
     return list(load_achievements().values())
 
 
-app.mount("/assets", StaticFiles(directory="webapp/frontend/dist/assets"), name="assets")
+FRONTEND_DIST = Path(__file__).parent / "webapp/frontend/dist"
+app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
 
 
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    return FileResponse("webapp/frontend/dist/index.html")
+    return FileResponse(FRONTEND_DIST / "index.html")
 
 
 app.add_middleware(
