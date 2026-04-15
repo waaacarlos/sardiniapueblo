@@ -23,6 +23,7 @@ jobs:
           git pull origin main
           
           cd webapp/frontend
+          nvm use 22
           npm ci
           npm run build
           cd ../..
