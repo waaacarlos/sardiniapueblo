@@ -1,2 +1,7 @@
 /log/
 /board.txt
+BL/__pycache__/
+webapp/__pycache__/
+github
+github.pub
+.vscode/
