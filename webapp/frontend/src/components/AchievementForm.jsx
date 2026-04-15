@@ -1,0 +1,157 @@
+import { useState } from "react";
+import {
+  TextField,
+  Button,
+  Box,
+  Card,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Stack,
+} from "@mui/material";
+
+export default function AchievementForm({ achievement = null, onSubmit }) {
+  const [formData, setFormData] = useState(
+    achievement || {
+      key: "",
+      title: "",
+      description: "",
+      category: "progress",
+      threshold: "",
+      cities: "",
+      province: "",
+      event: "",
+    }
+  );
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Card sx={{ padding: 3, marginBottom: 3 }}>
+      <Box component="form" onSubmit={handleSubmit}>
+        <Stack spacing={2}>
+          {!achievement && (
+            <TextField
+              label="Key (identificativo univoco)"
+              name="key"
+              value={formData.key}
+              onChange={handleChange}
+              placeholder="es. first_city_visit"
+              fullWidth
+              disabled={!!achievement}
+            />
+          )}
+
+          <TextField
+            label="Titolo"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="es. Primo passo"
+            fullWidth
+            required
+          />
+
+          <TextField
+            label="Descrizione"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="es. Visita la tua prima città"
+            fullWidth
+            multiline
+            rows={2}
+            required
+          />
+
+          <FormControl fullWidth>
+            <InputLabel>Categoria</InputLabel>
+            <Select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              label="Categoria"
+            >
+              <MenuItem value="progress">Progresso</MenuItem>
+              <MenuItem value="city">Città</MenuItem>
+              <MenuItem value="city_province">Città e Provincia</MenuItem>
+              <MenuItem value="write">Scritto</MenuItem>
+            </Select>
+          </FormControl>
+
+          {formData.category === "progress" && (
+            <TextField
+              label="Soglia (numero)"
+              name="threshold"
+              type="number"
+              value={formData.threshold}
+              onChange={handleChange}
+              placeholder="es. 10"
+              fullWidth
+              required
+            />
+          )}
+
+          {formData.category === "city" && (
+            <TextField
+              label="Città (una per riga)"
+              name="cities"
+              value={formData.cities}
+              onChange={handleChange}
+              placeholder="Cagliari&#10;Sassari&#10;Oristano"
+              fullWidth
+              multiline
+              rows={3}
+              required
+            />
+          )}
+
+          {formData.category === "city_province" && (
+            <TextField
+              label="Provincia"
+              name="province"
+              value={formData.province}
+              onChange={handleChange}
+              placeholder="es. Cagliari"
+              fullWidth
+              required
+            />
+          )}
+
+          {formData.category === "write" && (
+            <TextField
+              label="Evento"
+              name="event"
+              value={formData.event}
+              onChange={handleChange}
+              placeholder="es. review"
+              fullWidth
+              required
+            />
+          )}
+
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+          >
+            {achievement ? "Modifica" : "Aggiungi"} Achievement
+          </Button>
+        </Stack>
+      </Box>
+    </Card>
+  );
+}

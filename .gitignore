@@ -1,3 +1,15 @@
 /log/
 /board.txt
-/webapp/frontend/node_modules/
+/.idea/
+/.venv/
+/.vscode/
+/__pycache__/
+BL/__pycache__/achievementUtility.cpython-312.pyc
+BL/__pycache__/botUtility.cpython-312.pyc
+BL/__pycache__/citiesUtility.cpython-312.pyc
+github
+.gitignore
+github.pub
+webapp/__pycache__/app.cpython-312.pyc
+webapp/frontend/node_modules/
+/venv/
