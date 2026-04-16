@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { API_URI } from "../api";
 import {
   Box,
   Button,
@@ -175,7 +176,7 @@ export default function InteractiveMap({ citiesFound }) {
           .replaceAll(/[A-z]/g, "*");
         setCityCard(null);
         fetch(
-          "/api/city?city_id=" +
+          API_URI + "/api/city?city_id=" +
             encodeURIComponent(normalizedId)
               .replaceAll(/__/g, " ")
               .replace(/_/g, " "),

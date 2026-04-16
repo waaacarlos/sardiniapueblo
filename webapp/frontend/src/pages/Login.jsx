@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URI } from "../api";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {
@@ -16,7 +17,7 @@ export default function Login({ onLogin, onExit }) {
   const [error, setError] = useState(null);
 
   const generateOTP = () => {
-    fetch("/api/generateotp", {
+    fetch(API_URI + "/api/generateotp", {
       method: "GET",
     })
       .then((response) => {
@@ -29,7 +30,7 @@ export default function Login({ onLogin, onExit }) {
   }
   
   const handleLogin = () => {
-    fetch("/api/login", {
+    fetch(API_URI + "/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

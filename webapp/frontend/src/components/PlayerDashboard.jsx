@@ -2,6 +2,7 @@ import PlayerGreetings from "./PlayerGreetings";
 import { useEffect, useState } from "react";
 import { Box, LinearProgress, Paper, Chip } from "@mui/material";
 import InteractiveMap from "./InteractiveMap";
+import { API_URI } from "../api";
 
 const citiesCount = 377;
 
@@ -14,7 +15,7 @@ export default function PlayerDashboard({ playerData }) {
 
   useEffect(() => {
     if (playerData) {
-      fetch(`/api/player/cities?player_id=${playerData.id}`)
+      fetch(`${API_URI}/api/player/cities?player_id=${playerData.id}`)
         .then((response) => response.json())
         .then((data) => {
           setCitiesFound(data);

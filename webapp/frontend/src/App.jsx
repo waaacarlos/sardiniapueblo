@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Login from "./pages/Login";
 import Achievements from "./pages/Achievements";
 import PlayerDashboard from "./components/PlayerDashboard";
+import { API_URI } from "./api";
 import "./App.css";
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   if (playerId && !playerData) {
-    fetch(`/api/player?player_id=${playerId}`)
+    fetch(`${API_URI}/api/player?player_id=${playerId}`)
       .then((response) => response.json())
       .then((data) => setPlayerData(data))
       .catch((error) => console.error("Error fetching player data:", error));
@@ -36,7 +37,7 @@ function App() {
       setAuthenticated(false);
       return;
     }
-    fetch("/api/me", {
+    fetch(API_URI + "/api/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
