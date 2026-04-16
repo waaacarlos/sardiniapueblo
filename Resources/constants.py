@@ -26,4 +26,4 @@ PROVINCES = {
     "OT": 'provincia di Gallura Nord-Est Sardegna'
 }
 
-STATSURL = os.environ.get("IP_ADDRESS") + ":5001/?playerId={0}"
+STATSURL = os.environ.get('APP_URL') + "?playerId={0}"
