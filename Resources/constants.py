@@ -3,6 +3,8 @@ import json
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 insertquery = "INSERT INTO {0} {2} VALUES ({1})"
 conflict = " ON CONFLICT "
 onconstraint = " ON CONSTRAINT {0} "
@@ -26,4 +28,5 @@ PROVINCES = {
     "OT": 'provincia di Gallura Nord-Est Sardegna'
 }
 
+load_dotenv()
 STATSURL = os.getenv('APP_URL') + "?playerId={0}"
