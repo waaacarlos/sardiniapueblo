@@ -14,6 +14,41 @@ async def found_city(city: str):
     return await fetchrow(query, city.strip().upper())
 
 
+async def search_city_space_free(text: str, chat_id):
+    query = """
+        select nome, player
+        from cities c
+        left join cities_found cf on cf.city = c.id and player = $2
+        where replace(nome_norm, ' ', '') = replace($1, ' ', '')
+        """  # A quanto pare devo mettere la condizione sul giocatore nella join
+    return await fetchrow(query, text.strip().upper(), chat_id)
+
+
+async def search_city_doubles(text: str, chat_id):
+    query = """
+        select nome, player
+        from cities c
+        left join cities_found cf on cf.city = c.id and player = $2
+        where normalize_consecutive(nome_norm) = normalize_consecutive($1)
+    """
+    return await fetchrow(query, text.strip().upper(), chat_id)
+
+
+async def search_city_subgroup(text: str, chat_id):
+    query = f"""
+        select nome, nome_norm, player
+        from cities c
+        left join cities_found cf on cf.city = c.id and player = $1
+        where nome_norm like '%{text.strip().upper()}%'
+    """
+    return await fetch(query, chat_id)
+
+
+async def all_cities():
+    query = "SELECT c.id, c.nome from cities c"
+    return await fetch(query)
+
+
 async def add_city(city: str, chat_id: int):
     query = """
         INSERT INTO cities_found (player, city)

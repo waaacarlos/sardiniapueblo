@@ -5,11 +5,17 @@
   "found_count": "Hai scoperto {0} comuni su 377!",
   "cities_missing_count": "Ti mancano {0} comuni della {1} da scoprire ancora!\nSeparazione per lettera: /list\nSeparazione per provincia: /list_provinces",
   "already_found": "Hai già scoperto questo comune.\n",
-  "not_found": "Non ho trovato nessun comune con questo nome. Assicurati che non sia una frazione!",
+  "not_found": "Non ho trovato nessun comune della Sardegna con questo nome. Assicurati che non sia una frazione!",
   "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i comuni da capo.",
   "cities_found_by_prov": "Questo è l'elenco dei comuni della <b>{0}</b> che hai già trovato:\n",
   "cities_found": "Questo è l'elenco dei comuni che hai già trovato:\n",
   "already_selected": "Hai già selezionato questa provincia.",
   "achievement_unlocked": "<blockquote><b>{0}</b>\n<i>{1}</i></blockquote>\nObiettivo sbloccato!",
-  "stats": "Vedi i tuoi progressi <a href=\"{0}\">qui!</a>"
+  "stats": "Vedi i tuoi progressi <a href=\"{0}\">qui!</a>",
+  "spaces_not_found": "Prova a scriverlo staccato...",
+  "notspaces_not_found": "Prova a scriverlo tutto attaccato...",
+  "similar_found": "Sarebbe {0}, ma l'hai già trovato.",
+  "doubles_not_found": "Ricontrolla le doppie...",
+  "single_substring_not_found": "Ti manca un pezzo:\n<code>{0}</code>",
+  "multiple_substring": "Devi essere più specifico: ci sono {0} comuni che hanno \"{1}\" nel nome e ne hai trovato {2}\n{3}"
 }

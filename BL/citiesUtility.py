@@ -1,5 +1,6 @@
 import logging
 
+from BL import utility
 from BL.utility import normalize
 from DB import dbcities, dbuser
 from Resources import constants
@@ -9,6 +10,7 @@ from Resources.messages import messages
 async def search_city(text, chat_id):
     text = normalize(text)
     city = await dbcities.found_city(text)
+    msg_to_send = messages("not_found")
     if city:
         logging.info(f"Found city: {city['id']}")
         city_info = messages("city").format(
@@ -30,7 +32,39 @@ async def search_city(text, chat_id):
         if points > 1:
             msg_to_send += "\n\n" + messages("found_count").format(points)
     else:
-        msg_to_send = messages("not_found")
+        # Controllo spazi
+        city = await dbcities.search_city_space_free(text, chat_id)
+        if city:
+            if city['player']:
+                msg_to_send = messages("spaces_found").format(city['nome'])
+            else:
+                if ' ' in text:
+                    msg_to_send = messages("notspaces_not_found")
+                else:
+                    msg_to_send = messages("spaces_not_found")
+        # Controllo doppie
+        city = await dbcities.search_city_doubles(text, chat_id)
+        if city:
+            if city['player']:
+                msg_to_send = messages("similar_found").format(city['nome'])
+            else:
+                msg_to_send = messages("doubles_not_found")
+        # Controllo nome parziale
+        if len(text) > 3:
+            cities = await dbcities.search_city_subgroup(text, chat_id)
+            cities_count = len(cities)
+            if cities_count == 1:
+                city = cities[0]
+                if city['player']:
+                    msg_to_send = messages("similar_found").format(city['nome'])
+                else:
+                    hint = utility.subgroup(city['nome_norm'], text.strip().upper())
+                    msg_to_send = messages("single_substring_not_found").format(hint)
+            elif cities_count > 1:
+                found = [i['nome'] for i in cities if i['player']]
+                msg_to_send = messages("multiple_substring").format(
+                    cities_count, text, len(found), ", ".join(found)
+                )
     return msg_to_send
 
 

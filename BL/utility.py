@@ -54,3 +54,14 @@ def create_string_format_key_pair(attr, skip=0):
 
 def log(text):
     logger.info(str(text))
+
+
+def subgroup(s1: str, s2: str, placeholder='*'):
+    idx = s1.lower().find(s2.lower())
+    if idx == -1:
+        raise ValueError(f'"{s2}" non trovata in "{s1}"')
+
+    def mask(s: str) -> str:
+        return "".join(c if not c.isalpha() else placeholder for c in s)
+
+    return mask(s1[:idx]) + s2 + mask(s1[idx + len(s2):])

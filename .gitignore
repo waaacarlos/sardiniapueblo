@@ -4,9 +4,7 @@
 /.venv/
 /.vscode/
 /__pycache__/
-BL/__pycache__/achievementUtility.cpython-312.pyc
-BL/__pycache__/botUtility.cpython-312.pyc
-BL/__pycache__/citiesUtility.cpython-312.pyc
+/BL/__pycache__/
 github
 .gitignore
 github.pub
@@ -15,3 +13,5 @@ webapp/frontend/node_modules/
 /venv/
 webapp/frontend/.env
 .env
+*/__pycache__/*
+
