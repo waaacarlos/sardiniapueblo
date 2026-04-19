@@ -1,4 +1,5 @@
 from DB.dbservice import fetchrow, fetch
+from enum import Enum
 
 
 async def found_city(city: str):
@@ -14,34 +15,43 @@ async def found_city(city: str):
     return await fetchrow(query, city.strip().upper())
 
 
-async def search_city_space_free(text: str, chat_id):
-    query = """
-        select nome, player
-        from cities c
-        left join cities_found cf on cf.city = c.id and player = $2
-        where replace(nome_norm, ' ', '') = replace($1, ' ', '')
-        """  # A quanto pare devo mettere la condizione sul giocatore nella join
-    return await fetchrow(query, text.strip().upper(), chat_id)
+class CitySearchMode(Enum):
+    SPACE_FREE = ("replace(nome_norm, ' ', '') = replace($2, ' ', '')", False)
+    DOUBLES = ("normalize_consecutive(nome_norm) = normalize_consecutive($2)", False)
+    SUBGROUP = ("replace(nome_norm, ' ', '') LIKE replace('%' || $2 || '%', ' ', '')", True)
+    SIMILAR = ("similarity(nome_norm, $2) > 0.4", True)
+
+    def __init__(self, clause: str, multi: bool):
+        self.clause = clause
+        self.multi = multi
 
 
-async def search_city_doubles(text: str, chat_id):
-    query = """
-        select nome, player
-        from cities c
-        left join cities_found cf on cf.city = c.id and player = $2
-        where normalize_consecutive(nome_norm) = normalize_consecutive($1)
-    """
-    return await fetchrow(query, text.strip().upper(), chat_id)
-
-
-async def search_city_subgroup(text: str, chat_id):
+async def _search_city(mode: CitySearchMode, text: str, chat_id: int):
+    extra_col = ", nome_norm" if mode.multi else ""
     query = f"""
-        select nome, nome_norm, player
-        from cities c
-        left join cities_found cf on cf.city = c.id and player = $1
-        where replace(nome_norm, ' ', '') like replace('%{text.strip().upper()}%', ' ', '')
+        SELECT nome{extra_col}, player
+        FROM cities c
+        LEFT JOIN cities_found cf ON cf.city = c.id AND player = $1
+        WHERE {mode.clause}
     """
-    return await fetch(query, chat_id)
+    fn = fetch if mode.multi else fetchrow
+    return await fn(query, chat_id, text.strip().upper())
+
+
+async def search_city_space_free(text: str, chat_id: int):
+    return await _search_city(CitySearchMode.SPACE_FREE, text, chat_id)
+
+
+async def search_city_doubles(text: str, chat_id: int):
+    return await _search_city(CitySearchMode.DOUBLES, text, chat_id)
+
+
+async def search_city_subgroup(text: str, chat_id: int):
+    return await _search_city(CitySearchMode.SUBGROUP, text, chat_id)
+
+
+async def search_city_similar(text: str, chat_id: int):
+    return await _search_city(CitySearchMode.SIMILAR, text, chat_id)
 
 
 async def all_cities():
@@ -64,7 +74,7 @@ async def remove_all_from_chatid(chat_id: int):
     return await fetchrow(query, chat_id)
 
 
-async def found_player_cities(chat_id: int):
+async def found_player_all_cities(chat_id: int):
     query = """
         SELECT c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, 
                 provincia, string_agg(t.nome, ', ') AS territorio
@@ -77,39 +87,28 @@ async def found_player_cities(chat_id: int):
     return await fetch(query, chat_id)
 
 
-async def found_player_cities_by_prov(chat_id: int, province: str):
-    query = """
+async def found_player_cities(chat_id: int, filter_clause: str, filter_value: str):
+    query = f"""
         SELECT 
-         CASE when c.id in (
-            select city
-            from cities_found
-            where cities_found.player = $1)
-            then nome
-            else regexp_replace(nome, '[[:alpha:]]', '*', 'g')
-            end as all_names,
+            CASE WHEN c.id IN (
+                SELECT city
+                FROM cities_found
+                WHERE cities_found.player = $1)
+                THEN nome
+                ELSE regexp_replace(nome, '[[:alpha:]]', '*', 'g')
+            END AS all_names,
             nome,
             provincia
         FROM cities c
-        where provincia = $2
-        order by nome
+        WHERE {filter_clause}
+        ORDER BY nome
     """
-    return await fetch(query, chat_id, province)
+    return await fetch(query, chat_id, filter_value)
+
+
+async def found_player_cities_by_prov(chat_id: int, province: str):
+    return await found_player_cities(chat_id, "provincia = $2", province)
 
 
 async def found_player_cities_by_letter(chat_id: int, letter: str):
-    query = """
-        SELECT 
-         CASE when c.id in (
-            select city
-            from cities_found
-            where cities_found.player = $1)
-            then nome
-            else regexp_replace(nome, '[[:alpha:]]', '*', 'g')
-            end as all_names,
-            nome,
-            provincia
-        FROM cities c
-        where starts_with(nome, $2) 
-        order by nome
-    """
-    return await fetch(query, chat_id, letter)
+    return await found_player_cities(chat_id, "starts_with(nome, $2)", letter)

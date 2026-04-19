@@ -7,65 +7,92 @@ from Resources import constants
 from Resources.messages import messages
 
 
-async def search_city(text, chat_id):
+async def _build_city_info(city: dict, chat_id: int) -> str:
+    city_info = messages("city").format(
+        city['url'],
+        city['nome'],
+        city['nome_originale'],
+        city['territorio'] or '',
+        city['nome_provincia'],
+        f"{city['popolazione']:_}".replace("_", "."),
+        format(city['superficie'], "_.2f").replace(".", ","),
+        city['altitudine']
+    )
+    result = await dbcities.add_city(city['id'], chat_id)
+    msg = messages("city_found" if result else "already_found") + city_info
+
+    points = await dbuser.get_player_points(chat_id)
+    if points > 1:
+        msg += "\n\n" + messages("found_count").format(points)
+    return msg
+
+
+async def _search_fallbacks(text: str, chat_id: int) -> str:
+    # Controllo spazi
+    city = await dbcities.search_city_space_free(text, chat_id)
+    if city:
+        if city['player']:
+            return messages("similar_found").format(city['nome'])
+        return messages("notspaces_not_found" if ' ' in text else "spaces_not_found")
+
+    # Controllo doppie
+    city = await dbcities.search_city_doubles(text, chat_id)
+    if city:
+        if city['player']:
+            return messages("similar_found").format(city['nome'])
+        return messages("doubles_not_found")
+
+    # Controllo nome parziale
+    if len(text) > 3:
+        cities = await dbcities.search_city_subgroup(text, chat_id)
+        cities_count = len(cities)
+        if cities_count == 1:
+            city = cities[0]
+            if city['player']:
+                return messages("similar_found").format(city['nome'])
+            hint = utility.subgroup(city['nome_norm'], text.strip().upper())
+            return messages("single_substring_not_found").format(hint)
+        elif cities_count > 1:
+            found = [i['nome'] for i in cities if i['player']]
+            return messages("multiple_substring").format(
+                cities_count, text, len(found), ", ".join(found)
+            )
+
+    # Controllo simili
+    cities = await dbcities.search_city_similar(text, chat_id)
+    cities_count = len(cities)
+    if cities_count == 1:
+        city = cities[0]
+        if city['player']:
+            return messages("similar_found").format(city['nome'])
+        hint = utility.same_letters(city['nome_norm'], text.strip().upper())
+        msg = messages("similar_city_hint")
+        if '*' not in hint:
+            msg += messages("all_hinted")
+        return msg.format(hint)
+    elif cities_count > 1:
+        found = [i['nome'] for i in cities if i['player']]
+        msg = messages("multiple_similar_hint_count").format(cities_count)
+        if found:
+            msg += messages("multiple_similar_hint_already_found").format(len(found), ", ".join(found))
+        if len(found) < cities_count:
+            msg += messages("hint")
+            for city in cities:
+                hint = utility.same_letters(city['nome_norm'], text.strip().upper())
+                msg += f"\n<code>{hint}</code>"
+                if '*' not in hint:
+                    msg += messages("all_hinted")
+        return msg
+    return messages("not_found")
+
+
+async def search_city(text: str, chat_id: int) -> str:
     text = normalize(text)
     city = await dbcities.found_city(text)
-    msg_to_send = messages("not_found")
     if city:
         logging.info(f"Found city: {city['id']}")
-        city_info = messages("city").format(
-            city['url'],
-            city['nome'],
-            city['nome_originale'],
-            city['territorio'] or '',
-            city['nome_provincia'],
-            f"{city['popolazione']:_}".replace("_", "."),
-            format(city['superficie'], "_.2f").replace(".", ","),
-            city['altitudine']
-        )
-        result = await dbcities.add_city(city['id'], chat_id)
-        if result:
-            msg_to_send = messages("city_found") + city_info
-        else:
-            msg_to_send = messages("already_found") + city_info
-        points = await dbuser.get_player_points(chat_id)
-        if points > 1:
-            msg_to_send += "\n\n" + messages("found_count").format(points)
-    else:
-        # Controllo spazi
-        city = await dbcities.search_city_space_free(text, chat_id)
-        if city:
-            if city['player']:
-                msg_to_send = messages("spaces_found").format(city['nome'])
-            else:
-                if ' ' in text:
-                    msg_to_send = messages("notspaces_not_found")
-                else:
-                    msg_to_send = messages("spaces_not_found")
-        # Controllo doppie
-        city = await dbcities.search_city_doubles(text, chat_id)
-        if city:
-            if city['player']:
-                msg_to_send = messages("similar_found").format(city['nome'])
-            else:
-                msg_to_send = messages("doubles_not_found")
-        # Controllo nome parziale
-        if len(text) > 3:
-            cities = await dbcities.search_city_subgroup(text, chat_id)
-            cities_count = len(cities)
-            if cities_count == 1:
-                city = cities[0]
-                if city['player']:
-                    msg_to_send = messages("similar_found").format(city['nome'])
-                else:
-                    hint = utility.subgroup(city['nome_norm'], text.strip().upper())
-                    msg_to_send = messages("single_substring_not_found").format(hint)
-            elif cities_count > 1:
-                found = [i['nome'] for i in cities if i['player']]
-                msg_to_send = messages("multiple_substring").format(
-                    cities_count, text, len(found), ", ".join(found)
-                )
-    return msg_to_send
+        return await _build_city_info(city, chat_id)
+    return await _search_fallbacks(text, chat_id)
 
 
 async def reset_user(chat_id):

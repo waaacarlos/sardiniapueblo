@@ -82,3 +82,10 @@ def starts_same(s1, s2):
         else:
             break
     return common_letters
+
+
+def same_letters(s1, s2, placeholder='*'):
+    for c1 in s1:
+        if c1 not in s2 and c1.isalpha():
+            s1 = s1.replace(c1, placeholder)
+    return s1
