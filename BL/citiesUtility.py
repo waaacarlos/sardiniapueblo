@@ -1,7 +1,7 @@
 import logging
 
 from BL import utility
-from BL.utility import normalize
+from BL.utility import normalize, starts_same
 from DB import dbcities, dbuser
 from Resources import constants
 from Resources.messages import messages
@@ -74,15 +74,11 @@ async def reset_user(chat_id):
 
 
 async def list_cities_by_letter(chat_id, letter='A'):
+    msg_to_send = messages("cities_found").format(letter)
     cities = await dbcities.found_player_cities_by_letter(chat_id, letter)
-    msg_to_send = messages("cities_found")
-    counter = 0
-    for city in cities:
-        counter += 1
-        city_name = city['all_names']
-        if '*' in city_name:
-            city_name = f" <tg-spoiler>{city_name}</tg-spoiler>"
-        msg_to_send += f"{counter}. [{city['provincia']}] {city_name}\n"
+
+    msg_to_send = build_city_list(cities, msg_to_send)
+
     msg_to_send += f"\n{messages("cities_missing_count").format(
         len(cities) - len([i for i in cities if '*' not in i['all_names']]),
         letter
@@ -90,16 +86,35 @@ async def list_cities_by_letter(chat_id, letter='A'):
     return msg_to_send
 
 
-async def list_cities_by_prov(chat_id, province="CA"):  # da paginare?
-    cities = await dbcities.found_player_cities_by_prov(chat_id, province)
-    msg_to_send = messages("cities_found_by_prov").format(constants.PROVINCES[province])
+def build_city_list(cities, msg_to_send):
+    only_found = [city['nome'] for city in cities if '*' not in city['all_names']]
     counter = 0
+    previous_found = ""
     for city in cities:
         counter += 1
         city_name = city['all_names']
         if '*' in city_name:
-            city_name = f"<tg-spoiler>{city_name}</tg-spoiler>"
-        msg_to_send += f"{counter}. {city_name}\n"
+            idx = only_found.index(previous_found) if previous_found else -1
+            if previous_found == "" or idx == len(only_found) - 1:
+                prefix = city["nome"][0]
+            else:
+                next_found = only_found[idx + 1]
+                prefix = starts_same(previous_found, next_found)
+                if not prefix:
+                    prefix = city["nome"][0]
+            city_name = f"{prefix}<tg-spoiler>{city_name[max(len(prefix) - 1, 1):]}</tg-spoiler>"
+        else:
+            previous_found = city_name
+        msg_to_send += f"{str(counter).zfill(2)}. [{city['provincia']}] {city_name}\n"
+    return msg_to_send
+
+
+async def list_cities_by_prov(chat_id, province="CA"):  # da paginare?
+    cities = await dbcities.found_player_cities_by_prov(chat_id, province)
+    msg_to_send = messages("cities_found_by_prov").format(constants.PROVINCES[province])
+
+    msg_to_send = build_city_list(cities, msg_to_send)
+
     msg_to_send += f"\n{messages("cities_missing_count").format(
         len(cities) - len([i for i in cities if '*' not in i['all_names']]),
         constants.PROVINCES[province]

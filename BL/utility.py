@@ -57,11 +57,28 @@ def log(text):
 
 
 def subgroup(s1: str, s2: str, placeholder='*'):
-    idx = s1.lower().find(s2.lower())
-    if idx == -1:
+    s1, s2 = s1.upper(), s2.upper()
+    idx = s1.find(s2)
+    if idx == -1:  # Ci sono anche spazi
+        for i in s1.split():
+            if i in s2:
+                return subgroup(s1, i, placeholder)
+        for i in s2.split():
+            if i in s1:
+                return subgroup(s1, i, placeholder)
         raise ValueError(f'"{s2}" non trovata in "{s1}"')
 
     def mask(s: str) -> str:
         return "".join(c if not c.isalpha() else placeholder for c in s)
 
     return mask(s1[:idx]) + s2 + mask(s1[idx + len(s2):])
+
+
+def starts_same(s1, s2):
+    common_letters = ""
+    for c1, c2 in zip(s1, s2):
+        if c1.upper() == c2.upper():
+            common_letters += c1
+        else:
+            break
+    return common_letters

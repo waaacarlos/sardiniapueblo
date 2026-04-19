@@ -39,7 +39,7 @@ async def search_city_subgroup(text: str, chat_id):
         select nome, nome_norm, player
         from cities c
         left join cities_found cf on cf.city = c.id and player = $1
-        where nome_norm like '%{text.strip().upper()}%'
+        where replace(nome_norm, ' ', '') like replace('%{text.strip().upper()}%', ' ', '')
     """
     return await fetch(query, chat_id)
 
@@ -85,8 +85,10 @@ async def found_player_cities_by_prov(chat_id: int, province: str):
             from cities_found
             where cities_found.player = $1)
             then nome
-            else repeat('*', length(nome))
-            end as all_names
+            else regexp_replace(nome, '[[:alpha:]]', '*', 'g')
+            end as all_names,
+            nome,
+            provincia
         FROM cities c
         where provincia = $2
         order by nome
@@ -102,8 +104,9 @@ async def found_player_cities_by_letter(chat_id: int, letter: str):
             from cities_found
             where cities_found.player = $1)
             then nome
-            else repeat('*', length(nome))
+            else regexp_replace(nome, '[[:alpha:]]', '*', 'g')
             end as all_names,
+            nome,
             provincia
         FROM cities c
         where starts_with(nome, $2) 
