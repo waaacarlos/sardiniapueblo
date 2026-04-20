@@ -115,15 +115,6 @@ async def get_achievements(auth=Depends(require_auth)):
     return list(load_achievements().values())
 
 
-FRONTEND_DIST = Path(__file__).parent / "webapp/frontend/dist"
-app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
-
-
-@app.get("/{full_path:path}")
-async def serve_spa(full_path: str):
-    return FileResponse(FRONTEND_DIST / "index.html")
-
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://sardiniapueblo.vercel.app"],
