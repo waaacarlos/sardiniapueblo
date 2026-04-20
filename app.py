@@ -87,7 +87,7 @@ async def player(player_id: int):
 
 @app.get("/api/player/cities")
 async def player_points(player_id: int):
-    return await dbcities.found_player_cities(player_id)
+    return await dbcities.found_player_all_cities(player_id)
 
 
 @app.get("/api/city")
