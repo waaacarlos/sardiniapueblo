@@ -19,7 +19,7 @@ class CitySearchMode(Enum):
     SPACE_FREE = ("replace(nome_norm, ' ', '') = replace($2, ' ', '')", False)
     DOUBLES = ("normalize_consecutive(nome_norm) = normalize_consecutive($2)", False)
     SUBGROUP = ("replace(nome_norm, ' ', '') LIKE replace('%' || $2 || '%', ' ', '')", True)
-    SIMILAR = ("similarity(nome_norm, $2) > 0.4", True)
+    SIMILAR = ("similarity(nome_norm, $2) > 0.3", True)
 
     def __init__(self, clause: str, multi: bool):
         self.clause = clause
@@ -67,11 +67,6 @@ async def add_city(city: str, chat_id: int):
         RETURNING player
     """
     return await fetchrow(query, chat_id, city)
-
-
-async def remove_all_from_chatid(chat_id: int):
-    query = "DELETE FROM cities_found WHERE player = $1"
-    return await fetchrow(query, chat_id)
 
 
 async def found_player_all_cities(chat_id: int):

@@ -46,3 +46,12 @@ async def get_user_details(chatid: int):
     WHERE id = $1
     """
     return await fetchrow(query, chatid) or []
+
+
+async def remove_all_from_chatid(chat_id: int):
+    query = "DELETE FROM users WHERE id = $1"
+    if chat_id in _user_exists_cache:
+        _user_exists_cache.remove(chat_id)
+    if chat_id in _user_player_cache:
+        _user_player_cache.remove(chat_id)
+    return await fetchrow(query, chat_id)

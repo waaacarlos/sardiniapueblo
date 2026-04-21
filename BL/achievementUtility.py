@@ -1,27 +1,25 @@
 import json
 
-from DB import dbachievements, dbuser
+from DB import dbachievements, dbuser, dbcities
 from Resources.config import ABS_FILE_PATH
 
 
 async def check_achievement(player, event=None):
-    player_unlocked = await dbachievements.get_player_achievements(player)
     unlocked = []
-    achievements = get_achievements()
-
+    achievements = await dbachievements.get_achievements(player)
+    cities_found = [i['id'] for i in await dbcities.found_player_all_cities(player)]
     points = await dbuser.get_player_points(player)
-    for key, ach in achievements.items():
+    for ach in achievements:
+        key = ach['ach_key']
         if event and not ach['category'] == 'write':
-            continue
-        if key in player_unlocked:
             continue
         if ach['category'] == 'progress':
             if points >= ach['threshold']:
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         elif ach['category'] == 'city':
-            counter_cities_found = await dbachievements.check_cities_achievements(player, ach['cities'])
-            if counter_cities_found >= len(ach['cities']):
+            # counter_cities_found = await dbachievements.check_cities_achievements(player, ach['cities'])
+            if set(ach['cities']) <= set(cities_found):
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         elif ach['category'] == 'province':
@@ -35,10 +33,4 @@ async def check_achievement(player, event=None):
                 await dbachievements.add_achievement(key, player)
         else:
             raise Exception(f"Unknown category {ach['category']}")
-
     return unlocked
-
-
-def get_achievements():
-    with open(ABS_FILE_PATH + "Resources/achievements.json") as f:
-        return json.load(f)

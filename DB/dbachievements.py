@@ -1,6 +1,25 @@
 from DB.dbservice import fetchrow, fetch, fetchval
 
 
+async def get_achievements(chat_id=None):
+    query = """
+        SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event, 
+        array_agg(ac.city) as cities
+        FROM public.achievements a
+        left join achievement_cities ac on ac.ach_key = a.ach_key
+    """
+    args = []
+    if chat_id is not None:
+        query += f"""
+            left outer join user_achievements ua on ua.achievement = a.ach_key
+            and player = $1
+            where player is null
+        """
+        args.append(chat_id)
+    query += "group by a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event"
+    return await fetch(query, *args)
+
+
 async def get_player_achievements(chat_id):
     query = """
     select achievement
@@ -11,13 +30,13 @@ async def get_player_achievements(chat_id):
     return [i['achievement'] for i in result]
 
 
-async def add_achievement(chat_id, achievement):
+async def add_achievement(achievement, chat_id):
     query = """
     insert into user_achievements (player, achievement)
     values ($1, $2)
     returning unlocked
     """
-    return await fetchrow(query, achievement, chat_id)
+    return await fetchrow(query, chat_id, achievement)
 
 
 async def check_cities_achievements(chat_id: int, cities: tuple):

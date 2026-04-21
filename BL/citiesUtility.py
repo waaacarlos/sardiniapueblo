@@ -1,5 +1,6 @@
 import logging
 
+import DB.dbuser
 from BL import utility
 from BL.utility import normalize, starts_same
 from DB import dbcities, dbuser
@@ -96,7 +97,7 @@ async def search_city(text: str, chat_id: int) -> str:
 
 
 async def reset_user(chat_id):
-    await dbcities.remove_all_from_chatid(chat_id)
+    await DB.dbuser.remove_all_from_chatid(chat_id)
     return messages("reset")
 
 
