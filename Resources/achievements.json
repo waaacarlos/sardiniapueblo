@@ -885,5 +885,13 @@
     "cities": [
      "Ussana", "Samatzai", "Collinas", "Genuri", "Las Plassas", "Pauli Arbarei", "Villamar", "Turri", "Ussaramanna", "Villanovaforru", "Villanovafranca", "Siddi", "Gesturi", "Pimentel"
     ]
+  },
+  "monserrato": {
+    "title": "Stronato",
+    "description": "Trova Monserrato.",
+    "category": "city",
+    "cities": [
+      "Monserrato"
+    ]
   }
 }
