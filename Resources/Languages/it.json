@@ -17,10 +17,11 @@
   "similar_found": "Sarebbe {0}, ma l'hai già trovato.",
   "doubles_not_found": "Ricontrolla le doppie...",
   "single_substring_not_found": "Ti manca un pezzo:\n<code>{0}</code>",
-  "multiple_substring": "Devi essere più specifico: ci sono {0} comuni che hanno \"{1}\" nel nome.",
+  "multiple_substring": "Devi essere più specifico: ci sono {0} comuni che hanno \"{1}\" nel nome.\n",
   "similar_city_hint": "Mmm, forse intendevi <code>{0}</code>",
   "multiple_similar_hint_count": "Ho trovato {0} comuni simili a quello che hai scritto.\n",
-  "multiple_similar_hint_already_found": "Di questi ne hai già trovato {0}: {1}\n",
-  "hint": "Aiutino:",
+  "multiple_similar_hint_already_found": "Di questi, hai già trovato {1}.\n",
+  "hint_multiple": "\n<b>Ti mancano:</b>",
+  "hint_single": "\n<b>Ti manca:<\b>",
   "all_hinted": " (non ringraziarmi)"
 }
