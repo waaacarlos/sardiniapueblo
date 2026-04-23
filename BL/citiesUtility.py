@@ -34,7 +34,25 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
     if city:
         if city['player']:
             return messages("similar_found").format(city['nome'])
-        return messages("notspaces_not_found" if ' ' in text else "spaces_not_found")
+        else:
+            # Controllo apostrofo -- Se trova uguale a meno degli apostrofi, gliela diamo buona
+            if text.upper().replace("'", "") == city['nome'].upper().replace("'", ""):
+                return await search_city(city['nome'], chat_id)
+            # Verifica cosa è scritto staccato e cosa no
+            _cases = utility.find_spaces(city['nome'], text)
+            if _cases == utility.FindSpace.SPACE:
+                _msgcase = "spaces_not_found"
+            elif _cases == utility.FindSpace.NO_SPACE:
+                _msgcase = "notspaces_not_found"
+            elif _cases == utility.FindSpace.MIXED_SPACE:
+                _msgcase = "mixedspaces_not_found"
+            elif _cases == utility.FindSpace.SPACE_MULTIPLE:
+                _msgcase = "spacesmult_not_found"
+            elif _cases == utility.FindSpace.NO_SPACE_MULTIPLE:
+                _msgcase = "notspacesmult_not_found"
+            else:
+                raise NotImplementedError
+            return messages(_msgcase)
 
     # Controllo doppie
     city = await dbcities.search_city_doubles(text, chat_id)

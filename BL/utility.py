@@ -1,12 +1,21 @@
 import logging
 import unicodedata
 import re
+from enum import Enum, auto
 
 logger = logging.getLogger(__name__)
 
 
 # Region: Strings
 APOSTROFI = "'\u2019\u2018\u02BC\u0060\u00B4"
+
+
+class FindSpace(Enum):
+    NO_SPACE = auto()
+    SPACE = auto()
+    NO_SPACE_MULTIPLE = auto()
+    SPACE_MULTIPLE = auto()
+    MIXED_SPACE = auto()
 
 
 def normalize(testo):
@@ -89,3 +98,22 @@ def same_letters(s1, s2, placeholder='*'):
         if c1 not in s2 and c1.isalpha():
             s1 = s1.replace(c1, placeholder)
     return s1
+
+
+def find_spaces(s1: str, s2: str) -> FindSpace:
+    # CASI VALORI SINGOLI
+    a = s1.split()
+    b = s2.split()
+    if len(a) == 1 and len(b) > 1:
+        return FindSpace.NO_SPACE
+    if len(b) == 1 and len(a) > 1:
+        return FindSpace.SPACE
+
+    # CASI VALORI MULTIPLI
+    a = [word for word in s1.split() if word not in s2.split()]
+    b = [word for word in s2.split() if word not in s1.split()]
+    if len(a) > len(b):
+        return FindSpace.SPACE_MULTIPLE
+    if len(b) > len(a):
+        return FindSpace.NO_SPACE_MULTIPLE
+    return FindSpace.MIXED_SPACE
