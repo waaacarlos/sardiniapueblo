@@ -55,9 +55,9 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
             return messages("single_substring_not_found").format(hint)
         elif cities_count > 1:
             found = [i['nome'] for i in cities if i['player']]
-            msg = messages("multiple_substring").format(
-                cities_count, text, len(found), ", ".join(found)
-            )
+            msg = messages("multiple_substring").format(cities_count)
+            if found:
+                msg += messages("multiple_similar_hint_already_found").format(len(found), ", ".join(found))
             if len(found) < cities_count:
                 msg += messages("hint")
                 for city in [i for i in cities if i['nome'] not in found]:
