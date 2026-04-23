@@ -78,7 +78,7 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
             msg += messages("multiple_similar_hint_already_found").format(len(found), ", ".join(found))
         if len(found) < cities_count:
             msg += messages("hint")
-            for city in cities:
+            for city in [i for i in cities if i['nome'] not in found]:
                 hint = utility.same_letters(city['nome_norm'], text.strip().upper())
                 msg += f"\n<code>{hint}</code>"
                 if '*' not in hint:
