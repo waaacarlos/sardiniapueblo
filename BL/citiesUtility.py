@@ -55,35 +55,44 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
             return messages("single_substring_not_found").format(hint)
         elif cities_count > 1:
             found = [i['nome'] for i in cities if i['player']]
-            return messages("multiple_substring").format(
+            msg = messages("multiple_substring").format(
                 cities_count, text, len(found), ", ".join(found)
             )
-
+            if len(found) < cities_count:
+                msg += messages("hint")
+                for city in [i for i in cities if i['nome'] not in found]:
+                    hint = utility.subgroup(city['nome_norm'], text.strip().upper())
+                    msg += f"\n<code>{hint}</code>"
+                    if '*' not in hint:
+                        msg += messages("all_hinted")
+            return msg
+    
     # Controllo simili
-    cities = await dbcities.search_city_similar(text, chat_id)
-    cities_count = len(cities)
-    if cities_count == 1:
-        city = cities[0]
-        if city['player']:
-            return messages("similar_found").format(city['nome'])
-        hint = utility.same_letters(city['nome_norm'], text.strip().upper())
-        msg = messages("similar_city_hint")
-        if '*' not in hint:
-            msg += messages("all_hinted")
-        return msg.format(hint)
-    elif cities_count > 1:
-        found = [i['nome'] for i in cities if i['player']]
-        msg = messages("multiple_similar_hint_count").format(cities_count)
-        if found:
-            msg += messages("multiple_similar_hint_already_found").format(len(found), ", ".join(found))
-        if len(found) < cities_count:
-            msg += messages("hint")
-            for city in [i for i in cities if i['nome'] not in found]:
-                hint = utility.same_letters(city['nome_norm'], text.strip().upper())
-                msg += f"\n<code>{hint}</code>"
-                if '*' not in hint:
-                    msg += messages("all_hinted")
-        return msg
+    if len(text) > 3:
+        cities = await dbcities.search_city_similar(text, chat_id)
+        cities_count = len(cities)
+        if cities_count == 1:
+            city = cities[0]
+            if city['player']:
+                return messages("similar_found").format(city['nome'])
+            hint = utility.same_letters(city['nome_norm'], text.strip().upper())
+            msg = messages("similar_city_hint")
+            if '*' not in hint:
+                msg += messages("all_hinted")
+            return msg.format(hint)
+        elif cities_count > 1:
+            found = [i['nome'] for i in cities if i['player']]
+            msg = messages("multiple_similar_hint_count").format(cities_count)
+            if found:
+                msg += messages("multiple_similar_hint_already_found").format(len(found), ", ".join(found))
+            if len(found) < cities_count:
+                msg += messages("hint")
+                for city in [i for i in cities if i['nome'] not in found]:
+                    hint = utility.same_letters(city['nome_norm'], text.strip().upper())
+                    msg += f"\n<code>{hint}</code>"
+                    if '*' not in hint:
+                        msg += messages("all_hinted")
+            return msg
     return messages("not_found")
 
 
