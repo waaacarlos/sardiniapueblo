@@ -25,6 +25,6 @@
   "multiple_similar_hint_count": "Ho trovato {0} comuni simili a quello che hai scritto.\n",
   "multiple_similar_hint_already_found": "Di questi, hai già trovato {1}.\n",
   "hint_multiple": "\n<b>Ti mancano:</b>",
-  "hint_single": "\n<b>Ti manca:<\b>",
+  "hint_single": "\n<b>Ti manca:</b>",
   "all_hinted": " (non ringraziarmi)"
 }
