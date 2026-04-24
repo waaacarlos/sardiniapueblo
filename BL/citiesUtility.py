@@ -36,7 +36,7 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
             return messages("similar_found").format(city['nome'])
         else:
             # Controllo apostrofo -- Se trova uguale a meno degli apostrofi, gliela diamo buona
-            if text.upper().replace("'", "") == city['nome'].upper().replace("'", ""):
+            if text.upper().replace("'", "") == utility.normalize(city['nome'].upper().replace("'", "")):
                 return await search_city(city['nome'], chat_id)
             # Verifica cosa è scritto staccato e cosa no
             _cases = utility.find_spaces(city['nome'], text)
