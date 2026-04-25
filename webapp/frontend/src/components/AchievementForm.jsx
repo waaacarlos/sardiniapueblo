@@ -72,7 +72,6 @@ export default function AchievementForm({
       ...createEmptyForm(),
       ...prev,
       [name]: value,
-      key: prev.key,
     }));
   };
 
@@ -91,8 +90,8 @@ export default function AchievementForm({
               value={formData.key}
               onChange={handleChange}
               placeholder="Key"
-              fullWidth
-              disabled={!!achievement}
+            fullWidth
+            required
             />
           )}
 
