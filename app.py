@@ -124,6 +124,11 @@ async def delete_achievement(ach_key: str):
     return await dbachievements.delete_achievement(ach_key)
 
 
+@app.put("/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
+async def update_achievement(ach_key: str, achievement: dict):
+    return await dbachievements.update_achievement(ach_key, achievement)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://sardiniapueblo.vercel.app"],

@@ -1,36 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextField,
   Button,
   Box,
-  Card,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Stack,
   Autocomplete,
+  DialogActions,
 } from "@mui/material";
 
-export default function AchievementForm({ achievement = null, onSubmit, cities }) {
-  const [formData, setFormData] = useState(
-    achievement || {
-      key: "",
-      title: "",
-      description: "",
-      category: "progress",
-      threshold: "",
-      cities: [],
-      province: "",
-      event: "",
-    }
+function createEmptyForm() {
+  return {
+    key: "",
+    title: "",
+    description: "",
+    category: "progress",
+    threshold: "",
+    cities: [],
+    province: "",
+    event: "",
+  };
+}
+
+function normalizeAchievementForForm(achievement, cities) {
+  if (!achievement) {
+    return createEmptyForm();
+  }
+
+  const selectedCities = (achievement.cities || [])
+    .map((city) => {
+      if (typeof city === "object") {
+        return city;
+      }
+
+      return (cities || []).find((option) => option.id === city) || null;
+    })
+    .filter(Boolean);
+
+  return {
+    key: achievement.ach_key || achievement.key || "",
+    title: achievement.title || "",
+    description: achievement.description || "",
+    category: achievement.category || "progress",
+    threshold: achievement.threshold ?? "",
+    cities: selectedCities,
+    province: achievement.province || "",
+    event: achievement.event || "",
+  };
+}
+
+export default function AchievementForm({
+  achievement = null,
+  onSubmit,
+  onCancel,
+  cities,
+}) {
+  const [formData, setFormData] = useState(() =>
+    normalizeAchievementForForm(achievement, cities)
   );
+
+  useEffect(() => {
+    setFormData(normalizeAchievementForForm(achievement, cities));
+  }, [achievement, cities]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
+      ...createEmptyForm(),
       ...prev,
       [name]: value,
+      key: prev.key,
     }));
   };
 
@@ -40,8 +82,7 @@ export default function AchievementForm({ achievement = null, onSubmit, cities }
   };
 
   return (
-    <Card sx={{ padding: 3, marginBottom: 3 }}>
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ paddingTop: 1 }} noValidate>
         <Stack spacing={2}>
           {!achievement && (
             <TextField
@@ -87,7 +128,7 @@ export default function AchievementForm({ achievement = null, onSubmit, cities }
             >
               <MenuItem value="progress">Progresso</MenuItem>
               <MenuItem value="city">Città</MenuItem>
-              <MenuItem value="city_province">Città e Provincia</MenuItem>
+              <MenuItem value="province">Provincia</MenuItem>
               <MenuItem value="write">Scritto</MenuItem>
             </Select>
           </FormControl>
@@ -110,30 +151,27 @@ export default function AchievementForm({ achievement = null, onSubmit, cities }
               multiple
               options={cities || []}
               getOptionLabel={(option) => option.nome}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               value={formData.cities}
-              onChange={ (_, newValue) => setFormData((prev) => ({ ...prev, cities: newValue }))}
+              onChange={(_, newValue) =>
+                setFormData((prev) => ({
+                  ...createEmptyForm(),
+                  ...prev,
+                  cities: newValue,
+                  key: prev.key,
+                }))
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Città"
+                  required
                 />
               )}
             />
-
-            // <TextField
-            //   label="Città (una per riga)"
-            //   name="cities"
-            //   value={formData.cities}
-            //   onChange={handleChange}
-            //   placeholder="Città"
-            //   fullWidth
-            //   multiline
-            //   rows={3}
-            //   required
-            // />
           )}
 
-          {formData.category === "city_province" && (
+          {formData.category === "province" && (
             <TextField
               label="Provincia"
               name="province"
@@ -157,16 +195,20 @@ export default function AchievementForm({ achievement = null, onSubmit, cities }
             />
           )}
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            {achievement ? "Modifica" : "Aggiungi"} Achievement
-          </Button>
+          <DialogActions sx={{ px: 0, pt: 1 }}>
+            <Button onClick={onCancel} color="inherit">
+              Annulla
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+            >
+              {achievement ? "Salva modifiche" : "Aggiungi achievement"}
+            </Button>
+          </DialogActions>
         </Stack>
       </Box>
-    </Card>
   );
 }

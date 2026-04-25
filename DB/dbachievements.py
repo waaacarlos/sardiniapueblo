@@ -1,6 +1,18 @@
 from DB.dbservice import fetchrow, fetch, fetchval, get_transaction
 
 
+def _normalize_achievement_payload(achievement):
+    category = achievement["category"]
+    if category == "event":
+        category = "write"
+
+    threshold = achievement.get("threshold") if category == "progress" else None
+    province = achievement.get("province") if category == "province" else None
+    event = achievement.get("event") if category == "write" else None
+
+    return category, threshold, province, event
+
+
 async def get_achievements(chat_id=None):
     query = """
         SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event, 
@@ -62,33 +74,68 @@ async def check_prov_achievements(chat_id, province):
 
 
 async def insert_achievement(achievement):
-    cols = ["ach_key", "title", "description", "category"]
-    if achievement["category"] == "progress":
-        cols.append("threshold")
-        value = achievement["threshold"]
-    elif achievement["category"] == "province":
-        cols.append("province")
-        value = achievement["province"]
-    elif achievement["category"] == "event":
-        cols.append("event")
-        value = achievement["event"]
-    else:
-        cols.append("event")
-        value = None
-    query = f"""
-    INSERT INTO achievements ({','.join(cols)}) 
-    VALUES ($1, $2, $3, $4, $5);
+    category, threshold, province, event = _normalize_achievement_payload(achievement)
+    query = """
+    INSERT INTO achievements (ach_key, title, description, category, threshold, province, event)
+    VALUES ($1, $2, $3, $4, $5, $6, $7);
     """
-    _args = [achievement['key'], achievement['title'], achievement['description'], achievement['category'], value]
+    _args = [
+        achievement['key'],
+        achievement['title'],
+        achievement['description'],
+        category,
+        threshold,
+        province,
+        event,
+    ]
 
     async with get_transaction() as conn:
-        res = await conn.execute(query, *_args)
-        if achievement["category"] == "city":
-            rows = [(achievement["key"], city['id']) for city in achievement["cities"]]
-            await conn.executemany("INSERT INTO achievement_cities (ach_key, city) VALUES ($1, $2)", rows)
+        async with conn.transaction():
+            res = await conn.execute(query, *_args)
+            if category == "city":
+                rows = [(achievement["key"], city['id']) for city in achievement["cities"]]
+                await conn.executemany("INSERT INTO achievement_cities (ach_key, city) VALUES ($1, $2)", rows)
     return res
 
 
 async def delete_achievement(ach_key):
     query = "DELETE FROM achievements WHERE ach_key = $1"
     return await fetch(query, ach_key)
+
+
+async def update_achievement(ach_key, achievement):
+    category, threshold, province, event = _normalize_achievement_payload(achievement)
+    query = """
+        UPDATE achievements
+        SET title = $2,
+            description = $3,
+            category = $4,
+            threshold = $5,
+            province = $6,
+            event = $7
+        WHERE ach_key = $1"""
+
+    async with get_transaction() as conn:
+        async with conn.transaction():
+            res = await conn.execute(
+                query,
+                ach_key,
+                achievement["title"],
+                achievement["description"],
+                category,
+                threshold,
+                province,
+                event,
+            )
+
+            await conn.execute("DELETE FROM achievement_cities WHERE ach_key = $1", ach_key)
+
+            if category == "city":
+                rows = [(ach_key, city['id']) for city in achievement.get("cities", [])]
+                if rows:
+                    await conn.executemany(
+                        "INSERT INTO achievement_cities (ach_key, city) VALUES ($1, $2)",
+                        rows,
+                    )
+
+    return res

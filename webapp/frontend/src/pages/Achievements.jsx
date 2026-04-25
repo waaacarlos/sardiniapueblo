@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import AchievementForm from "../components/AchievementForm";
 import AchievementList from "../components/AchievementList";
-import { Container, Alert, Box, Button, Stack } from "@mui/material";
+import {
+  Container,
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Stack,
+} from "@mui/material";
 import { authFetch } from "../api";
 
-export default function Achievements({ onLogout, cities }) {
+export default function Achievements({ cities }) {
   const [achievements, setAchievements] = useState([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +50,7 @@ export default function Achievements({ onLogout, cities }) {
       setError(null);
       const method = editingAchievement ? "PUT" : "POST";
       const url = editingAchievement
-        ? `/api/achievements/${editingAchievement.key}`
+        ? `/api/achievements/${editingAchievement.ach_key}`
         : "/api/achievements";
 
       const response = await authFetch(url, {
@@ -61,6 +71,7 @@ export default function Achievements({ onLogout, cities }) {
           ? "Achievement modificato con successo!"
           : "Achievement creato con successo!"
       );
+      setIsFormOpen(false);
       setEditingAchievement(null);
       loadAchievements();
 
@@ -74,8 +85,12 @@ export default function Achievements({ onLogout, cities }) {
 
   const handleEdit = (achievement) => {
     setEditingAchievement(achievement);
-    // Scroll al form
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsFormOpen(true);
+  };
+
+  const handleCreate = () => {
+    setEditingAchievement(null);
+    setIsFormOpen(true);
   };
 
   const handleDelete = async (key) => {
@@ -102,28 +117,34 @@ export default function Achievements({ onLogout, cities }) {
   };
 
   const handleCancel = () => {
+    setIsFormOpen(false);
     setEditingAchievement(null);
   };
 
   return (
     <Container sx={{ marginTop: 4 }}>
-      <Box sx={{ marginBottom: 4 }}>
-        <AchievementForm
-          achievement={editingAchievement}
-          onSubmit={handleSubmit}
-          cities={cities}
-        />
-        {editingAchievement && (
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleCancel}
-            sx={{ marginBottom: 2 }}
-          >
-            Annulla modifica
+      <Box sx={{ marginBottom: 3 }}>
+        <Stack direction="row">
+          <Box component="h1" sx={{ m: 0, fontSize: "1.75rem" }}>
+            Achievements
+          </Box>
+          <Button variant="contained" onClick={handleCreate}>
+            Aggiungi achievement
           </Button>
-        )}
+        </Stack>
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ marginBottom: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" sx={{ marginBottom: 2 }}>
+          {successMessage}
+        </Alert>
+      )}
 
       {!loading && (
         <AchievementList
@@ -134,6 +155,25 @@ export default function Achievements({ onLogout, cities }) {
       )}
 
       {loading && <div>Caricamento...</div>}
+
+      <Dialog
+        open={isFormOpen}
+        onClose={handleCancel}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {editingAchievement ? "Modifica achievement" : "Nuovo achievement"}
+        </DialogTitle>
+        <DialogContent>
+          <AchievementForm
+            achievement={editingAchievement}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+            cities={cities}
+          />
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 }
