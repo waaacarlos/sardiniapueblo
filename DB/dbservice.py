@@ -2,6 +2,7 @@
 import asyncpg
 import logging
 import os
+from contextlib import asynccontextmanager
 
 logger = logging.getLogger(__name__)
 
@@ -67,3 +68,18 @@ async def fetchval(query: str, *args):
             return await conn.fetchval(query, *args)
     except Exception as e:
         logger.error(f"Error fetching {query}: {e}")
+
+
+async def executemany(query: str, *args):
+    logging.info(f"Executing {query}")
+    try:
+        async with pool.acquire() as conn:
+            return await conn.executemany(query, *args)
+    except Exception as e:
+        logger.error(f"Error fetching {query}: {e}")
+
+
+@asynccontextmanager
+async def get_transaction():
+    async with pool.acquire() as conn:
+        yield conn

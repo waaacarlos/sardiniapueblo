@@ -9,9 +9,10 @@ import {
   Select,
   MenuItem,
   Stack,
+  Autocomplete,
 } from "@mui/material";
 
-export default function AchievementForm({ achievement = null, onSubmit }) {
+export default function AchievementForm({ achievement = null, onSubmit, cities }) {
   const [formData, setFormData] = useState(
     achievement || {
       key: "",
@@ -19,7 +20,7 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
       description: "",
       category: "progress",
       threshold: "",
-      cities: "",
+      cities: [],
       province: "",
       event: "",
     }
@@ -44,11 +45,11 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
         <Stack spacing={2}>
           {!achievement && (
             <TextField
-              label="Key (identificativo univoco)"
+              label="Key"
               name="key"
               value={formData.key}
               onChange={handleChange}
-              placeholder="es. first_city_visit"
+              placeholder="Key"
               fullWidth
               disabled={!!achievement}
             />
@@ -59,7 +60,7 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="es. Primo passo"
+            placeholder="Titolo"
             fullWidth
             required
           />
@@ -69,7 +70,7 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="es. Visita la tua prima città"
+            placeholder="Descrizione"
             fullWidth
             multiline
             rows={2}
@@ -98,24 +99,38 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
               type="number"
               value={formData.threshold}
               onChange={handleChange}
-              placeholder="es. 10"
+              placeholder="Soglia"
               fullWidth
               required
             />
           )}
 
           {formData.category === "city" && (
-            <TextField
-              label="Città (una per riga)"
-              name="cities"
+            <Autocomplete
+              multiple
+              options={cities || []}
+              getOptionLabel={(option) => option.nome}
               value={formData.cities}
-              onChange={handleChange}
-              placeholder="Cagliari&#10;Sassari&#10;Oristano"
-              fullWidth
-              multiline
-              rows={3}
-              required
+              onChange={ (_, newValue) => setFormData((prev) => ({ ...prev, cities: newValue }))}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Città"
+                />
+              )}
             />
+
+            // <TextField
+            //   label="Città (una per riga)"
+            //   name="cities"
+            //   value={formData.cities}
+            //   onChange={handleChange}
+            //   placeholder="Città"
+            //   fullWidth
+            //   multiline
+            //   rows={3}
+            //   required
+            // />
           )}
 
           {formData.category === "city_province" && (
@@ -124,7 +139,7 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
               name="province"
               value={formData.province}
               onChange={handleChange}
-              placeholder="es. Cagliari"
+              placeholder="Provincia"
               fullWidth
               required
             />
@@ -136,7 +151,7 @@ export default function AchievementForm({ achievement = null, onSubmit }) {
               name="event"
               value={formData.event}
               onChange={handleChange}
-              placeholder="es. review"
+              placeholder="Evento"
               fullWidth
               required
             />

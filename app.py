@@ -1,4 +1,4 @@
-import json
+# import json
 import os
 import random
 from pathlib import Path
@@ -17,10 +17,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from telegram import Bot
 
 from DB.dbservice import init_db, close_db
-from DB import dbuser, dbcities
+from DB import dbuser, dbcities, dbachievements
 
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -50,15 +48,11 @@ def create_token() -> str:
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def load_achievements():
-    return json.loads(ACHIEVEMENTS_PATH.read_text(encoding="utf-8"))
-
-
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    await init_db()  # inizializza pool asyncpg all'avvio
+async def lifespan(_app: FastAPI):
+    await init_db()
     yield
-    await close_db()  # chiude pool allo spegnimento
+    await close_db()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -71,8 +65,8 @@ async def generate_otp():
     await bot.send_message(chat_id=TG_CHAT, text=f"OTP: {OTP}")
 
 
-@app.get("/api/me")
-async def me(auth=Depends(require_auth)):
+@app.get("/api/me", dependencies=[Depends(require_auth)])
+async def me():
     return {"authenticated": True}
 
 
@@ -95,6 +89,11 @@ async def city(city_id: str):
     return await dbcities.found_city(city_id)
 
 
+@app.get("/api/all_cities")
+async def all_cities():
+    return await dbcities.all_cities()
+
+
 @app.post("/api/login")
 async def login(body: dict):
     if not OTP:
@@ -111,8 +110,18 @@ async def logout():
 
 
 @app.get("/api/achievements")
-async def get_achievements(auth=Depends(require_auth)):
-    return list(load_achievements().values())
+async def get_achievements():
+    return await dbachievements.get_achievements()
+
+
+@app.post("/api/achievements", dependencies=[Depends(require_auth)])
+async def insert_achievement(achievement: dict):
+    return await dbachievements.insert_achievement(achievement)
+
+
+@app.delete("/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
+async def delete_achievement(ach_key: str):
+    return await dbachievements.delete_achievement(ach_key)
 
 
 app.add_middleware(

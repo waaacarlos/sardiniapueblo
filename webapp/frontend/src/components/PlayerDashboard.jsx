@@ -6,7 +6,7 @@ import { API_URI } from "../api";
 
 const citiesCount = 377;
 
-export default function PlayerDashboard({ playerData }) {
+export default function PlayerDashboard({ playerData, loading }) {
   const [cities, setCities] = useState([]);
   const [citiesFound, setCitiesFound] = useState([]);
   const [playerPoints, setPlayerPoints] = useState(0);
@@ -45,12 +45,12 @@ export default function PlayerDashboard({ playerData }) {
       </Paper>
       <Paper sx={{ p: 2, m: 2 }} className="player-dashboard">
         <div className="player-points">
-          Hai trovato {playerPoints} comuni su {citiesCount}
+          {loading ? "Caricamento..." : `Hai trovato ${playerPoints} comuni su ${citiesCount}`}
         </div>
         <LinearProgress
           value={playerPercentage}
           sx={{ mt: 2 }}
-          variant="determinate"
+          variant={loading ? "indeterminate" : "determinate"}
         />
       </Paper>
 

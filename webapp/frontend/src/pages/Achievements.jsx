@@ -4,7 +4,7 @@ import AchievementList from "../components/AchievementList";
 import { Container, Alert, Box, Button, Stack } from "@mui/material";
 import { authFetch } from "../api";
 
-export default function Achievements({ onLogout }) {
+export default function Achievements({ onLogout, cities }) {
   const [achievements, setAchievements] = useState([]);
   const [editingAchievement, setEditingAchievement] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -111,6 +111,7 @@ export default function Achievements({ onLogout }) {
         <AchievementForm
           achievement={editingAchievement}
           onSubmit={handleSubmit}
+          cities={cities}
         />
         {editingAchievement && (
           <Button

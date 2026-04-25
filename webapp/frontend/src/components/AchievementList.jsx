@@ -65,9 +65,6 @@ export default function AchievementList({ achievements, onEdit, onDelete }) {
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
               <TableCell header="true" sx={{ fontWeight: "bold" }}>
-                Key
-              </TableCell>
-              <TableCell header="true" sx={{ fontWeight: "bold" }}>
                 Titolo
               </TableCell>
               <TableCell header="true" sx={{ fontWeight: "bold" }}>
@@ -95,11 +92,6 @@ export default function AchievementList({ achievements, onEdit, onDelete }) {
             ) : (
               achievements.map((achievement, index) => (
                 <TableRow key={index} hover>
-                  <TableCell
-                    sx={{ fontFamily: "monospace", fontSize: "0.9em" }}
-                  >
-                    {achievement.key || "-"}
-                  </TableCell>
                   <TableCell>
                     <div>{achievement.title}</div>
                     <div style={{ fontSize: "0.8em", color: "#666" }}>
@@ -134,7 +126,7 @@ export default function AchievementList({ achievements, onEdit, onDelete }) {
                       <IconButton
                         size="small"
                         color="error"
-                        onClick={() => handleDeleteClick(achievement.key)}
+                        onClick={() => handleDeleteClick(achievement.ach_key)}
                         title="Elimina"
                       >
                         <DeleteIcon fontSize="small" />

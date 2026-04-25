@@ -55,7 +55,7 @@ async def search_city_similar(text: str, chat_id: int):
 
 
 async def all_cities():
-    query = "SELECT c.id, c.nome from cities c"
+    query = "SELECT c.id, c.nome from cities c order by c.nome"
     return await fetch(query)
 
 

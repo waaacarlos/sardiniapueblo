@@ -6,10 +6,10 @@ export default function PlayerGreetings({ playerData }) {
   return (
     <div className="player-greetings-container">
       <Box className="player-greetings" sx={{ color: "primary.main" }}>
-        Ciao, {playerData ? playerData.firstname : "giocatore"}
+        Ciao {playerData ? playerData.firstname : ""}
       </Box>
       <div>
-        Questo è la tua dashboard personale, dove potrai vedere i tuoi
+        Questa è la tua dashboard personale, dove potrai vedere i tuoi
         progressi.
       </div>
     </div>
