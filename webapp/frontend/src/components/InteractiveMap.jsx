@@ -84,7 +84,7 @@ function injectStyle(svgText, css) {
 }
 
 const SARDINIA_CSS = `
-  g[id] { cursor: pointer; }
+  g[id] path { fill: #f8c300 !important; cursor: pointer; }
   g[id]:hover path { fill: #f0a500 !important; }
 `;
 

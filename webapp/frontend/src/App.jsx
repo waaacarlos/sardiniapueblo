@@ -7,7 +7,7 @@ import PlayerDashboard from "./components/PlayerDashboard";
 import Achievements from "./pages/Achievements";
 import Login from "./pages/Login";
 import InteractiveMap from "./components/InteractiveMap";
-import sardiniaSvg from "/assets/sardinia.svg";
+import SardiniaShape from "./components/SardiniaShape";
 
 function App() {
   const params = new URLSearchParams(window.location.search);
@@ -139,26 +139,16 @@ function App() {
         <Paper sx={{ p: 2, mb: 2 }}>
           <InteractiveMap citiesFound={cities}></InteractiveMap>
         </Paper>
-      </Box>
+      </Box >
     );
   }
 
   return (
     <div className="App">
-      <Box
-        component="img"
-        src={sardiniaSvg}
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          opacity: 0.1,
-          zIndex: -9999
-        }}
-      />
+      <div className="sardinia-bg">
+        <div className="sardinia-border-gradient" />
+        <SardiniaShape className="sardinia-fill" />
+      </div>
       <Box sx={{ flexGrow: 1 }}>
         {authenticated && (
           <Button onClick={handleLogout} color="inherit">
@@ -168,7 +158,7 @@ function App() {
       </Box>
       <div className="content">{appbody}</div>
       <Paper
-        sx={{ margin: 1, bottom: 0, left: 0, right: 0 }}
+        sx={{ margin: 1, bottom: 0, left: 0, right: 0, position: "fixed" }}
         elevation={3}
         onClick={() => {
           if (!playerId || playerId == ADMIN_CHAT_ID) setShowLogin(true);
