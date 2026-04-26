@@ -342,7 +342,7 @@ export default function InteractiveMap({ citiesFound }) {
                       />
                     )}
                     <CardActionArea
-                      href={cityCard.url}
+                      href={cityCard.found ? cityCard.url : null}
                       rel="noopener noreferrer"
                       target="_blank"
                       sx={{ flex: "1 0 auto" }}
