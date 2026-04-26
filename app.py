@@ -84,6 +84,11 @@ async def player_points(player_id: int):
     return await dbcities.found_player_all_cities(player_id)
 
 
+@app.get("/api/player/achievements")
+async def player_achievements(player_id: int):
+    return await dbachievements.get_player_achievements(player_id)
+
+
 @app.get("/api/city")
 async def city(city_id: str):
     return await dbcities.found_city(city_id)

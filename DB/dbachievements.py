@@ -6,7 +6,7 @@ def _normalize_achievement_payload(achievement):
     if category == "event":
         category = "write"
 
-    threshold = achievement.get("threshold") if category == "progress" else None
+    threshold = int(achievement.get("threshold")) if category == "progress" else None
     province = achievement.get("province") if category == "province" else None
     event = achievement.get("event") if category == "write" else None
 

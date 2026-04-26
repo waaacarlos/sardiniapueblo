@@ -1,62 +1,84 @@
 import PlayerGreetings from "./PlayerGreetings";
-import { useEffect, useState } from "react";
-import { Box, LinearProgress, Paper, Chip } from "@mui/material";
+import { Box, Paper, Button, Dialog, DialogContent } from "@mui/material";
+import PlayerProgressCard from "./PlayerProgressCard";
+import { useState } from "react";
 import InteractiveMap from "./InteractiveMap";
-import { API_URI } from "../api";
 
 const citiesCount = 377;
 
-export default function PlayerDashboard({ playerData, loading }) {
-  const [cities, setCities] = useState([]);
-  const [citiesFound, setCitiesFound] = useState([]);
-  const [playerPoints, setPlayerPoints] = useState(0);
+export default function PlayerDashboard({
+  playerData,
+  citiesFound,
+  loading,
+  unlockedAchievements,
+  totalAchievements,
+  achievementsLoading,
+}) {
+  const playerPoints = citiesFound.length;
+  const playerPercentage = (playerPoints / citiesCount) * 100;
+  const safeTotalAchievements = totalAchievements || 1;
+  const achievementsPercentage =
+    (unlockedAchievements / safeTotalAchievements) * 100;
 
-  const [playerPercentage, setPlayerPercentage] = useState(0);
-
-  useEffect(() => {
-    if (playerData) {
-      fetch(`${API_URI}/api/player/cities?player_id=${playerData.id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setCitiesFound(data);
-          const points = data.length
-          setPlayerPoints(points);
-          setPlayerPercentage((points / citiesCount) * 100);
-        })
-        .catch((error) =>
-          console.error("Error fetching player points:", error),
-        );
-    }
-  }, [playerData]);
+  const [mapOpen, setMapOpen] = useState(false);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        p: 2,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-      className="player-dashboard"
-    >
-      <Paper sx={{ p: 2, m: 2 }} className="player-dashboard">
-        <PlayerGreetings playerData={playerData} />
-      </Paper>
-      <Paper sx={{ p: 2, m: 2 }} className="player-dashboard">
-        <div className="player-points">
-          {loading ? "Caricamento..." : `Hai trovato ${playerPoints} comuni su ${citiesCount}`}
-        </div>
-        <LinearProgress
-          value={playerPercentage}
-          sx={{ mt: 2 }}
-          variant={loading ? "indeterminate" : "determinate"}
-        />
-      </Paper>
-
-      <Paper sx={{ p: 2, m: 2 }} className="player-dashboard">
-        <InteractiveMap citiesFound={citiesFound} />
-      </Paper>
-    </Box>
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        className="player-dashboard"
+      >
+        <Paper sx={{ p: 2, width: "100%" }} className="player-dashboard">
+          <PlayerGreetings playerData={playerData} />
+        </Paper>
+      </Box>
+      <Box sx={{ position: "relative", overflow: "hidden" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <PlayerProgressCard
+            loading={loading}
+            count={playerPoints}
+            percentage={playerPercentage}
+            total={citiesCount}
+            labelTop="Hai trovato"
+            labelBottom={`comuni su ${citiesCount}`}
+          />
+          <PlayerProgressCard
+            loading={achievementsLoading}
+            count={unlockedAchievements}
+            percentage={achievementsPercentage}
+            total={totalAchievements}
+            labelTop="Hai sbloccato"
+            labelBottom={`obiettivi su ${totalAchievements}`}
+          />
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
+          <Button variant="outlined" onClick={() => setMapOpen(true)}>
+            Mostra mappa
+          </Button>
+        </Box>
+        <Dialog
+          open={mapOpen}
+          onClose={() => setMapOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogContent>
+            <InteractiveMap citiesFound={citiesFound} />
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </>
   );
 }

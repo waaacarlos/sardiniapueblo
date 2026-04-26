@@ -62,16 +62,13 @@ export default function AchievementList({ achievements, onEdit, onDelete }) {
     <>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+          <TableHead sx={{ backgroundColor: 'primary.main' }}>
             <TableRow>
               <TableCell header="true" sx={{ fontWeight: "bold" }}>
                 Titolo
               </TableCell>
               <TableCell header="true" sx={{ fontWeight: "bold" }}>
                 Categoria
-              </TableCell>
-              <TableCell header="true" sx={{ fontWeight: "bold" }}>
-                Dettagli
               </TableCell>
               <TableCell
                 header="true"
@@ -105,9 +102,9 @@ export default function AchievementList({ achievements, onEdit, onDelete }) {
                       color="primary"
                       variant="outlined"
                     />
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "0.9em" }}>
-                    {getDetailsText(achievement)}
+                    <div sx={{ fontSize: "0.9em" }}>
+                      {getDetailsText(achievement)}
+                    </div>
                   </TableCell>
                   <TableCell align="right">
                     <Stack

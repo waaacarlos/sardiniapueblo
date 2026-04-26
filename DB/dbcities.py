@@ -55,7 +55,7 @@ async def search_city_similar(text: str, chat_id: int):
 
 
 async def all_cities():
-    query = "SELECT c.id, c.nome from cities c order by c.nome"
+    query = "SELECT c.id, c.nome, c.provincia from cities c order by c.nome"
     return await fetch(query)
 
 
@@ -93,6 +93,7 @@ async def found_player_cities(chat_id: int, filter_clause: str, filter_value: st
                 ELSE regexp_replace(nome, '[[:alpha:]]', '*', 'g')
             END AS all_names,
             nome,
+            nome_originale,
             provincia
         FROM cities c
         WHERE {filter_clause}

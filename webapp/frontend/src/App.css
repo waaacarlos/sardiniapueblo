@@ -6,7 +6,6 @@
 .player-greetings-container {
   justify-content: center;
   align-items: center;
-
 }
 
 .footer-text {
@@ -21,6 +20,26 @@
   width: 1em;
   height: 1em;
   animation: pulse 1.5s infinite;
+}
+
+.map_background {
+  background: radial-gradient(circle at center, navy 10%, rgba(0, 0, 0, 0) 70%);
+}
+
+.player-percentage {
+  text-align: center;
+  text-shadow: 0 0 10px navy;
+}
+
+.player-points {
+  font-size: 4em;
+}
+
+.player-points-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
 }
 
 @keyframes pulse {

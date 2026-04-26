@@ -286,6 +286,7 @@ export default function InteractiveMap({ citiesFound }) {
                   component="img"
                   image={cityCard.thumbnail}
                   sx={{ objectFit: "cover", height: 140 }}
+                  loading="Caricamento"
                 />
               </CardActionArea>
             ) : (
@@ -334,22 +335,25 @@ export default function InteractiveMap({ citiesFound }) {
             </CardContent>
           </Card>
         )}
-        <Box
-          onClick={handleClick}
-          onMouseMove={handleMouseMove}
-          dangerouslySetInnerHTML={{ __html: svgContent }}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            "& svg": {
-              width: "auto",
-              height: "auto",
-              display: "block",
-              maxHeight: "calc(100vh - 180px)",
-              maxWidth: "100%",
-            },
-          }}
-        />
+        <div className="map_background">
+          <Box
+            onClick={handleClick}
+            onMouseMove={handleMouseMove}
+            dangerouslySetInnerHTML={{ __html: svgContent }}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              "& svg": {
+                width: "auto",
+                height: "auto",
+                display: "block",
+                maxHeight: "calc(100vh - 180px)",
+                maxWidth: "100%",
+              },
+            }}
+          >         
+            </Box>
+        </div>
       </Box>
     </>
   );

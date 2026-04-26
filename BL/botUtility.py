@@ -3,7 +3,7 @@ import time
 import logging
 import traceback
 
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
 
@@ -87,7 +87,9 @@ class Message:
     async def send_message(self, text, send_stats=False):
         message = await self.context.bot.send_message(
             self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text="Statistiche", url=self.statsurl)]]) if send_stats else None
+                [
+                    [InlineKeyboardButton(text="Statistiche", web_app=WebAppInfo(self.statsurl))]
+                ]) if send_stats else None
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id

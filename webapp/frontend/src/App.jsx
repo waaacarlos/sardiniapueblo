@@ -1,11 +1,13 @@
-import { use, useEffect, useState } from "react";
-import { AppBar, Box, Toolbar, Typography, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import Button from "@mui/material/Button";
-import Login from "./pages/Login";
-import Achievements from "./pages/Achievements";
-import PlayerDashboard from "./components/PlayerDashboard";
-import { API_URI, ADMIN_CHAT_ID } from "./api";
+import { useEffect, useState } from "react";
+import { ADMIN_CHAT_ID, API_URI } from "./api";
 import "./App.css";
+import PlayerDashboard from "./components/PlayerDashboard";
+import Achievements from "./pages/Achievements";
+import Login from "./pages/Login";
+import InteractiveMap from "./components/InteractiveMap";
+import sardiniaSvg from "/assets/sardinia.svg";
 
 function App() {
   const params = new URLSearchParams(window.location.search);
@@ -14,8 +16,44 @@ function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const [cities, setCities] = useState([]);
+  const [citiesFound, setCitiesFound] = useState([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState(0);
+  const [totalAchievements, setTotalAchievements] = useState(0);
+  const [achievementsLoading, setAchievementsLoading] = useState(true);
+
+  useEffect(() => {
+    if (playerData) {
+      fetch(`${API_URI}/api/player/cities?player_id=${playerData.id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setCitiesFound(data);
+        })
+        .catch((error) =>
+          console.error("Error fetching player points:", error),
+        );
+
+      setAchievementsLoading(true);
+      fetch(`${API_URI}/api/player/achievements?player_id=${playerData.id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setUnlockedAchievements(Array.isArray(data) ? data.length : 0);
+        })
+        .catch((error) =>
+          console.error("Error fetching player achievements:", error),
+        )
+        .finally(() => setAchievementsLoading(false));
+    }
+  }, [playerData]);
+
+  useEffect(() => {
+    fetch(`${API_URI}/api/achievements`)
+      .then((response) => response.json())
+      .then((data) => {
+        setTotalAchievements(Array.isArray(data) ? data.length : 0);
+      })
+      .catch((error) => console.error("Error fetching achievements:", error));
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URI}/api/all_cities`)
@@ -31,8 +69,7 @@ function App() {
         .then((data) => setPlayerData(data))
         .catch((error) => console.error("Error fetching player data:", error))
         .finally(() => setLoading(false));
-    }
-    else setLoading(false);
+    } else setLoading(false);
   }, [playerId]);
 
   const handleLogout = async () => {
@@ -69,7 +106,7 @@ function App() {
   if (showLogin) {
     switch (authenticated) {
       case true:
-        appbody = <Achievements onLogout={handleLogout} cities={cities}/>;
+        appbody = <Achievements onLogout={handleLogout} cities={citiesFound} />;
         break;
       case false:
         appbody = (
@@ -83,39 +120,64 @@ function App() {
         appbody = <h1>Loading...</h1>;
         break;
     }
+  } else if (playerId) {
+    appbody = (
+      <Box sx={{ p: 2 }}>
+        <PlayerDashboard
+          playerData={playerData}
+          citiesFound={citiesFound}
+          loading={loading}
+          unlockedAchievements={unlockedAchievements}
+          totalAchievements={totalAchievements}
+          achievementsLoading={achievementsLoading}
+        />
+      </Box>
+    );
   } else {
     appbody = (
       <Box sx={{ p: 2 }}>
-        <PlayerDashboard playerData={playerData} loading={loading} />
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <InteractiveMap citiesFound={cities}></InteractiveMap>
+        </Paper>
       </Box>
     );
   }
 
   return (
     <div className="App">
+      <Box
+        component="img"
+        src={sardiniaSvg}
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          opacity: 0.1
+        }}
+      />
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed" sx={{ backgroundColor: "primary" }}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Sardinia Pueblo
-            </Typography>
-
-            {authenticated && (
-              <Button onClick={handleLogout} color="inherit">
-                Logout
-              </Button>
-            )}
-          </Toolbar>
-        </AppBar>
+        {authenticated && (
+          <Button onClick={handleLogout} color="inherit">
+            Logout
+          </Button>
+        )}
       </Box>
       <div className="content">{appbody}</div>
       <Paper
-        sx={{ position: "fixed", bottom: 0, left: 0, right: 0}}
+        sx={{ margin: 1, bottom: 0, left: 0, right: 0 }}
         elevation={3}
-        onClick={() => {if(!playerId || playerId == ADMIN_CHAT_ID) setShowLogin(true)}}
+        onClick={() => {
+          if (!playerId || playerId == ADMIN_CHAT_ID) setShowLogin(true);
+        }}
       >
         <Box sx={{ textAlign: "center" }}>
-          <div className="footer-text">Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati. Mappe e immagini: Wikipedia Commons Vonvikken CC BY-SA</div>
+          <div className="footer-text">
+            Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati. Mappe e
+            immagini: Wikipedia Commons Vonvikken CC BY-SA
+          </div>
         </Box>
       </Paper>
     </div>
