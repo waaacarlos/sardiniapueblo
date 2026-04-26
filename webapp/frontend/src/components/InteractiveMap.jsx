@@ -38,13 +38,20 @@ async function getWikiThumbnail(wikiUrl, size = 300) {
   return page?.thumbnail?.source ?? null;
 }
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: "inline-block", mx: "1px", transform: "scale(0.8)" }}
-    className="bullet"
-  ></Box>
-);
+function bull(char) {
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: "inline-block",
+        mx: "1px",
+        transform: "scale(1)",
+        backgroundColor: char === "*" ? "primary.dark" : "transparent",
+      }}
+      className="bullet"
+    ></Box>
+  );
+}
 
 const PROVINCE_MAP = {
   OT: { svgId: "Olbia-Tempio", svg: otSvg, label: "Gallura Nord-Est Sardegna" },
@@ -123,9 +130,10 @@ function normalizeCityId(name) {
 
 export default function InteractiveMap({ citiesFound }) {
   const [selectedProvince, setSelectedProvince] = useState(null);
-  const [cityCard, setCityCard] = useState(null); // { name, found, x, y }
+  const [cityCard, setCityCard] = useState(null);
   const [tooltip, setTooltip] = useState({ name: null, x: 0, y: 0 });
-  const [loadingCard, setLoadingCard] = useState(false); // { x, y }
+  const [loadingCard, setLoadingCard] = useState(false);
+  const [imageReady, setImageReady] = useState(false);
 
   const foundCount = selectedProvince
     ? citiesFound.filter((c) => c.provincia === selectedProvince).length
@@ -175,9 +183,10 @@ export default function InteractiveMap({ citiesFound }) {
         );
         const displayName = group.id
           .replace(/_/g, " ")
-          .replaceAll(/[A-z]/g, "*");
+          .replaceAll(/[a-zA-Z]/g, "*");
         setCityCard(null);
         setLoadingCard(true);
+        setImageReady(false);
         fetch(
           API_URI +
             "/api/city?city_id=" +
@@ -187,14 +196,13 @@ export default function InteractiveMap({ citiesFound }) {
         )
           .then((response) => response.json())
           .then(async (city) => {
-            const thumbnail = await getWikiThumbnail(city.url);
-            setLoadingCard(false);
             setCityCard({
+              real_name: city.nome,
               name: found ? found.nome : displayName,
               found: Boolean(found),
               name_original: found ? found.nome_originale : "",
               territorio: city.territorio,
-              thumbnail,
+              thumbnail: null,
               popolazione:
                 Number(city.popolazione).toLocaleString("it-IT") + " abitanti",
               estensione:
@@ -204,6 +212,10 @@ export default function InteractiveMap({ citiesFound }) {
               x: e.clientX,
               y: e.clientY,
             });
+            setLoadingCard(false);
+
+            const thumbnail = await getWikiThumbnail(city.url);
+            setCityCard((prev) => (prev ? { ...prev, thumbnail } : prev));
           });
         return;
       }
@@ -213,7 +225,6 @@ export default function InteractiveMap({ citiesFound }) {
     },
     [selectedProvince, citiesFound],
   );
-
   return (
     <>
       {tooltip.name && tooltip.found && (
@@ -270,7 +281,6 @@ export default function InteractiveMap({ citiesFound }) {
               },
             }}
           >
-            <Skeleton variant="rectangular" height={140} />
             <CardContent>
               <Skeleton width="60%" height={24} />
               <Skeleton width="40%" height={20} sx={{ mt: 0.5 }} />
@@ -282,6 +292,7 @@ export default function InteractiveMap({ citiesFound }) {
           <Card
             sx={{
               position: "fixed",
+              display: "flex",
               bottom: 0,
               left: 0,
               right: 0,
@@ -289,11 +300,7 @@ export default function InteractiveMap({ citiesFound }) {
               boxShadow: 4,
               pointerEvents: "auto",
               overflow: "visible",
-              animation: "slideUp 0.3s ease",
-              "@keyframes slideUp": {
-                from: { transform: "translateY(100%)" },
-                to: { transform: "translateY(0)" },
-              },
+              transition: "transform 0.3s ease",
             }}
           >
             <IconButton
@@ -301,8 +308,8 @@ export default function InteractiveMap({ citiesFound }) {
               size="small"
               sx={{
                 position: "absolute",
-                top: -12,
-                right: -12,
+                top: 10,
+                right: 10,
                 zIndex: 1,
                 bgcolor: "background.paper",
                 boxShadow: 2,
@@ -312,22 +319,51 @@ export default function InteractiveMap({ citiesFound }) {
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
-            {cityCard.found ? (
-              <CardActionArea
-                href={cityCard.url}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <CardMedia
-                  component="img"
-                  image={cityCard.thumbnail}
-                  sx={{ objectFit: "cover", height: 140 }}
-                  loading="Caricamento"
-                />
-              </CardActionArea>
-            ) : (
-              ""
-            )}
+
+            <Box
+              sx={{
+                width: imageReady ? 150 : 0,
+                display: "flex",
+                flexDirection: "column",
+                transition: "width 0.3s ease",
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              <Box sx={{ width: 150, height: 150, position: "relative" }}>
+                {cityCard.thumbnail && (
+                  <>
+                    {!imageReady && (
+                      <Skeleton
+                        variant="rectangular"
+                        width={150}
+                        height={150}
+                        sx={{ position: "absolute", inset: 0 }}
+                      />
+                    )}
+                    <CardActionArea
+                      href={cityCard.url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      sx={{ flex: "1 0 auto" }}
+                    >
+                      <CardMedia
+                        component="img"
+                        image={cityCard.thumbnail}
+                        onLoad={() => setImageReady(true)}
+                        sx={{
+                          objectFit: "cover",
+                          height: 150,
+                          opacity: imageReady ? 1 : 0,
+                          transition: "opacity 320ms ease",
+                        }}
+                      />
+                    </CardActionArea>
+                  </>
+                )}
+              </Box>
+            </Box>
+
             <CardContent sx={{ pb: "12px !important", p: 2 }}>
               <Box sx={{ alignItems: "flex-start", gap: 1 }}>
                 <Box>
@@ -340,13 +376,15 @@ export default function InteractiveMap({ citiesFound }) {
                       }}
                     >
                       {Array.from(cityCard.name).map((char, index) => (
-                        <span key={index}>{cityCard.found ? char : bull}</span>
+                        <span key={index}>
+                          {cityCard.found ? char : bull(char)}
+                        </span>
                       ))}
-                    </Box>{" "}
+                    </Box>
                     <Box
                       sx={{
                         fontStyle: "italic",
-                        color: "text.secondary",
+                        color: "primary.main",
                       }}
                     >
                       {cityCard.name_original}

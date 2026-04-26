@@ -16,9 +16,9 @@
 
 .bullet {
   border: 1px solid #888;
-  border-radius: 25%;
+  border-radius: 5px;
   width: 1em;
-  height: 1em;
+  height: 1.5em;
   animation: pulse 1.5s infinite;
 }
 
