@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardMedia,
   CardActionArea,
+  Skeleton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -124,6 +125,7 @@ export default function InteractiveMap({ citiesFound }) {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [cityCard, setCityCard] = useState(null); // { name, found, x, y }
   const [tooltip, setTooltip] = useState({ name: null, x: 0, y: 0 });
+  const [loadingCard, setLoadingCard] = useState(false); // { x, y }
 
   const foundCount = selectedProvince
     ? citiesFound.filter((c) => c.provincia === selectedProvince).length
@@ -175,8 +177,10 @@ export default function InteractiveMap({ citiesFound }) {
           .replace(/_/g, " ")
           .replaceAll(/[A-z]/g, "*");
         setCityCard(null);
+        setLoadingCard(true);
         fetch(
-          API_URI + "/api/city?city_id=" +
+          API_URI +
+            "/api/city?city_id=" +
             encodeURIComponent(normalizedId)
               .replaceAll(/__/g, " ")
               .replace(/_/g, " "),
@@ -184,14 +188,17 @@ export default function InteractiveMap({ citiesFound }) {
           .then((response) => response.json())
           .then(async (city) => {
             const thumbnail = await getWikiThumbnail(city.url);
+            setLoadingCard(false);
             setCityCard({
               name: found ? found.nome : displayName,
               found: Boolean(found),
               name_original: found ? found.nome_originale : "",
               territorio: city.territorio,
               thumbnail,
-              popolazione: Number(city.popolazione).toLocaleString("it-IT") + " abitanti",
-              estensione: Math.round(city.superficie).toLocaleString("it-IT") + " km²",
+              popolazione:
+                Number(city.popolazione).toLocaleString("it-IT") + " abitanti",
+              estensione:
+                Math.round(city.superficie).toLocaleString("it-IT") + " km²",
               altitudine: city.altitudine.toLocaleString("it-IT") + " m",
               url: city.url,
               x: e.clientX,
@@ -246,18 +253,47 @@ export default function InteractiveMap({ citiesFound }) {
             </Typography>
           </Box>
         )}
+        {loadingCard && (
+          <Card
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 9998,
+              boxShadow: 4,
+              overflow: "hidden",
+              animation: "slideUp 0.3s ease",
+              "@keyframes slideUp": {
+                from: { transform: "translateY(100%)" },
+                to: { transform: "translateY(0)" },
+              },
+            }}
+          >
+            <Skeleton variant="rectangular" height={140} />
+            <CardContent>
+              <Skeleton width="60%" height={24} />
+              <Skeleton width="40%" height={20} sx={{ mt: 0.5 }} />
+              <Skeleton width="80%" height={20} sx={{ mt: 1 }} />
+            </CardContent>
+          </Card>
+        )}
         {cityCard && (
           <Card
             sx={{
               position: "fixed",
-              top: cityCard.y - 140,
-              left: cityCard.x - 140,
+              bottom: 0,
+              left: 0,
+              right: 0,
               zIndex: 9998,
-              minWidth: 180,
-              maxWidth: 300,
               boxShadow: 4,
               pointerEvents: "auto",
               overflow: "visible",
+              animation: "slideUp 0.3s ease",
+              "@keyframes slideUp": {
+                from: { transform: "translateY(100%)" },
+                to: { transform: "translateY(0)" },
+              },
             }}
           >
             <IconButton
@@ -329,7 +365,8 @@ export default function InteractiveMap({ citiesFound }) {
                 </Box>
 
                 <Box sx={{ mt: 1 }}>
-                  {cityCard.popolazione} — {cityCard.estensione} — {cityCard.altitudine}
+                  {cityCard.popolazione} — {cityCard.estensione} —{" "}
+                  {cityCard.altitudine}
                 </Box>
               </Box>
             </CardContent>
@@ -337,12 +374,18 @@ export default function InteractiveMap({ citiesFound }) {
         )}
         <div className="map_background">
           <Box
+            key={selectedProvince ?? "sardinia"} // Forza re-render quando cambia la provincia per aggiornare lo stile
             onClick={handleClick}
             onMouseMove={handleMouseMove}
             dangerouslySetInnerHTML={{ __html: svgContent }}
             sx={{
               display: "flex",
               justifyContent: "center",
+              animation: "fadeIn 0.35s ease",
+              "@keyframes fadeIn": {
+                from: { opacity: 0, transform: "scale(0.97)" },
+                to: { opacity: 1, transform: "scale(1)" },
+              },
               "& svg": {
                 width: "auto",
                 height: "auto",
@@ -351,8 +394,7 @@ export default function InteractiveMap({ citiesFound }) {
                 maxWidth: "100%",
               },
             }}
-          >         
-            </Box>
+          ></Box>
         </div>
       </Box>
     </>

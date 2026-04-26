@@ -155,7 +155,8 @@ function App() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          opacity: 0.1
+          opacity: 0.1,
+          zIndex: -9999
         }}
       />
       <Box sx={{ flexGrow: 1 }}>
