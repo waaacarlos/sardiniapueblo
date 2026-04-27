@@ -3,6 +3,7 @@ import time
 import logging
 import traceback
 
+import telegram
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
@@ -28,6 +29,7 @@ class Message:
         self.text = update.effective_message.text
         self.statsurl = constants.STATSURL.format(update.effective_chat.id)
         self.rankurl = constants.RANKURL.format(update.effective_chat.id)
+        self.forwarded = None
 
     async def async_init(self):
         await self.add_user()
@@ -41,7 +43,8 @@ class Message:
         achievements_unlocked = []
         try:
             try:
-                await self.context.bot.forward_message(LOG, self.chat_id, self.message_id)
+                self.forwarded: telegram.Message = await self.context.bot.forward_message(
+                    LOG, self.chat_id, self.message_id)
             except Exception as e:
                 await self.context.bot.send_message(LOG, str(e))
             if self.text == "/start":
@@ -73,7 +76,7 @@ class Message:
             for ach in achievements_unlocked:
                 await self.send_achievement(ach['title'], ach['description'])
                 await asyncio.sleep(1)
-            await dbuser.add_log(self.message_id, self.chat_id, self.text, msg_to_send)
+            await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")

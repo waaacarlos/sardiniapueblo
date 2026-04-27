@@ -133,7 +133,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                               {column.format && typeof value === "number"
                                 ? column.format(value)
                                 : value}
-                              {column.id === "fullname" && (
+                              {column.id === "public_name" && (
                                 <LinearProgress
                                   variant="determinate"
                                   value={(row["points"] / 377) * 100}
