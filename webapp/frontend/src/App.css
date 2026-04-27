@@ -74,13 +74,42 @@
   stroke: none;
 }
 
+
+.sardinia-mask-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sardinia-mask {
+  width: 80vw;
+  height: 80vh;
+  background-color: var(--app-bg);
+
+  -webkit-mask-image: var(--sardinia-url);
+  mask-image: var(--sardinia-url);
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
 .sardinia-border-gradient {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0, 0, 128, 1), transparent 100%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 70%);
   opacity: 1;
   
-  animation: spin 5s linear infinite backwards alternate;
+  animation: spin 5s ease infinite backwards alternate;
 }
 
 @keyframes spin {

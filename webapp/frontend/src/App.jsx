@@ -147,7 +147,7 @@ function App() {
     <div className="App">
       <div className="sardinia-bg">
         <div className="sardinia-border-gradient" />
-        <SardiniaShape className="sardinia-fill" />
+        <SardiniaShape/>
       </div>
       <Box sx={{ flexGrow: 1 }}>
         {authenticated && (
