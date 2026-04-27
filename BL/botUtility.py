@@ -27,6 +27,7 @@ class Message:
         self.message_id = update.effective_message.message_id
         self.text = update.effective_message.text
         self.statsurl = constants.STATSURL.format(update.effective_chat.id)
+        self.rankurl = constants.RANKURL.format(update.effective_chat.id)
 
     async def async_init(self):
         await self.add_user()
@@ -91,7 +92,10 @@ class Message:
         message = await self.context.bot.send_message(
             self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(
                 [
-                    [InlineKeyboardButton(text="Statistiche", web_app=WebAppInfo(self.statsurl))]
+                    [
+                        InlineKeyboardButton(text="Statistiche", web_app=WebAppInfo(self.statsurl)),
+                        InlineKeyboardButton(text="Classifica", web_app=WebAppInfo(self.rankurl)),
+                    ]
                 ]) if send_stats else None
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)

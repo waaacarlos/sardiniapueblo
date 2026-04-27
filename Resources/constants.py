@@ -30,3 +30,4 @@ PROVINCES = {
 
 load_dotenv()
 STATSURL = os.getenv('APP_URL') + "?playerId={0}"
+RANKURL = STATSURL + "&page=ranked"
