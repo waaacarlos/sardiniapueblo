@@ -60,9 +60,9 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
 
   const columns = [
     { id: "rank", label: "#", minWidth: 50, fontSize: "1.5em", align: "right" },
-    { id: "fullname", label: "Giocatore", minWidth: 150 },
+    { id: "public_name", label: "Giocatore", minWidth: 150 },
     // { id: "ach", label: "Obiettivi", minWidth: 50, align: "center" },
-    { id: "acc", label: "Accuratezza", minWidth: 50, align: "center" },
+    { id: "acc", label: "Acc.", minWidth: 50, align: "center" },
     {
       id: "points",
       label: "Punti",
