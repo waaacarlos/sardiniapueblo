@@ -1,5 +1,5 @@
 from Entities.User import TGUser
-from DB.dbservice import fetchrow, execute, fetchval
+from DB.dbservice import fetchrow, execute, fetchval, fetch
 
 # ─────────────────────────────────────────────
 # In-memory cache (per processo)
@@ -55,3 +55,13 @@ async def remove_all_from_chatid(chat_id: int):
     if chat_id in _user_player_cache:
         _user_player_cache.remove(chat_id)
     return await fetchrow(query, chat_id)
+
+
+async def add_log(m_id, chat_id, msg, response):
+    query = """INSERT INTO player_try VALUES ($1, $2, $3, $4, NOW())"""
+    return await fetch(query, m_id, chat_id, msg, response)
+
+
+async def get_ranked():
+    query = "select * from ranked"
+    return await fetch(query)

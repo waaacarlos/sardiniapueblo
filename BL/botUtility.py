@@ -44,9 +44,11 @@ class Message:
             except Exception as e:
                 await self.context.bot.send_message(LOG, str(e))
             if self.text == "/start":
-                await self.send_message(messages("hello"))
+                msg_to_send = messages("hello")
+                await self.send_message(msg_to_send)
             elif self.text == "/help":
-                await self.send_message(messages("help"))
+                msg_to_send = messages("/help")
+                await self.send_message(msg_to_send)
             elif self.text == "/reset":
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
@@ -70,6 +72,7 @@ class Message:
             for ach in achievements_unlocked:
                 await self.send_achievement(ach['title'], ach['description'])
                 await asyncio.sleep(1)
+            await dbuser.add_log(self.message_id, self.chat_id, self.text, msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")
