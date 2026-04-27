@@ -88,7 +88,7 @@ const SARDINIA_CSS = `
   g[id]:hover path { fill: #f0a500 !important; }
 `;
 
-function buildProvinceCss(foundNames) {
+function buildProvinceCss(foundNames, selectedCityId) {
   const foundSet = new Set(
     foundNames.map((n) =>
       n
@@ -109,6 +109,9 @@ function buildProvinceCss(foundNames) {
   `;
   for (const name of foundSet) {
     const escaped = CSS.escape(name);
+    const escapedSelected = CSS.escape(selectedCityId);
+    css += `g#${escapedSelected} path { fill: #1976d2 !important; stroke: #0d47a1 !important; stroke-width: 1.5px !important; }\n`;
+    css += `g#${escapedSelected}:hover path { fill: #1565c0 !important; }\n`;
     css += `g#${escaped} path { fill: #4caf50 !important; }\n`;
     css += `g#${escaped}:hover path { fill: #2e7d32 !important; cursor: pointer; }\n`;
   }
@@ -129,6 +132,7 @@ function normalizeCityId(name) {
 }
 
 export default function InteractiveMap({ citiesFound }) {
+  const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [cityCard, setCityCard] = useState(null);
   const [tooltip, setTooltip] = useState({ name: null, x: 0, y: 0 });
@@ -146,7 +150,7 @@ export default function InteractiveMap({ citiesFound }) {
   const svgContent = selectedProvince
     ? injectStyle(
         PROVINCE_MAP[selectedProvince].svg,
-        buildProvinceCss(foundInProvince),
+        buildProvinceCss(foundInProvince, selectedCityId),
       )
     : injectStyle(sardiniaSvg, SARDINIA_CSS);
 
@@ -178,6 +182,7 @@ export default function InteractiveMap({ citiesFound }) {
           return;
         }
         const normalizedId = group.id.toUpperCase();
+        setSelectedCityId(normalizedId);
         const found = citiesFound.find(
           (c) => normalizeCityId(c.nome) === normalizedId,
         );
@@ -259,8 +264,8 @@ export default function InteractiveMap({ citiesFound }) {
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="subtitle1">
-              {PROVINCE_MAP[selectedProvince].label} — {foundCount} comuni
-              trovati
+              {PROVINCE_MAP[selectedProvince].label} — comuni trovati:{" "}
+              {foundCount}
             </Typography>
           </Box>
         )}
@@ -367,11 +372,10 @@ export default function InteractiveMap({ citiesFound }) {
             <CardContent sx={{ pb: "12px !important", p: 2 }}>
               <Box sx={{ alignItems: "flex-start", gap: 1 }}>
                 <Box>
-                  <Box sx={{ alignItems: "center", display: "flex", gap: 0.5 }}>
+                  <Box sx={{ alignItems: "center" }}>
                     <Box
                       sx={{
-                        color: "primary.main",
-                        textAlign: "center",
+                        color: "primary.secondary",
                         fontSize: "1.1rem",
                       }}
                     >

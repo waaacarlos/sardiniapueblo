@@ -5,7 +5,7 @@ export default function PlayerProgressCard({
   count,
   percentage,
   total,
-  labelTop = "Hai trovato",
+  labelTop,
   labelBottom,
 }) {
   return (

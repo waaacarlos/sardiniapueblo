@@ -1,5 +1,6 @@
 import PlayerGreetings from "./PlayerGreetings";
-import { Box, Paper, Button, Dialog, DialogContent } from "@mui/material";
+import { Box, Paper, Button, Dialog, DialogContent, Fab } from "@mui/material";
+import NavigationIcon from "@mui/icons-material/Navigation";
 import PlayerProgressCard from "./PlayerProgressCard";
 import { useState } from "react";
 import InteractiveMap from "./InteractiveMap";
@@ -33,11 +34,12 @@ export default function PlayerDashboard({
         }}
         className="player-dashboard"
       >
-        <Paper sx={{ p: 2, width: "100%" }} className="player-dashboard">
-          <PlayerGreetings playerData={playerData} />
-        </Paper>
+        <PlayerGreetings playerData={playerData} />
       </Box>
-      <Box sx={{ position: "relative", overflow: "hidden" }}>
+      <Box
+        className="card-container"
+        sx={{ position: "relative", overflow: "hidden" }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -63,11 +65,6 @@ export default function PlayerDashboard({
             labelBottom={`obiettivi su ${totalAchievements}`}
           />
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
-          <Button variant="outlined" onClick={() => setMapOpen(true)}>
-            Mostra mappa
-          </Button>
-        </Box>
         <Dialog
           open={mapOpen}
           onClose={() => setMapOpen(false)}
@@ -78,6 +75,12 @@ export default function PlayerDashboard({
             <InteractiveMap citiesFound={citiesFound} />
           </DialogContent>
         </Dialog>
+        <Box className="actions-container">
+          <Fab variant="extended" onClick={() => setMapOpen(true)}>
+            <NavigationIcon />
+            Mostra mappa
+          </Fab>
+        </Box>
       </Box>
     </>
   );
