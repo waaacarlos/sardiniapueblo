@@ -65,3 +65,8 @@ async def add_log(m_id, chat_id, msg, response):
 async def get_ranked():
     query = "select * from ranked order by points desc, attempts asc, ach desc"
     return await fetch(query)
+
+
+async def add_public_name(chatid, name):
+    query = "UPDATE users SET public_name = $1 WHERE id = $2"
+    return await fetch(query, name, chatid)

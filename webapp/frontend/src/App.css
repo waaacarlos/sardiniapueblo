@@ -22,6 +22,10 @@
   justify-content: center;
 }
 
+.uela {
+  text-shadow: 0 0 10px black;
+}
+
 .card-container {
   margin-top: 20px;
   display: flex;

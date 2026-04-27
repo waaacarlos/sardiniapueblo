@@ -139,6 +139,12 @@ async def get_ranked():
     return await dbuser.get_ranked()
 
 
+@app.patch("/api/user/{chat_id}/public_name")
+async def update_public_name(chat_id: int, args: dict):
+    name = args.get("public_name")
+    return await dbuser.add_public_name(chat_id, name)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://sardiniapueblo.vercel.app"],

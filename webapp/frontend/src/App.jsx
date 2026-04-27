@@ -122,11 +122,19 @@ function App() {
         appbody = <h1>Loading...</h1>;
         break;
     }
-  }
-  else if (page === "ranked") {
-    appbody = <Ranked playerId={playerId} />;
-  }
-  else if (playerId) {
+  } else if (page === "ranked") {
+    appbody = (
+      <Ranked
+        playerId={playerId}
+        playerData={playerData}
+        onPublicNameSaved={(name) =>
+          setPlayerData((prev) =>
+            prev ? { ...prev, public_name: name } : prev,
+          )
+        }
+      />
+    );
+  } else if (playerId) {
     appbody = (
       <Box sx={{ p: 2 }}>
         <PlayerDashboard
@@ -145,7 +153,7 @@ function App() {
         <Paper sx={{ p: 2, mb: 2 }}>
           <InteractiveMap citiesFound={cities}></InteractiveMap>
         </Paper>
-      </Box >
+      </Box>
     );
   }
 
@@ -153,7 +161,7 @@ function App() {
     <div className="App">
       <div className="sardinia-bg">
         <div className="sardinia-border-gradient" />
-        <SardiniaShape/>
+        <SardiniaShape />
       </div>
       <Box sx={{ flexGrow: 1 }}>
         {authenticated && (
