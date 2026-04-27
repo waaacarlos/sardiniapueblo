@@ -8,10 +8,12 @@ import Achievements from "./pages/Achievements";
 import Login from "./pages/Login";
 import InteractiveMap from "./components/InteractiveMap";
 import SardiniaShape from "./components/SardiniaShape";
+import Ranked from "./pages/Ranked";
 
 function App() {
   const params = new URLSearchParams(window.location.search);
   const playerId = params.get("playerId");
+  const page = params.get("page");
   const [playerData, setPlayerData] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -120,7 +122,11 @@ function App() {
         appbody = <h1>Loading...</h1>;
         break;
     }
-  } else if (playerId) {
+  }
+  else if (page === "ranked") {
+    appbody = <Ranked playerId={playerId} />;
+  }
+  else if (playerId) {
     appbody = (
       <Box sx={{ p: 2 }}>
         <PlayerDashboard

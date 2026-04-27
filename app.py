@@ -134,6 +134,11 @@ async def update_achievement(ach_key: str, achievement: dict):
     return await dbachievements.update_achievement(ach_key, achievement)
 
 
+@app.get("/api/getranked")
+async def get_ranked():
+    return await dbuser.get_ranked()
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://sardiniapueblo.vercel.app"],

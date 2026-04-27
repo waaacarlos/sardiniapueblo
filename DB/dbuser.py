@@ -63,5 +63,5 @@ async def add_log(m_id, chat_id, msg, response):
 
 
 async def get_ranked():
-    query = "select * from ranked"
+    query = "select * from ranked order by points desc, attempts asc, ach desc"
     return await fetch(query)
