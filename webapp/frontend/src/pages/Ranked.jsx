@@ -13,6 +13,7 @@ import {
   Box,
   TextField,
   Button,
+  Grid,
 } from "@mui/material";
 
 export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
@@ -21,6 +22,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
   const [publicName, setPublicName] = useState(
     playerData?.public_name || playerData?.firstname || "",
   );
+  const [headerReady, setHeaderReady] = useState(false);
 
   const updatePublicName = async () => {
     try {
@@ -50,10 +52,31 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
   }, [playerData]);
 
   useEffect(() => {
+    setHeaderReady(false);
     fetch(`${API_URI}/api/getranked`)
       .then((response) => response.json())
       .then((data) => {
-        setRankingData(data.filter((entry) => entry.public_name));
+        const filtered = data
+          .filter((entry) => entry.public_name)
+          .map((entry) => ({ ...entry, visible: false })); // tutti nascosti inizialmente
+
+        setRankingData(filtered);
+        setTimeout(() => {
+          setHeaderReady(true);
+        }, 120);
+
+        filtered.forEach((_, index) => {
+          setTimeout(
+            () => {
+              setRankingData((prev) =>
+                prev.map((item, i) =>
+                  i === index ? { ...item, visible: true } : item,
+                ),
+              );
+            },
+            (index + 1) * 150,
+          );
+        });
       })
       .catch((error) => console.error("Error fetching ranking data:", error));
   }, [playerId, reload]);
@@ -74,82 +97,228 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
   ];
   if (!playerId || (playerData && playerData.public_name))
     return (
-      <>
-        <div className="ranked">
-          <h1>Classifica generale</h1>
-        </div>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: "80vh" }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
+      <Box className="ranked-container">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Box
+            sx={{
+              width: "90vw",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 3,
+              transition:
+                "transform 500ms ease, opacity 500ms ease, box-shadow 500ms ease",
+              transform: headerReady ? "translateY(0)" : "translateY(-10px)",
+              opacity: headerReady ? 1 : 0,
+              backgroundColor: "#06142BAA",
+              boxShadow: headerReady
+                ? "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)"
+                : "0 2px 8px rgba(0,0,0,0.08)",
+            }}
+          >
+            <Box className="uela" sx={{ textShadow: "0 0 10px black" }}>
+              <h1>CLASSIFICA GENERALE</h1>
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 900,
+            mx: "auto",
+            textShadow: "0 0 5px black",
+          }}
+        >
+          {rankingData?.map((player, index) => (
+            <Box
+              key={player.id}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                borderRadius: 3,
+                m: 2,
+              }}
+            >
+              <Grid
+                container
+                spacing={2}
+                wrap="nowrap"
+                sx={{
+                  opacity: player.visible ? 1 : 0,
+                  transform: player.visible
+                    ? "translateY(0)"
+                    : "translateY(-10px)",
+                  transition: "all 0.5s ease-in-out",
+                  width: "100%",
+                  alignItems: "center",
+                }}
+              >
+                <Grid size="auto">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Paper
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "1.5em",
+                        backgroundColor:
+                          index === 0
+                            ? "#a67c52AA"
+                            : player.id == playerId
+                              ? "#0d6b8740"
+                              : "#06142B80",
+                        boxShadow:
+                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                      }}
                     >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rankingData &&
-                  rankingData.map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row["id"]}
-                      >
-                        {columns.map((column) => {
-                          let value;
-                          switch (column.id) {
-                            case "rank":
-                              value = index + 1;
-                              break;
-                            case "acc":
-                              value =
-                                (
-                                  (row["points"] / row["attempts"]) *
-                                  100
-                                ).toFixed(0) + "%";
-                              break;
-                            default:
-                              value = row[column.id];
-                              break;
-                          }
-                          return (
-                            <TableCell
-                              key={`${row["id"]}-${column.id}`}
-                              align={column.align}
-                              style={{
-                                fontSize: column.fontSize || "1em",
-                                backgroundColor: column.bgColor || "inherit",
+                      {index + 1}
+                    </Paper>
+                  </Box>
+                </Grid>
+                <Grid size="grow">
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                    }}
+                  >
+                    <Paper
+                      sx={{
+                        width: "100%",
+                        height: 50,
+                        borderRadius: 3,
+                        backgroundColor:
+                          player.id == playerId
+                            ? "#0d6b8740"
+                            : index === 0
+                              ? "#a67c5240"
+                              : "#06142B80",
+                        boxShadow:
+                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      }}
+                    >
+                      <Grid container spacing={0} alignItems="center">
+                        <Grid size={10}>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              pt: 0.5,
+                              pl: 2,
+                              pb: 0,
+                              fontSize: "1.2em",
+                              letterSpacing: "0.05em",
+                            }}
+                          >
+                            {player.public_name.toUpperCase()}
+                          </Box>
+                        </Grid>
+                        <Grid size={2}>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              pt: 0.5,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.4em",
+                              letterSpacing: "0.01em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            Accuratezza
+                          </Box>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              pt: 0,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.8em",
+                              letterSpacing: "0.05em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            {((player.points / player.attempts) * 100).toFixed(
+                              0,
+                            )}
+                            %
+                          </Box>
+                        </Grid>
+                        <Grid size={12}>
+                          <Box className="progress-bar" sx={{ pl: 2, pr: 2 }}>
+                            <LinearProgress
+                              variant="determinate"
+                              value={(player.points / 377) * 100}
+                              sx={{
+                                width: "100%",
+                                borderRadius: 5,
                               }}
-                            >
-                              {column.format && typeof value === "number"
-                                ? column.format(value)
-                                : value}
-                              {column.id === "public_name" && (
-                                <LinearProgress
-                                  variant="determinate"
-                                  value={(row["points"] / 377) * 100}
-                                ></LinearProgress>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </>
+                              color="primary"
+                            />
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                  </Box>
+                </Grid>
+                <Grid size="auto">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Paper
+                      sx={{
+                        width: 75,
+                        height: 50,
+                        borderRadius: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "1.5em",
+                        backgroundColor:
+                          player.points === 377
+                            ? "#a67c5240"
+                            : index === 0
+                              ? "#a67c5240"
+                              : player.id == playerId
+                                ? "#0d6b8740"
+                                : "#06142B40",
+                        boxShadow:
+                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                      }}
+                    >
+                      {player.points}
+                    </Paper>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Box>
+          ))}
+        </Box>
+      </Box>
     );
   else if (playerId)
     return (
@@ -180,13 +349,16 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
             }}
           >
             <h1>Ciao, {playerData ? playerData.firstname : "giocatore"}!</h1>
-            <p>
-              Per poter visualizzare la classifica generale, è necessario che tu
-              abbia un nome pubblico.
-            </p>
-            <h3>Con quale nome vuoi essere visualizzato nella classifica?</h3>
-            {playerData && (
+
+            {playerData ? (
               <>
+                <p>
+                  Per poter visualizzare la classifica generale, è necessario
+                  che tu abbia un nome pubblico.
+                </p>
+                <h3>
+                  Con quale nome vuoi essere visualizzato nella classifica?
+                </h3>
                 <TextField
                   label="Nome pubblico"
                   variant="filled"
@@ -207,6 +379,8 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                   Continua
                 </Button>
               </>
+            ) : (
+              <p>Caricamento in corso...</p>
             )}
           </Box>
         </Paper>
