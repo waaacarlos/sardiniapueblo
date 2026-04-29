@@ -56,6 +56,7 @@ class Message:
             elif self.text == "/reset":
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
+                return
             elif self.text == "/list_provinces":
                 msg_to_send = await self.get_list_by_province()
                 await self.send_message_with_provinces(msg_to_send)
@@ -75,7 +76,7 @@ class Message:
             achievements_unlocked.extend(await achievementUtility.check_achievement(self.chat_id))
             for ach in achievements_unlocked:
                 await self.send_achievement(ach['title'], ach['description'])
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
             await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())

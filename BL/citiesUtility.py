@@ -161,7 +161,7 @@ def build_city_list(cities, msg_to_send):
                 prefix = starts_same(previous_found, next_found)
                 if not prefix:
                     prefix = city["nome"][0]
-            city_name = f"{prefix}<tg-spoiler>{city_name[max(len(prefix) - 1, 1):]}</tg-spoiler>"
+            city_name = f"{prefix}<tg-spoiler>{city_name[max(len(prefix), 1):]}</tg-spoiler>"
         else:
             previous_found = city_name
         msg_to_send += f"{str(counter).zfill(2)}. [{city['provincia']}] {city_name}\n"
