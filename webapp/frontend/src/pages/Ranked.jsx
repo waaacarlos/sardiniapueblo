@@ -58,7 +58,11 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
       .then((data) => {
         const filtered = data
           .filter((entry) => entry.public_name)
-          .map((entry) => ({ ...entry, visible: false })); // tutti nascosti inizialmente
+          .map((entry) => ({
+            ...entry,
+            visible: false,
+            displayStats: playerId == entry.id,
+          }));
 
         setRankingData(filtered);
         setTimeout(() => {
@@ -77,9 +81,19 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
             (index + 1) * 150,
           );
         });
+
+        console.log("Fetched ranking data:", filtered);
       })
       .catch((error) => console.error("Error fetching ranking data:", error));
   }, [playerId, reload]);
+
+  const showPlayerStats = (id) => {
+    setRankingData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, displayStats: !item.displayStats } : item,
+      ),
+    );
+  };
 
   const columns = [
     { id: "rank", label: "#", minWidth: 50, fontSize: "1.5em", align: "right" },
@@ -147,11 +161,12 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                 borderRadius: 3,
                 m: 2,
               }}
+              onClick={() => showPlayerStats(player.id)}
             >
               <Grid
                 container
                 spacing={2}
-                wrap="nowrap"
+                wrap="wrap"
                 sx={{
                   opacity: player.visible ? 1 : 0,
                   transform: player.visible
@@ -215,8 +230,8 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                         transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       }}
                     >
-                      <Grid container spacing={0} alignItems="center">
-                        <Grid size={{xs: 12, sm: 8}}>
+                      <Grid container spacing={0} sx={{ alignItems: "center" }}>
+                        <Grid size={{ xs: 12, lg: 9 }}>
                           <Box
                             sx={{
                               width: "100%",
@@ -226,12 +241,73 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                               pb: 0,
                               fontSize: "1.2em",
                               letterSpacing: "0.05em",
+                              transition: "all 1s ease",
                             }}
                           >
                             {player.public_name.toUpperCase()}
                           </Box>
                         </Grid>
-                        <Grid size={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
+                        <Grid
+                          size={{ xs: 3, lg: 1 }}
+                          sx={{
+                            maxHeight: player.displayStats ? "200px" : "0px",
+                            overflow: "hidden",
+                            opacity: player.displayStats ? 1 : 0,
+                            transform: player.displayStats
+                              ? "translateY(0)"
+                              : "translateY(-20px)",
+                            transition: "all 0.5s ease",
+                            scale: player.displayStats ? 1 : 0.8,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: "100%",
+                              pt: 0.5,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.4em",
+                              letterSpacing: "0.01em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            Trovati
+                          </Box>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              transition: "all 1s ease",
+                              pt: 0,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.8em",
+                              letterSpacing: "0.05em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            {((player.points / 377) * 100).toFixed(
+                              0,
+                            )}
+                            %
+                          </Box>
+                        </Grid>
+                        <Grid
+                          size={{ xs: 3, lg: 1 }}
+                          sx={{
+                            maxHeight: player.displayStats ? "200px" : "0px",
+                            overflow: "hidden",
+                            opacity: player.displayStats ? 1 : 0,
+                            transform: player.displayStats
+                              ? "translateY(0)"
+                              : "translateY(-20px)",
+                            transition: "all 0.5s ease",
+                            scale: player.displayStats ? 1 : 0.8,
+                          }}
+                        >
                           <Box
                             sx={{
                               width: "100%",
@@ -250,6 +326,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                           <Box
                             sx={{
                               width: "100%",
+                              transition: "all 1s ease",
                               pt: 0,
                               pl: 2,
                               pb: 0,
@@ -264,6 +341,52 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                               0,
                             )}
                             %
+                          </Box>
+                        </Grid>
+                        <Grid
+                          size={{ xs: 3, lg: 1 }}
+                          sx={{
+                            maxHeight: player.displayStats ? "200px" : "0px",
+                            overflow: "hidden",
+                            opacity: player.displayStats ? 1 : 0,
+                            transform: player.displayStats
+                              ? "translateY(0)"
+                              : "translateY(-20px)",
+                            transition: "all 0.5s ease",
+                            scale: player.displayStats ? 1 : 0.8,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: "100%",
+                              pt: 0.5,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.4em",
+                              letterSpacing: "0.01em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            Obiettivi
+                          </Box>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              transition: "all 1s ease",
+                              pt: 0,
+                              pl: 2,
+                              pb: 0,
+                              pr: 2,
+                              fontSize: "0.8em",
+                              letterSpacing: "0.05em",
+                              color: "text.secondary",
+                              textAlign: "center",
+                            }}
+                          >
+                            {player.ach}
+                            
                           </Box>
                         </Grid>
                         <Grid size={12}>
