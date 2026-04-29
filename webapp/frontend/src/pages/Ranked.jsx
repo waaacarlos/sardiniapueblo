@@ -202,7 +202,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                     <Paper
                       sx={{
                         width: "100%",
-                        height: 50,
+                        minHeight: 50,
                         borderRadius: 3,
                         backgroundColor:
                           player.id == playerId
@@ -216,10 +216,11 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                       }}
                     >
                       <Grid container spacing={0} alignItems="center">
-                        <Grid size={10}>
+                        <Grid size={{xs: 12, sm: 8}}>
                           <Box
                             sx={{
                               width: "100%",
+                              minHeight: "100%",
                               pt: 0.5,
                               pl: 2,
                               pb: 0,
@@ -230,7 +231,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                             {player.public_name.toUpperCase()}
                           </Box>
                         </Grid>
-                        <Grid size={2}>
+                        <Grid size={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
                           <Box
                             sx={{
                               width: "100%",
@@ -292,7 +293,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                     <Paper
                       sx={{
                         width: 75,
-                        height: 50,
+                        minHeight: 50,
                         borderRadius: 2,
                         display: "flex",
                         alignItems: "center",
