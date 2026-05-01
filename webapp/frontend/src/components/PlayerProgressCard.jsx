@@ -16,6 +16,9 @@ export default function PlayerProgressCard({
         justifyContent: "center",
         alignItems: "stretch",
         display: "flex",
+        backgroundColor: "#06142B80",
+        boxShadow:
+          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
       }}
       className="player-dashboard"
     >
@@ -25,7 +28,7 @@ export default function PlayerProgressCard({
           position: "relative",
           display: "flex",
           justifyContent: "center",
-            alignItems: "center",
+          alignItems: "center",
         }}
       >
         <CircularProgress

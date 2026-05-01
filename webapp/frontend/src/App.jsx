@@ -180,8 +180,8 @@ function App() {
       >
         <Box sx={{ textAlign: "center" }}>
           <div className="footer-text">
-            Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati. Mappe e
-            immagini: Wikipedia Commons Vonvikken CC BY-SA
+            Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati.<br/>
+            Mappe e immagini: Wikipedia Commons Vonvikken CC BY-SA
           </div>
         </Box>
       </Paper>

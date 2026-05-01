@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
+import { Fab } from "@mui/material";
+import DataUsageIcon from "@mui/icons-material/DataUsage";
+import EditIcon from "@mui/icons-material/Edit";
 import { API_URI } from "../api";
+
 import {
   // CircularProgress,
   LinearProgress,
@@ -23,8 +27,9 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
     playerData?.public_name || playerData?.firstname || "",
   );
   const [headerReady, setHeaderReady] = useState(false);
+  const [editName, setEditName] = useState(false);
 
-  const updatePublicName = async () => {
+  const updatePublicName = async (nameToSave = publicName) => {
     try {
       const response = await fetch(
         `${API_URI}/api/user/${playerId}/public_name`,
@@ -33,22 +38,25 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ public_name: publicName }),
+          body: JSON.stringify({ public_name: nameToSave }),
         },
       );
       if (!response.ok) {
         console.error("PATCH failed:", response.status);
-        return;
+        return false;
       }
-      onPublicNameSaved?.(publicName);
+      onPublicNameSaved?.(nameToSave);
       setReload((prev) => !prev);
+      return true;
     } catch (error) {
       console.error("Error updating public name:", error);
+      return false;
     }
   };
 
   useEffect(() => {
     setPublicName(playerData?.public_name || playerData?.firstname || "");
+    setEditName(false);
   }, [playerData]);
 
   useEffect(() => {
@@ -81,8 +89,6 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
             (index + 1) * 150,
           );
         });
-
-        console.log("Fetched ranking data:", filtered);
       })
       .catch((error) => console.error("Error fetching ranking data:", error));
   }, [playerId, reload]);
@@ -109,7 +115,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
       bgColor: "primary.dark",
     },
   ];
-  if (!playerId || (playerData && playerData.public_name))
+  if (!playerId || (playerData && playerData.public_name && !editName))
     return (
       <Box className="ranked-container">
         <Box
@@ -248,14 +254,14 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                           </Box>
                         </Grid>
                         <Grid
-                          size={{ xs: 3, lg: 1 }}
+                          size={{ xs: 4, lg: 1 }}
                           sx={{
                             maxHeight: player.displayStats ? "200px" : "0px",
                             overflow: "hidden",
                             opacity: player.displayStats ? 1 : 0,
                             transform: player.displayStats
                               ? "translateY(0)"
-                              : "translateY(-20px)",
+                              : "translateY(-10px)",
                             transition: "all 0.5s ease",
                             scale: player.displayStats ? 1 : 0.8,
                           }}
@@ -289,21 +295,18 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                               textAlign: "center",
                             }}
                           >
-                            {((player.points / 377) * 100).toFixed(
-                              0,
-                            )}
-                            %
+                            {((player.points / 377) * 100).toFixed(0)}%
                           </Box>
                         </Grid>
                         <Grid
-                          size={{ xs: 3, lg: 1 }}
+                          size={{ xs: 4, lg: 1 }}
                           sx={{
                             maxHeight: player.displayStats ? "200px" : "0px",
                             overflow: "hidden",
                             opacity: player.displayStats ? 1 : 0,
                             transform: player.displayStats
                               ? "translateY(0)"
-                              : "translateY(-20px)",
+                              : "translateY(-10px)",
                             transition: "all 0.5s ease",
                             scale: player.displayStats ? 1 : 0.8,
                           }}
@@ -344,14 +347,14 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                           </Box>
                         </Grid>
                         <Grid
-                          size={{ xs: 3, lg: 1 }}
+                          size={{ xs: 4, lg: 1 }}
                           sx={{
                             maxHeight: player.displayStats ? "200px" : "0px",
                             overflow: "hidden",
                             opacity: player.displayStats ? 1 : 0,
                             transform: player.displayStats
                               ? "translateY(0)"
-                              : "translateY(-20px)",
+                              : "translateY(-10px)",
                             transition: "all 0.5s ease",
                             scale: player.displayStats ? 1 : 0.8,
                           }}
@@ -386,7 +389,6 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                             }}
                           >
                             {player.ach}
-                            
                           </Box>
                         </Grid>
                         <Grid size={12}>
@@ -442,9 +444,21 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
             </Box>
           ))}
         </Box>
+        {playerId && (
+          <Box className="actions-container">
+            <Fab variant="extended" onClick={() => setEditName(true)}>
+              <EditIcon />
+              Cambia nome
+            </Fab>
+            <Fab variant="extended" href={`/?playerId=${playerData.id}`}>
+              <DataUsageIcon />
+              Statistiche
+            </Fab>
+          </Box>
+        )}
       </Box>
     );
-  else if (playerId)
+  else if (playerId || editName)
     return (
       <Box
         sx={{
@@ -477,8 +491,8 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
             {playerData ? (
               <>
                 <p>
-                  Per poter visualizzare la classifica generale, è necessario
-                  che tu abbia un nome pubblico.
+                  Per poter apparire nella classifica generale, è necessario che
+                  tu abbia un nome pubblico.
                 </p>
                 <h3>
                   Con quale nome vuoi essere visualizzato nella classifica?
@@ -497,10 +511,24 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                 </h6>
                 <Button
                   variant="contained"
-                  color="success"
-                  onClick={updatePublicName}
+                  color="primary"
+                  onClick={() => updatePublicName()}
                 >
                   Continua
+                </Button>
+                <p></p>
+                <p>Non vuoi apparire nella classifica?</p>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={async () => {
+                    const ok = await updatePublicName("");
+                    if (ok) {
+                      window.location.href = "/?page=ranked";
+                    }
+                  }}
+                >
+                  Vai alla classifica
                 </Button>
               </>
             ) : (

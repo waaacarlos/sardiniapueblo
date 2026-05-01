@@ -17,9 +17,12 @@
 
 .actions-container {
   position: fixed;
-  bottom: 5vh;
-  right: 5vw;
+  bottom: 6vh;
+  right: 6vw;
   justify-content: center;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
 }
 
 .uela {

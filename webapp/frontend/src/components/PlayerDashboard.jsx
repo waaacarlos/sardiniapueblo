@@ -1,6 +1,7 @@
 import PlayerGreetings from "./PlayerGreetings";
 import { Box, Paper, Button, Dialog, DialogContent, Fab } from "@mui/material";
-import NavigationIcon from "@mui/icons-material/Navigation";
+import MapIcon from "@mui/icons-material/Map";
+import GradeIcon from "@mui/icons-material/Grade";
 import PlayerProgressCard from "./PlayerProgressCard";
 import { useState } from "react";
 import InteractiveMap from "./InteractiveMap";
@@ -76,9 +77,19 @@ export default function PlayerDashboard({
           </DialogContent>
         </Dialog>
         <Box className="actions-container">
+          {playerData && (
+            <Fab
+              variant="extended"
+              href={`/?playerId=${playerData.id}&page=ranked`}
+            >
+              <GradeIcon />
+              Classifica
+            </Fab>
+          )}
+
           <Fab variant="extended" onClick={() => setMapOpen(true)}>
-            <NavigationIcon />
-            Mostra mappa
+            <MapIcon />
+            Mappa
           </Fab>
         </Box>
       </Box>
