@@ -111,12 +111,17 @@ async def login(body: dict):
 
 @app.post("/api/logout")
 async def logout():
-    return {"ok": True}  # il frontend eliminerà il token
+    return {"ok": True}
 
 
 @app.get("/api/achievements")
 async def get_achievements():
     return await dbachievements.get_achievements()
+
+
+@app.get("/api/achievements/{player_id}")
+async def get_achievements_from_player(player_id: int):
+    return await dbachievements.get_achievements(player_id, True)
 
 
 @app.post("/api/achievements", dependencies=[Depends(require_auth)])

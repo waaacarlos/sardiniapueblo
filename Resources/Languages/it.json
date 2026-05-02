@@ -26,5 +26,7 @@
   "multiple_similar_hint_already_found": "Di questi, hai già trovato {1}.\n",
   "hint_multiple": "\n<b>Ti mancano:</b>",
   "hint_single": "\n<b>Ti manca:</b>",
-  "all_hinted": " (non ringraziarmi)"
+  "all_hinted": " (non ringraziarmi)",
+  "ach_low_perc": "\n<i>Solo {0} ha sbloccato questo obiettivo!</i>",
+  "ach_perc": "\n<i>{0} ha sbloccato questo obiettivo!</i>"
 }

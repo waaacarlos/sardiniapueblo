@@ -34,3 +34,7 @@ async def check_achievement(player, event=None):
         else:
             raise Exception(f"Unknown category {ach['category']}")
     return unlocked
+
+
+async def get_percentage_ach():
+    return {ach['achievement']: ach['percentage'] for ach in await dbachievements.get_percentage_ach()}

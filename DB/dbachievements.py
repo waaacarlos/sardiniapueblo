@@ -13,7 +13,7 @@ def _normalize_achievement_payload(achievement):
     return category, threshold, province, event
 
 
-async def get_achievements(chat_id=None):
+async def get_achievements(chat_id=None, include_all=False):
     query = """
         SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event, 
         array_remove(array_agg(ac.city), NULL) as cities
@@ -25,8 +25,9 @@ async def get_achievements(chat_id=None):
         query += f"""
             left outer join user_achievements ua on ua.achievement = a.ach_key
             and player = $1
-            where player is null
         """
+        if not include_all:
+            query += "where player is null\n"
         args.append(chat_id)
     query += "group by a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event order by a.title"
     return await fetch(query, *args)
@@ -139,3 +140,12 @@ async def update_achievement(ach_key, achievement):
                     )
 
     return res
+
+
+async def get_percentage_ach():
+    q = """with player as (select count(*) as cnt from users where id > 1000)
+        select achievement, count(achievement)*100 / player.cnt as percentage
+        from user_achievements a, player
+        group by achievement, player.cnt
+    """
+    return await fetch(q)

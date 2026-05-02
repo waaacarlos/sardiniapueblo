@@ -74,9 +74,11 @@ class Message:
                         await achievementUtility.check_achievement(self.chat_id, "duplicate")
                     )
             achievements_unlocked.extend(await achievementUtility.check_achievement(self.chat_id))
-            for ach in achievements_unlocked:
-                await self.send_achievement(ach['title'], ach['description'])
-                await asyncio.sleep(0.5)
+            if achievements_unlocked:
+                ach_percentage = await achievementUtility.get_percentage_ach()
+                for ach in achievements_unlocked:
+                    await self.send_achievement(ach['title'], ach['description'], ach_percentage[ach['ach_key']])
+                    await asyncio.sleep(0.5)
             await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
@@ -105,8 +107,13 @@ class Message:
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
 
-    async def send_achievement(self, title, description):
+    async def send_achievement(self, title, description, percent):
         msg_to_send = messages("achievement_unlocked").format(title, description)
+        perc_text = f"{"l'" if percent in (8, 11) else "il "}{percent}%"
+        if percent < 25:
+            msg_to_send += messages("ach_low_perc").format(perc_text)
+        elif percent < 50:
+            msg_to_send += messages("ach_perc").format(perc_text.capitalize())
         await self.send_message(msg_to_send)
 
     async def send_message_with_provinces(self, text):
