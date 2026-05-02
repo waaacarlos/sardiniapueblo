@@ -468,16 +468,6 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
           justifyContent: "center",
         }}
       >
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "var(--bg-secondary)",
-          }}
-        >
           <Box
             className="uela"
             sx={{
@@ -486,7 +476,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
               alignItems: "center",
             }}
           >
-            <h1>Ciao, {playerData ? playerData.firstname : "giocatore"}!</h1>
+            <h1>Ciao {playerData ? playerData.firstname : ""}</h1>
 
             {playerData ? (
               <>
@@ -535,7 +525,6 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
               <p>Caricamento in corso...</p>
             )}
           </Box>
-        </Paper>
       </Box>
     );
 }
