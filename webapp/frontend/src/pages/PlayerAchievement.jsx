@@ -31,6 +31,7 @@ export default function PlayerAchievement({
   const surfaceColors = theme.palette.app?.surface;
   const rankingColors = theme.palette.app?.ranking;
 
+  const [headerReady, setHeaderReady] = useState(false);
   const [achievements, setAchievements] = useState([]);
 
   useEffect(() => {
@@ -42,10 +43,10 @@ export default function PlayerAchievement({
       .then((data) => {
         if (cancelled) return;
 
-        const achs = [...data]
-          .map((ach) => ({ ...ach, visible: false }));
+        const achs = [...data].map((ach) => ({ ...ach, visible: false }));
 
         setAchievements(achs);
+        setTimeout(() => setHeaderReady(true), 50);
 
         achs.forEach((_, index) => {
           const id = setTimeout(
@@ -77,7 +78,7 @@ export default function PlayerAchievement({
           ach.cities.includes(city.id),
         ).length;
         return calcProgress(cityCount, ach.cities.length).toFixed(0);
-      case "provinces":
+      case "province":
         let provinceFoundCount = citiesFound.filter(
           (city) => city.provincia === ach.province,
         ).length;
@@ -113,8 +114,30 @@ export default function PlayerAchievement({
             boxShadow: softShadow,
           }}
         >
-          <Box p={2} m={2} sx={{ textShadow: "0 0 10px black" }}>
-            <h1>Obiettivi sbloccati</h1>
+          <Box
+            p={2}
+            m={2}
+            sx={{
+              textShadow: "0 0 10px black",
+            }}
+          >
+            <Box
+              p={2}
+              m={2}
+              sx={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                letterSpacing: headerReady ? "normal" : "0.5em",
+                minHeight: headerReady ? "0" : "90vh",
+                transition: "all 1s ease",
+                alignItems: "center",
+                display: "flex",
+                gap: 2,
+                justifyContent: "center",
+              }}
+            >
+              <h3>Obiettivi sbloccati</h3>
+            </Box>
           </Box>
         </Box>
       </Box>
