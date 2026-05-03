@@ -60,7 +60,7 @@ export default function PlayerAchievement({
                 ),
               );
             },
-            (index + 1) * 150,
+            (index + 1) * 100,
           );
 
           timeouts.push(id);
@@ -219,12 +219,50 @@ export default function PlayerAchievement({
                 <Grid size={9} sx={{ alignItems: "flex-start", gap: 1 }}>
                   <CardContent>
                     <Typography variant="h6">
-                      {ach.unlocked || ach.title_visible ? ach.title : "??????"}
+                      {ach.unlocked || ach.title_visible ? (
+                        ach.title
+                      ) : (
+                        <Box
+                          sx={{
+                            height: "1.5em",
+                            width: "80%",
+                            backgroundColor: rankingColors?.highlight,
+                            borderRadius: 1,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            color: "text.secondary",
+                            textShadow: "0 0 5px black",
+                            pointerEvents: "none",
+                            fontSize: "1rem",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
+                          Obiettivo nascosto
+                        </Box>
+                      )}
                     </Typography>
                     <Typography variant="body2">
-                      {ach.unlocked || ach.description_visible
-                        ? ach.description
-                        : "??????"}
+                      {ach.unlocked || ach.description_visible ? (
+                        ach.description
+                      ) : (
+                        <Box
+                          sx={{
+                            height: 16,
+                            width: "80%",
+                            backgroundColor: rankingColors?.highlight,
+                            borderRadius: 1,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            color: "text.secondary",
+                            textShadow: "0 0 5px black",
+                            pointerEvents: "none",
+                            fontSize: "0.75rem",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
+                          Descrizione nascosta
+                        </Box>
+                      )}
                     </Typography>
                     <Typography
                       variant="caption"
