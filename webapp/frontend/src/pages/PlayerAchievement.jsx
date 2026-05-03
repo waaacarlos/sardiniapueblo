@@ -34,7 +34,7 @@ export default function PlayerAchievement({
   const [achievements, setAchievements] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URI}/api/player/achievements/?player_id=${playerId}`)
+    fetch(`${API_URI}/api/player/achievements?player_id=${playerId}`)
       .then((response) => response.json())
       .then((data) => {
         setAchievements(data);
