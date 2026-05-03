@@ -1,6 +1,7 @@
 import PlayerGreetings from "./PlayerGreetings";
 import { Box, Paper, Button, Dialog, DialogContent, Fab } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GradeIcon from "@mui/icons-material/Grade";
 import PlayerProgressCard from "./PlayerProgressCard";
 import { useState } from "react";
@@ -23,6 +24,12 @@ export default function PlayerDashboard({
     (unlockedAchievements / safeTotalAchievements) * 100;
 
   const [mapOpen, setMapOpen] = useState(false);
+  const achievementsAction = {
+    icon: <EmojiEventsIcon />,
+    onClick: () => {
+      window.location.href = `/?playerId=${playerData.id}&page=achs`;
+    },
+  }
 
   return (
     <>
@@ -64,6 +71,7 @@ export default function PlayerDashboard({
             total={totalAchievements}
             labelTop="Hai sbloccato"
             labelBottom={`obiettivi su ${totalAchievements}`}
+            action={achievementsAction}
           />
         </Box>
         <Dialog

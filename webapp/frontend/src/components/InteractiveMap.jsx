@@ -15,6 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
+import { useTheme } from "@mui/material/styles";
 
 import sardiniaSvg from "../../assets/sardinia.svg?raw";
 import caSvg from "../../assets/ca.svg?raw";
@@ -83,12 +84,14 @@ function injectStyle(svgText, css) {
   return result.replace(/<svg([^>]*)>/, `<svg$1><style>${css}</style>`);
 }
 
-const SARDINIA_CSS = `
-  g[id] path { fill: #f8c300 !important; cursor: pointer; }
-  g[id]:hover path { fill: #f0a500 !important; }
-`;
+function buildSardiniaCss(mapColors) {
+  return `
+    g[id] path { fill: ${mapColors.base} !important; cursor: pointer; }
+    g[id]:hover path { fill: ${mapColors.baseHover} !important; }
+  `;
+}
 
-function buildProvinceCss(foundNames, selectedCityId) {
+function buildProvinceCss(foundNames, selectedCityId, mapColors) {
   const foundSet = new Set(
     foundNames.map((n) =>
       n
@@ -104,16 +107,16 @@ function buildProvinceCss(foundNames, selectedCityId) {
     ),
   );
   let css = `
-    g[id] path { fill: #cccccc !important; }
-    g[id]:hover path { fill: #aaaaaa !important; cursor: pointer; }
+    g[id] path { fill: ${mapColors.neutral} !important; }
+    g[id]:hover path { fill: ${mapColors.neutralHover} !important; cursor: pointer; }
   `;
   for (const name of foundSet) {
     const escaped = CSS.escape(name);
     const escapedSelected = CSS.escape(selectedCityId);
-    css += `g#${escapedSelected} path { fill: #1976d2 !important; stroke: #0d47a1 !important; stroke-width: 1.5px !important; }\n`;
-    css += `g#${escapedSelected}:hover path { fill: #1565c0 !important; }\n`;
-    css += `g#${escaped} path { fill: #4caf50 !important; }\n`;
-    css += `g#${escaped}:hover path { fill: #2e7d32 !important; cursor: pointer; }\n`;
+    css += `g#${escapedSelected} path { fill: ${mapColors.selected} !important; stroke: ${mapColors.selectedStroke} !important; stroke-width: 1.5px !important; }\n`;
+    css += `g#${escapedSelected}:hover path { fill: ${mapColors.selectedHover} !important; }\n`;
+    css += `g#${escaped} path { fill: ${mapColors.found} !important; }\n`;
+    css += `g#${escaped}:hover path { fill: ${mapColors.foundHover} !important; cursor: pointer; }\n`;
   }
   return css;
 }
@@ -132,6 +135,8 @@ function normalizeCityId(name) {
 }
 
 export default function InteractiveMap({ citiesFound }) {
+  const theme = useTheme();
+  const mapColors = theme.palette.app?.map;
   const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [cityCard, setCityCard] = useState(null);
@@ -150,9 +155,9 @@ export default function InteractiveMap({ citiesFound }) {
   const svgContent = selectedProvince
     ? injectStyle(
         PROVINCE_MAP[selectedProvince].svg,
-        buildProvinceCss(foundInProvince, selectedCityId),
+        buildProvinceCss(foundInProvince, selectedCityId, mapColors),
       )
-    : injectStyle(sardiniaSvg, SARDINIA_CSS);
+    : injectStyle(sardiniaSvg, buildSardiniaCss(mapColors));
 
   const handleMouseMove = useCallback((e) => {
     const group = e.target.closest("g[id]");

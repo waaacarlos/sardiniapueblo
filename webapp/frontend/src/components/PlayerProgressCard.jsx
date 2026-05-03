@@ -1,4 +1,5 @@
-import { Box, CircularProgress, Paper } from "@mui/material";
+import { Box, CircularProgress, Paper, Fab } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function PlayerProgressCard({
   loading,
@@ -7,7 +8,10 @@ export default function PlayerProgressCard({
   total,
   labelTop,
   labelBottom,
+  action
 }) {
+  const theme = useTheme();
+
   return (
     <Paper
       sx={{
@@ -16,9 +20,8 @@ export default function PlayerProgressCard({
         justifyContent: "center",
         alignItems: "stretch",
         display: "flex",
-        backgroundColor: "#06142B80",
-        boxShadow:
-          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+        backgroundColor: theme.palette.app?.surface?.soft,
+        boxShadow: theme.customShadows?.raisedInset,
       }}
       className="player-dashboard"
     >
@@ -56,6 +59,15 @@ export default function PlayerProgressCard({
               <div className="player-points-text">{labelBottom}</div>
             )}
           </Box>
+        )}
+        {action && (
+          <Fab
+            size="small"
+            sx={{ position: "absolute", bottom: 2, right: 2 }}
+            onClick={action.onClick}
+          >
+            {action.icon}
+          </Fab>
         )}
       </Box>
     </Paper>
