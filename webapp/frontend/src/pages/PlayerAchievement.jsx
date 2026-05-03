@@ -196,7 +196,7 @@ export default function PlayerAchievement({
                       <div className="player-achievement-situation">
                         <EmojiEventsIcon
                           fontSize="large"
-                          color={ach.unlocked ? "primary" : "disabled"}
+                          color={ach.unlocked ? "warning" : "disabled"}
                         />
                       </div>
                     </Box>
