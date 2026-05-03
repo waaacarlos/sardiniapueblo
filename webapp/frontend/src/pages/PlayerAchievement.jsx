@@ -13,6 +13,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { API_URI } from "../api";
 import { useTheme } from "@mui/material/styles";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 
 function calcProgress(count, total) {
   const maxcount = Math.max(count, total);
@@ -136,7 +138,7 @@ export default function PlayerAchievement({
                 justifyContent: "center",
               }}
             >
-              <h3>Obiettivi sbloccati</h3>
+              <h3>Obiettivi</h3>
             </Box>
           </Box>
         </Box>
@@ -194,10 +196,22 @@ export default function PlayerAchievement({
                       }}
                     >
                       <div className="player-achievement-situation">
-                        <EmojiEventsIcon
-                          fontSize="large"
-                          color={ach.unlocked ? "warning" : "disabled"}
-                        />
+                        {ach.category === "province" ? (
+                          <LocationCityIcon
+                            fontSize="large"
+                            color={ach.unlocked ? "warning" : "disabled"}
+                          />
+                        ) : ach.category === "city" ? (
+                          <MapsHomeWorkIcon
+                            fontSize="large"
+                            color={ach.unlocked ? "warning" : "disabled"}
+                          />
+                        ) : (
+                          <EmojiEventsIcon
+                            fontSize="large"
+                            color={ach.unlocked ? "warning" : "disabled"}
+                          />
+                        )}
                       </div>
                     </Box>
                   </Box>
