@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import InteractiveMap from "./components/InteractiveMap";
 import SardiniaShape from "./components/SardiniaShape";
 import Ranked from "./pages/Ranked";
+import PlayerAchievement from "./pages/PlayerAchievement";
 
 function App() {
   const params = new URLSearchParams(window.location.search);
@@ -39,7 +40,8 @@ function App() {
       fetch(`${API_URI}/api/player/achievements?player_id=${playerData.id}`)
         .then((response) => response.json())
         .then((data) => {
-          setUnlockedAchievements(Array.isArray(data) ? data.length : 0);
+          setUnlockedAchievements(Array.isArray(data) ? data.filter((ach) => ach.unlocked).length : 0);
+          setTotalAchievements(Array.isArray(data) ? data.length : 1);
         })
         .catch((error) =>
           console.error("Error fetching player achievements:", error),
@@ -47,15 +49,6 @@ function App() {
         .finally(() => setAchievementsLoading(false));
     }
   }, [playerData]);
-
-  useEffect(() => {
-    fetch(`${API_URI}/api/achievements`)
-      .then((response) => response.json())
-      .then((data) => {
-        setTotalAchievements(Array.isArray(data) ? data.length : 0);
-      })
-      .catch((error) => console.error("Error fetching achievements:", error));
-  }, []);
 
   useEffect(() => {
     fetch(`${API_URI}/api/all_cities`)
@@ -108,7 +101,7 @@ function App() {
   if (showLogin) {
     switch (authenticated) {
       case true:
-        appbody = <Achievements onLogout={handleLogout} cities={citiesFound} />;
+        appbody = <Achievements onLogout={handleLogout} cities={cities} />;
         break;
       case false:
         appbody = (
@@ -133,6 +126,15 @@ function App() {
           )
         }
       />
+    );
+  } else if (page === "achs") {
+    appbody = (
+      <PlayerAchievement
+        playerId={playerId}
+        playerData={playerData}
+        citiesFound={citiesFound}
+        cities={cities}
+      ></PlayerAchievement>
     );
   } else if (playerId) {
     appbody = (
@@ -171,6 +173,7 @@ function App() {
         )}
       </Box>
       <div className="content">{appbody}</div>
+
       <Paper
         sx={{ margin: 1, bottom: 0, left: 0, right: 0, position: "fixed" }}
         elevation={3}
@@ -180,7 +183,8 @@ function App() {
       >
         <Box sx={{ textAlign: "center" }}>
           <div className="footer-text">
-            Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati.<br/>
+            Copyright © 2026 Sardinia Pueblo. Tutti i diritti riservati.
+            <br />
             Mappe e immagini: Wikipedia Commons Vonvikken CC BY-SA
           </div>
         </Box>

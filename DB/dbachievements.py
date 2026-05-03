@@ -15,7 +15,8 @@ def _normalize_achievement_payload(achievement):
 
 async def get_achievements(chat_id=None, include_all=False):
     query = """
-        SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event, 
+        SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event,
+            a.title_visible, a.description_visible,
         array_remove(array_agg(ac.city), NULL) as cities
         FROM public.achievements a
         left join achievement_cities ac on ac.ach_key = a.ach_key
@@ -29,18 +30,28 @@ async def get_achievements(chat_id=None, include_all=False):
         if not include_all:
             query += "where player is null\n"
         args.append(chat_id)
-    query += "group by a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event order by a.title"
+    query += """
+        group by a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event,
+            a.title_visible, a.description_visible
+        order by a.title
+    """
     return await fetch(query, *args)
 
 
 async def get_player_achievements(chat_id):
     query = """
-    select achievement
-    from user_achievements
-    where player = $1
+    select a.ach_key, title, description, category, threshold, province, event, title_visible, description_visible,
+        percentage, unlocked, array_remove(array_agg(ac.city), NULL) as cities
+    from user_achievements ua
+    right join achievements a on ua.achievement = a.ach_key and player = $1
+    join achievement_global g on a.ach_key = g.achievement
+    left join achievement_cities ac on ac.ach_key = a.ach_key
+    group by a.ach_key, title, description, category, threshold, province, event, title_visible, description_visible,
+        percentage, unlocked
+    order by percentage desc
     """
     result = await fetch(query, chat_id) or []
-    return [i['achievement'] for i in result]
+    return result
 
 
 async def add_achievement(achievement, chat_id):
@@ -113,7 +124,9 @@ async def update_achievement(ach_key, achievement):
             category = $4,
             threshold = $5,
             province = $6,
-            event = $7
+            event = $7,
+            title_visible = $8,
+            description_visible = $9
         WHERE ach_key = $1"""
 
     async with get_transaction() as conn:
@@ -127,6 +140,8 @@ async def update_achievement(ach_key, achievement):
                 threshold,
                 province,
                 event,
+                achievement["title_visible"],
+                achievement["description_visible"],
             )
 
             await conn.execute("DELETE FROM achievement_cities WHERE ach_key = $1", ach_key)

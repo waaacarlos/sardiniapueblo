@@ -1,0 +1,214 @@
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  Fab,
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import DataUsageIcon from "@mui/icons-material/DataUsage";
+import EditIcon from "@mui/icons-material/Edit";
+import { API_URI } from "../api";
+import { useTheme } from "@mui/material/styles";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+
+function calcProgress(count, total) {
+  const maxcount = Math.max(count, total);
+  return (count / maxcount) * 100;
+}
+
+export default function PlayerAchievement({
+  playerId,
+  playerData,
+  citiesFound,
+  cities,
+}) {
+  const theme = useTheme();
+  const shellShadow = theme.customShadows?.raisedInset;
+  const softShadow = theme.customShadows?.soft;
+  const surfaceColors = theme.palette.app?.surface;
+  const rankingColors = theme.palette.app?.ranking;
+
+  const [achievements, setAchievements] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URI}/api/player/achievements/?player_id=${playerId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAchievements(data);
+        setAchievements((prev) =>
+          prev.map((ach) => ({ ...ach, visible: false })),
+        );
+      })
+      .catch((error) =>
+        console.error("Error fetching player achievements:", error),
+      );
+  }, [playerId, citiesFound]);
+
+  const formatProgress = (ach) => {
+    switch (ach.category) {
+      case "city":
+        let cityCount = citiesFound.filter((city) =>
+          ach.cities.includes(city.id),
+        ).length;
+        return calcProgress(cityCount, ach.cities.length).toFixed(0);
+      case "provinces":
+        let provinceFoundCount = citiesFound.filter(
+          (city) => city.provincia === ach.province,
+        ).length;
+        let provinceCount = cities.filter(
+          (city) => city.provincia === ach.province,
+        ).length;
+        return calcProgress(provinceFoundCount, provinceCount).toFixed(0);
+      case "progress":
+        return calcProgress(citiesFound.length, ach.threshold).toFixed(0);
+      default:
+        return ach.unlocked ? 100 : 0;
+    }
+  };
+
+  return (
+    <div>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: "90vw",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 3,
+            backgroundColor: surfaceColors?.strong,
+            boxShadow: softShadow,
+          }}
+        >
+          <Box p={2} m={2} sx={{ textShadow: "0 0 10px black" }}>
+            <h1>Obiettivi sbloccati</h1>
+          </Box>
+        </Box>
+      </Box>
+      <Grid container spacing={2} sx={{ mb: 2, alignItems: "center" }}>
+        {achievements
+          .sort((a, b) => b.unlocked - a.unlocked)
+          .map((ach) => (
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={ach.ach_key}>
+              <Card
+                key={ach.ach_key}
+                sx={{
+                  backgroundColor: ach.unlocked
+                    ? rankingColors?.highlight
+                    : surfaceColors?.soft,
+                  textShadow: "0 0 5px black",
+                }}
+              >
+                <Grid
+                  container
+                  sx={{
+                    minHeight: 100,
+                    alignItems: "center",
+                  }}
+                >
+                  <Grid size={3} p={2}>
+                    <Box
+                      className="player-achievement-percentage"
+                      sx={{
+                        position: "relative",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <CircularProgress
+                        enableTrackSlot
+                        value={formatProgress(ach)}
+                        size={75}
+                        variant="determinate"
+                      />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          inset: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          pointerEvents: "none",
+                        }}
+                      >
+                        <div className="player-achievement-situation">
+                          <EmojiEventsIcon
+                            fontSize="large"
+                            color={ach.unlocked ? "primary" : "disabled"}
+                          />
+                        </div>
+                      </Box>
+                    </Box>
+                  </Grid>
+                  <Grid size={9} sx={{ alignItems: "flex-start", gap: 1 }}>
+                    <CardContent>
+                      <Typography variant="h6">
+                        {ach.unlocked || ach.title_visible
+                          ? ach.title
+                          : "??????"}
+                      </Typography>
+                      <Typography variant="body2">
+                        {ach.unlocked || ach.description_visible
+                          ? ach.description
+                          : "??????"}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ mt: 1, display: "block" }}
+                      >
+                        {ach.category === "city" && ach.cities.length > 1 &&(
+                          <div>
+                            Progresso:{" "}
+                            {
+                              citiesFound.filter((city) =>
+                                ach.cities.includes(city.id),
+                              ).length
+                            }
+                            /
+                            {
+                              ach.cities.length
+                            }
+                          </div>
+                        )}
+                        {ach.category === "province" && (
+                          <div>
+                            Progresso:{" "}
+                            {
+                              citiesFound.filter(
+                                (city) => city.provincia === ach.province,
+                              ).length
+                            }
+                            /
+                            {
+                              cities.filter(
+                                (city) => city.provincia === ach.province,
+                              ).length
+                            }
+                          </div>
+                        )}
+                        Giocatori che hanno sbloccato: {ach.percentage}%
+                      </Typography>
+                    </CardContent>
+                  </Grid>
+                </Grid>
+              </Card>
+            </Grid>
+          ))}
+      </Grid>
+    </div>
+  );
+}

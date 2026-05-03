@@ -15,6 +15,7 @@ from jose import jwt, JWTError
 from fastapi.middleware.cors import CORSMiddleware
 
 from telegram import Bot
+from telegram.constants import ParseMode
 
 from DB.dbservice import init_db, close_db
 from DB import dbuser, dbcities, dbachievements
@@ -62,7 +63,7 @@ app = FastAPI(lifespan=lifespan)
 async def generate_otp():
     global OTP
     OTP = random.randint(100000, 999999)
-    await bot.send_message(chat_id=TG_CHAT, text=f"OTP: {OTP}")
+    await bot.send_message(chat_id=TG_CHAT, text=f"OTP: <code>{OTP}</code>", parse_mode=ParseMode.HTML)
 
 
 @app.get("/api/me", dependencies=[Depends(require_auth)])

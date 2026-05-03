@@ -10,7 +10,12 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  Fab,
+  Divider,
+  Paper,
+  Grid,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { authFetch } from "../api";
 
 export default function Achievements({ cities }) {
@@ -69,7 +74,7 @@ export default function Achievements({ cities }) {
       setSuccessMessage(
         editingAchievement
           ? "Achievement modificato con successo!"
-          : "Achievement creato con successo!"
+          : "Achievement creato con successo!",
       );
       setIsFormOpen(false);
       setEditingAchievement(null);
@@ -124,14 +129,18 @@ export default function Achievements({ cities }) {
   return (
     <Container sx={{ marginTop: 4 }}>
       <Box sx={{ marginBottom: 3 }}>
-        <Stack direction="row">
-          <Box component="h1" sx={{ m: 0, fontSize: "1.75rem" }}>
-            Achievements
-          </Box>
-          <Button variant="contained" onClick={handleCreate}>
-            Aggiungi achievement
-          </Button>
-        </Stack>
+        <Grid container>
+          <Grid size="grow">
+            <Box component="h1" sx={{ m: 0, fontSize: "1.75rem" }}>
+              Obiettivi
+            </Box>
+          </Grid>
+          <Grid>
+            <Fab size="small" color="primary" aria-label="add" onClick={handleCreate}>
+              <AddIcon />
+            </Fab>
+          </Grid>
+        </Grid>
       </Box>
 
       {error && (
@@ -156,12 +165,7 @@ export default function Achievements({ cities }) {
 
       {loading && <div>Caricamento...</div>}
 
-      <Dialog
-        open={isFormOpen}
-        onClose={handleCancel}
-        fullWidth
-        maxWidth="md"
-      >
+      <Dialog open={isFormOpen} onClose={handleCancel} fullWidth maxWidth="md">
         <DialogTitle>
           {editingAchievement ? "Modifica achievement" : "Nuovo achievement"}
         </DialogTitle>

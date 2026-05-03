@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Fab } from "@mui/material";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import EditIcon from "@mui/icons-material/Edit";
+import { useTheme } from "@mui/material/styles";
 import { API_URI } from "../api";
 
 import {
@@ -21,6 +22,11 @@ import {
 } from "@mui/material";
 
 export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
+  const theme = useTheme();
+  const shellShadow = theme.customShadows?.raisedInset;
+  const softShadow = theme.customShadows?.soft;
+  const surfaceColors = theme.palette.app?.surface;
+  const rankingColors = theme.palette.app?.ranking;
   const [rankingData, setRankingData] = useState(null);
   const [reload, setReload] = useState(false);
   const [publicName, setPublicName] = useState(
@@ -137,10 +143,8 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                 "transform 500ms ease, opacity 500ms ease, box-shadow 500ms ease",
               transform: headerReady ? "translateY(0)" : "translateY(-10px)",
               opacity: headerReady ? 1 : 0,
-              backgroundColor: "#06142BAA",
-              boxShadow: headerReady
-                ? "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)"
-                : "0 2px 8px rgba(0,0,0,0.08)",
+              backgroundColor: surfaceColors?.strong,
+              boxShadow: headerReady ? shellShadow : softShadow,
             }}
           >
             <Box className="uela" sx={{ textShadow: "0 0 10px black" }}>
@@ -201,12 +205,11 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                         fontSize: "1.5em",
                         backgroundColor:
                           index === 0
-                            ? "#a67c52AA"
+                            ? rankingColors?.goldStrong
                             : player.id == playerId
-                              ? "#0d6b8740"
-                              : "#06142B80",
-                        boxShadow:
-                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                              ? rankingColors?.highlight
+                              : surfaceColors?.soft,
+                        boxShadow: shellShadow,
                       }}
                     >
                       {index + 1}
@@ -227,12 +230,11 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                         borderRadius: 3,
                         backgroundColor:
                           player.id == playerId
-                            ? "#0d6b8740"
+                            ? rankingColors?.highlight
                             : index === 0
-                              ? "#a67c5240"
-                              : "#06142B80",
-                        boxShadow:
-                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                              ? rankingColors?.goldSoft
+                              : surfaceColors?.soft,
+                        boxShadow: shellShadow,
                         transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       }}
                     >
@@ -426,14 +428,13 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                         fontSize: "1.5em",
                         backgroundColor:
                           player.points === 377
-                            ? "#a67c5240"
+                            ? rankingColors?.goldSoft
                             : index === 0
-                              ? "#a67c5240"
+                              ? rankingColors?.goldSoft
                               : player.id == playerId
-                                ? "#0d6b8740"
-                                : "#06142B40",
-                        boxShadow:
-                          "0 10px 24px rgba(0,0,0,0.3), inset 0 -2px 8px rgba(212, 165, 116, 0.2)",
+                                ? rankingColors?.highlight
+                                : surfaceColors?.subtle,
+                        boxShadow: shellShadow,
                       }}
                     >
                       {player.points}
