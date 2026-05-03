@@ -224,7 +224,6 @@ export default function PlayerAchievement({
                       ) : (
                         <Box
                           sx={{
-                            height: "1.5em",
                             width: "80%",
                             backgroundColor: rankingColors?.highlight,
                             borderRadius: 1,
@@ -247,7 +246,6 @@ export default function PlayerAchievement({
                       ) : (
                         <Box
                           sx={{
-                            height: 16,
                             width: "80%",
                             backgroundColor: rankingColors?.highlight,
                             borderRadius: 1,
