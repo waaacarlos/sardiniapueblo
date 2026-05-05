@@ -256,14 +256,14 @@ export default function PlayerAchievement({
           </Grid>
         ))}
       </Grid>
-      {playerId && (
+      {/* {playerId && (
         <Box sx={{ position: "fixed", bottom: "9vh", right: "4vw" }}>
           <Fab variant="extended" href={`/?playerId=${playerId}`}>
             <DataUsageIcon />
             Statistiche
           </Fab>
         </Box>
-      )}
+      )} */}
     </div>
   );
 }
