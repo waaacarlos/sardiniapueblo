@@ -8,23 +8,11 @@ export default function PlayerProgressCard({
   total,
   labelTop,
   labelBottom,
-  action
 }) {
   const theme = useTheme();
 
   return (
-    <Paper
-      sx={{
-        p: 2,
-        m: 2,
-        justifyContent: "center",
-        alignItems: "stretch",
-        display: "flex",
-        backgroundColor: theme.palette.app?.surface?.soft,
-        boxShadow: theme.customShadows?.raisedInset,
-      }}
-      className="player-dashboard"
-    >
+
       <Box
         className="player-percentage"
         sx={{
@@ -60,16 +48,7 @@ export default function PlayerProgressCard({
             )}
           </Box>
         )}
-        {action && (
-          <Fab
-            size="small"
-            sx={{ position: "absolute", bottom: 2, right: 2 }}
-            onClick={action.onClick}
-          >
-            {action.icon}
-          </Fab>
-        )}
       </Box>
-    </Paper>
+
   );
 }

@@ -4,6 +4,7 @@ import DataUsageIcon from "@mui/icons-material/DataUsage";
 import EditIcon from "@mui/icons-material/Edit";
 import { useTheme } from "@mui/material/styles";
 import { API_URI } from "../api";
+import PageHeader from "../components/PageHeader";
 
 import {
   // CircularProgress,
@@ -121,37 +122,17 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
       bgColor: "primary.dark",
     },
   ];
+
+  const header = (
+    <PageHeader
+      ready={headerReady}
+      title="Classifica"
+    />
+  );
   if (!playerId || (playerData && playerData.public_name && !editName))
     return (
       <Box className="ranked-container">
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              width: "90vw",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 3,
-              transition:
-                "transform 500ms ease, opacity 500ms ease, box-shadow 500ms ease",
-              transform: headerReady ? "translateY(0)" : "translateY(-10px)",
-              opacity: headerReady ? 1 : 0,
-              backgroundColor: surfaceColors?.strong,
-              boxShadow: headerReady ? shellShadow : softShadow,
-            }}
-          >
-            <Box className="uela" sx={{ textShadow: "0 0 10px black" }}>
-              <h1>CLASSIFICA GENERALE</h1>
-            </Box>
-          </Box>
-        </Box>
+        {header}
         <Box
           sx={{
             width: "100%",
@@ -239,7 +220,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                       }}
                     >
                       <Grid container spacing={0} sx={{ alignItems: "center" }}>
-                        <Grid size={{ xs: 12, lg: 9 }}>
+                        <Grid size={{ xs: 12, sm: 9 }}>
                           <Box
                             sx={{
                               width: "100%",
@@ -252,7 +233,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
                               transition: "all 1s ease",
                             }}
                           >
-                            {player.public_name.toUpperCase()}
+                            {player.public_name}
                           </Box>
                         </Grid>
                         <Grid
@@ -461,14 +442,16 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
     );
   else if (playerId || editName)
     return (
-      <Box
-        sx={{
-          minHeight: "70vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <>
+        {header}
+        <Box
+          sx={{
+            minHeight: "70vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Box
             className="uela"
             sx={{
@@ -477,8 +460,6 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
               alignItems: "center",
             }}
           >
-            <h1>Ciao {playerData ? playerData.firstname : ""}</h1>
-
             {playerData ? (
               <>
                 <p>
@@ -526,6 +507,7 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
               <p>Caricamento in corso...</p>
             )}
           </Box>
-      </Box>
+        </Box>
+      </>
     );
 }

@@ -143,7 +143,7 @@ function App() {
           playerData={playerData}
           citiesFound={citiesFound}
           loading={loading}
-          unlockedAchievements={unlockedAchievements}
+          unlockedAchs={unlockedAchievements}
           totalAchievements={totalAchievements}
           achievementsLoading={achievementsLoading}
         />

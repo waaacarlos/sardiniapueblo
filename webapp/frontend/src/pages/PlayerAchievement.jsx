@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
+import PageHeader from "../components/PageHeader";
 
 function calcProgress(count, total) {
   const maxcount = Math.max(count, total);
@@ -97,52 +98,7 @@ export default function PlayerAchievement({
 
   return (
     <div>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            width: "90vw",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 3,
-            backgroundColor: surfaceColors?.strong,
-            boxShadow: softShadow,
-          }}
-        >
-          <Box
-            p={2}
-            m={2}
-            sx={{
-              textShadow: "0 0 10px black",
-            }}
-          >
-            <Box
-              p={2}
-              m={2}
-              sx={{
-                fontSize: "2rem",
-                fontWeight: "bold",
-                letterSpacing: headerReady ? "normal" : "0.5em",
-                minHeight: headerReady ? "0" : "90vh",
-                transition: "all 1s ease",
-                alignItems: "center",
-                display: "flex",
-                gap: 2,
-                justifyContent: "center",
-              }}
-            >
-              <h3>Obiettivi</h3>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      <PageHeader ready={headerReady} title="Obiettivi" showBack></PageHeader>
       <Grid container spacing={2} sx={{ mb: 2, alignItems: "center" }}>
         {achievements?.map((ach) => (
           <Grid size={{ xs: 12, md: 6, lg: 4 }} key={ach.ach_key}>
@@ -218,50 +174,48 @@ export default function PlayerAchievement({
                 </Grid>
                 <Grid size={9} sx={{ alignItems: "flex-start", gap: 1 }}>
                   <CardContent>
-                    <Typography variant="h6">
-                      {ach.unlocked || ach.title_visible ? (
-                        ach.title
-                      ) : (
-                        <Box
-                          sx={{
-                            width: "80%",
-                            backgroundColor: rankingColors?.highlight,
-                            borderRadius: 1,
-                            textAlign: "center",
-                            textTransform: "uppercase",
-                            color: "text.secondary",
-                            textShadow: "0 0 5px black",
-                            pointerEvents: "none",
-                            fontSize: "1rem",
-                            letterSpacing: "0.1em",
-                          }}
-                        >
-                          Obiettivo nascosto
-                        </Box>
-                      )}
-                    </Typography>
-                    <Typography variant="body2">
-                      {ach.unlocked || ach.description_visible ? (
-                        ach.description
-                      ) : (
-                        <Box
-                          sx={{
-                            width: "80%",
-                            backgroundColor: rankingColors?.highlight,
-                            borderRadius: 1,
-                            textAlign: "center",
-                            textTransform: "uppercase",
-                            color: "text.secondary",
-                            textShadow: "0 0 5px black",
-                            pointerEvents: "none",
-                            fontSize: "0.75rem",
-                            letterSpacing: "0.1em",
-                          }}
-                        >
-                          Descrizione nascosta
-                        </Box>
-                      )}
-                    </Typography>
+                    {ach.unlocked || ach.title_visible ? (
+                      <Typography variant="h6">{ach.title}</Typography>
+                    ) : (
+                      <Box
+                        sx={{
+                          width: "80%",
+                          backgroundColor: rankingColors?.highlight,
+                          borderRadius: 1,
+                          textAlign: "center",
+                          textTransform: "uppercase",
+                          color: "text.secondary",
+                          textShadow: "0 0 5px black",
+                          pointerEvents: "none",
+                          fontSize: "1rem",
+                          letterSpacing: "0.1em",
+                        }}
+                      >
+                        Obiettivo nascosto
+                      </Box>
+                    )}
+
+                    {ach.unlocked || ach.description_visible ? (
+                      <Typography variant="body2">{ach.description}</Typography>
+                    ) : (
+                      <Box
+                        sx={{
+                          width: "80%",
+                          backgroundColor: rankingColors?.highlight,
+                          borderRadius: 1,
+                          textAlign: "center",
+                          textTransform: "uppercase",
+                          color: "text.secondary",
+                          textShadow: "0 0 5px black",
+                          pointerEvents: "none",
+                          fontSize: "0.75rem",
+                          letterSpacing: "0.1em",
+                        }}
+                      >
+                        Descrizione nascosta
+                      </Box>
+                    )}
+
                     <Typography
                       variant="caption"
                       sx={{ mt: 1, display: "block" }}
@@ -302,6 +256,14 @@ export default function PlayerAchievement({
           </Grid>
         ))}
       </Grid>
+      {playerId && (
+        <Box sx={{ position: "fixed", bottom: "9vh", right: "4vw" }}>
+          <Fab variant="extended" href={`/?playerId=${playerData.id}`}>
+            <DataUsageIcon />
+            Statistiche
+          </Fab>
+        </Box>
+      )}
     </div>
   );
 }

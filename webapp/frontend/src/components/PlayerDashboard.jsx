@@ -1,11 +1,20 @@
-import PlayerGreetings from "./PlayerGreetings";
-import { Box, Paper, Button, Dialog, DialogContent, Fab } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Button,
+  Dialog,
+  DialogContent,
+  Fab,
+  Grid,
+} from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GradeIcon from "@mui/icons-material/Grade";
 import PlayerProgressCard from "./PlayerProgressCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InteractiveMap from "./InteractiveMap";
+import PageHeader from "./PageHeader";
+import { useTheme } from "@mui/material/styles";
 
 const citiesCount = 377;
 
@@ -13,94 +22,170 @@ export default function PlayerDashboard({
   playerData,
   citiesFound,
   loading,
-  unlockedAchievements,
+  unlockedAchs,
   totalAchievements,
   achievementsLoading,
 }) {
-  const playerPoints = citiesFound.length;
-  const playerPercentage = (playerPoints / citiesCount) * 100;
-  const safeTotalAchievements = totalAchievements || 1;
-  const achievementsPercentage =
-    (unlockedAchievements / safeTotalAchievements) * 100;
+  const theme = useTheme();
 
+  //const playerPoints = citiesFound.length;
+  //const playerPercentage = (playerPoints / citiesCount) * 100;
+  const [playerPoints, setPlayerPoints] = useState(0);
+  const [playerPercentage, setPlayerPercentage] = useState(0);
+  //const safeTotalAchievements = totalAchievements || 1;
+  //const achievementsPercentage =
+  //  (unlockedAchievements / safeTotalAchievements) * 100;
+  const [achievementsPercentage, setAchievementsPercentage] = useState(0);
+  const [unlockedAchievements, setUnlockedAchievements] = useState(0);
+  const [safeTotalAchievements, setSafeTotalAchievements] = useState(1);
   const [mapOpen, setMapOpen] = useState(false);
+
+  useEffect(() => {
+    setSafeTotalAchievements(totalAchievements || 1);
+    for (let i = 0; i <= unlockedAchs; i++) {
+      setTimeout(
+        () => {
+          setUnlockedAchievements(i);
+          setAchievementsPercentage((i / (totalAchievements || 1)) * 100);
+        },
+        (i * 200) / unlockedAchs,
+      );
+    }
+  }, [totalAchievements, unlockedAchs]);
+
+  useEffect(() => {
+    for (let i = playerPoints; i <= citiesFound.length; i++) {
+      setTimeout(
+        () => {
+          setPlayerPoints(i);
+          setPlayerPercentage((i / citiesCount) * 100);
+        },
+        (i * 200) / citiesFound.length,
+      );
+    }
+  }, [citiesFound]);
+
   const achievementsAction = {
     icon: <EmojiEventsIcon />,
     onClick: () => {
       window.location.href = `/?playerId=${playerData.id}&page=achs`;
     },
-  }
+  };
+
+  const [headerReady, setHeaderReady] = useState(false);
+
+  useEffect(() => {
+    setHeaderReady(true);
+  }, [playerData]);
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        className="player-dashboard"
-      >
-        <PlayerGreetings playerData={playerData} />
-      </Box>
+      <PageHeader ready={headerReady} title="Statistiche" />
       <Box
         className="card-container"
         sx={{ position: "relative", overflow: "hidden" }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <PlayerProgressCard
-            loading={loading}
-            count={playerPoints}
-            percentage={playerPercentage}
-            total={citiesCount}
-            labelTop="Hai trovato"
-            labelBottom={`comuni su ${citiesCount}`}
-          />
-          <PlayerProgressCard
-            loading={achievementsLoading}
-            count={unlockedAchievements}
-            percentage={achievementsPercentage}
-            total={totalAchievements}
-            labelTop="Hai sbloccato"
-            labelBottom={`obiettivi su ${totalAchievements}`}
-            action={achievementsAction}
-          />
-        </Box>
-        <Dialog
-          open={mapOpen}
-          onClose={() => setMapOpen(false)}
-          maxWidth="md"
-          fullWidth
-        >
-          <DialogContent>
-            <InteractiveMap citiesFound={citiesFound} />
-          </DialogContent>
-        </Dialog>
-        <Box className="actions-container">
-          {playerData && (
-            <Fab
-              variant="extended"
-              href={`/?playerId=${playerData.id}&page=ranked`}
+        <Grid container spacing={2} sx={{ justifyContent: "center" }}>
+          <Grid size={12}>
+            <Paper
+              sx={{
+                p: 2,
+                m: 2,
+                justifyContent: "center",
+                alignItems: "stretch",
+                display: "flex",
+                backgroundColor: theme.palette.app?.surface?.soft,
+                boxShadow: theme.customShadows?.raisedInset,
+              }}
+              className="player-dashboard"
             >
-              <GradeIcon />
-              Classifica
-            </Fab>
-          )}
-
-          <Fab variant="extended" onClick={() => setMapOpen(true)}>
-            <MapIcon />
-            Mappa
-          </Fab>
-        </Box>
+              <Grid container spacing={2} sx={{ justifyContent: "center" }}>
+                <Grid size={12}>
+                  <PlayerProgressCard
+                    loading={loading}
+                    count={playerPoints}
+                    percentage={playerPercentage}
+                    total={citiesCount}
+                    labelTop="Hai trovato"
+                    labelBottom={`comuni su ${citiesCount}`}
+                  />
+                </Grid>
+                <Grid container spacing={2} sx={{ justifyContent: "center" }}>
+                  {playerData && (
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Fab
+                          variant="extended"
+                          href={`/?playerId=${playerData.id}&page=ranked`}
+                        >
+                          <GradeIcon />
+                          Classifica
+                        </Fab>
+                      </Box>
+                    </Grid>
+                  )}
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Fab variant="extended" onClick={() => setMapOpen(true)}>
+                        <MapIcon />
+                        Mappa
+                      </Fab>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+          <Grid size={12}>
+            <Paper
+              sx={{
+                p: 2,
+                m: 2,
+                justifyContent: "center",
+                alignItems: "stretch",
+                display: "flex",
+                backgroundColor: theme.palette.app?.surface?.soft,
+                boxShadow: theme.customShadows?.raisedInset,
+              }}
+              className="player-dashboard"
+            >
+              <Grid container spacing={2} sx={{ justifyContent: "center" }}>
+                <Grid size={12}>
+                  <PlayerProgressCard
+                    loading={achievementsLoading}
+                    count={unlockedAchievements}
+                    percentage={achievementsPercentage}
+                    total={totalAchievements}
+                    labelTop="Hai sbloccato"
+                    labelBottom={`obiettivi su ${totalAchievements}`}
+                  />
+                </Grid>
+                <Grid size={12}>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Fab
+                      variant="extended"
+                      onClick={achievementsAction.onClick}
+                    >
+                      <EmojiEventsIcon />
+                      Vedi obiettivi
+                    </Fab>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
       </Box>
+      <Dialog
+        open={mapOpen}
+        onClose={() => setMapOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <InteractiveMap citiesFound={citiesFound} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

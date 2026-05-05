@@ -16,9 +16,7 @@
 }
 
 .actions-container {
-  position: fixed;
-  bottom: 6vh;
-  right: 6vw;
+
   justify-content: center;
   display: flex;
   flex-direction: row;
@@ -47,7 +45,7 @@ padding-bottom: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  min-height: 60vh;
 }
 
 .footer-text {
