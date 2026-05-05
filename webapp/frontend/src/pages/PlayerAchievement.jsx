@@ -258,7 +258,7 @@ export default function PlayerAchievement({
       </Grid>
       {playerId && (
         <Box sx={{ position: "fixed", bottom: "9vh", right: "4vw" }}>
-          <Fab variant="extended" href={`/?playerId=${playerData.id}`}>
+          <Fab variant="extended" href={`/?playerId=${playerId}`}>
             <DataUsageIcon />
             Statistiche
           </Fab>
