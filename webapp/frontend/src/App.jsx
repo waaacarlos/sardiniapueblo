@@ -1,4 +1,4 @@
-import { Box, Paper } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { ADMIN_CHAT_ID, API_URI } from "./api";
@@ -115,7 +115,20 @@ function App() {
         appbody = <h1>Loading...</h1>;
         break;
     }
-  } else if (page === "ranked") {
+  } // TODO MOMENTANEO in attesa di aggiustare il server
+  else if (true) {
+    appbody = (
+      <>
+        <Typography variant="h5" align="center" sx={{ mt: 4 }}>
+        La sezione è temporaneamente disabilitata. 
+        </Typography>
+        <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+          Sto cercando di risolvere al più presto.
+        </Typography>
+      </>
+    )
+  }
+  else if (page === "ranked") {
     appbody = (
       <Ranked
         playerId={playerId}
