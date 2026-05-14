@@ -116,7 +116,7 @@ function App() {
         break;
     }
   } // TODO MOMENTANEO in attesa di aggiustare il server
-  else if (true) {
+  else if (false) {
     appbody = (
       <>
         <Typography variant="h5" align="center" sx={{ mt: 4 }}>
