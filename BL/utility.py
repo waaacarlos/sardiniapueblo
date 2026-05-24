@@ -66,21 +66,24 @@ def log(text):
 
 
 def subgroup(s1: str, s2: str, placeholder='*'):
-    s1, s2 = s1.upper(), s2.upper()
-    idx = s1.find(s2)
-    if idx == -1:  # Ci sono anche spazi
-        for i in s1.split():
-            if i in s2:
-                return subgroup(s1, i, placeholder)
-        for i in s2.split():
-            if i in s1:
-                return subgroup(s1, i, placeholder)
-        raise ValueError(f'"{s2}" non trovata in "{s1}"')
-
     def mask(s: str) -> str:
         return "".join(c if not c.isalpha() else placeholder for c in s)
 
-    return mask(s1[:idx]) + s2 + mask(s1[idx + len(s2):])
+    s1_nospace = s1.replace(" ", "")
+    s2_nospace = s2.replace(" ", "")
+    idx = s1_nospace.find(s2_nospace)
+
+    result = mask(s1_nospace[:idx]) + s2_nospace + mask(s1_nospace[idx + len(s2_nospace):])
+    spaces = get_char_index(s1)
+
+    for i in range(len(spaces)):
+        space = spaces[i]
+        result = result[:space] + " " + result[space:]
+    return result
+
+
+def get_char_index(s: str, c=" "):
+    return [i for i in range(len(s)) if s[i] == c]
 
 
 def starts_same(s1, s2):

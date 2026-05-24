@@ -12,7 +12,7 @@ from BL import citiesUtility, achievementUtility
 from DB import dbuser
 from Entities.User import TGUser
 from Resources import constants
-from Resources.config import LOG
+from Resources.config import LOG, ADMIN_CHATID
 from Resources.constants import PROVINCES
 from Resources.messages import messages
 
@@ -66,6 +66,8 @@ class Message:
             elif self.text == "/stats":
                 msg_to_send = messages("stats").format(self.statsurl)
                 await self.send_message(msg_to_send)
+            elif self.text == "//":
+                raise NotImplementedError
             else:
                 msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send, send_stats=True)
@@ -82,6 +84,7 @@ class Message:
             await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
+            await self.context.bot.send_message(ADMIN_CHATID, traceback.format_exc())
             await self.context.bot.send_message(self.chat_id, "Errore")
             logging.error(ex)
         finally:
