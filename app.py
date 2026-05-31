@@ -62,7 +62,7 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/api/generateotp")
 async def generate_otp():
     global OTP
-    OTP = random.randint(100000, 999999)
+    OTP = random.randint(1000, 9999)
     await bot.send_message(chat_id=TG_CHAT, text=f"OTP: <code>{OTP}</code>", parse_mode=ParseMode.HTML)
 
 
@@ -102,16 +102,20 @@ async def all_cities():
 
 @app.post("/api/login")
 async def login(body: dict):
+    global OTP
     if not OTP:
         raise HTTPException(status_code=400, detail="OTP not generated yet.")
     if body.get("password") != str(OTP):
         raise HTTPException(status_code=401, detail="Wrong creds")
     token = create_token()
+    OTP = None
     return {"token": token}
 
 
 @app.post("/api/logout")
 async def logout():
+    global OTP
+    OTP = None
     return {"ok": True}
 
 
