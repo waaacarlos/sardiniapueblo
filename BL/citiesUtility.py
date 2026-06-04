@@ -25,6 +25,10 @@ async def _build_city_info(city: dict, chat_id: int) -> str:
     points = await dbuser.get_player_points(chat_id)
     if points > 1:
         msg += "\n\n" + messages("found_count").format(points)
+    if not(points % 5):
+        already_list = await dbuser.get_list_count(chat_id)
+        if already_list == 0:
+            msg += messages("list")
     return msg
 
 

@@ -11,7 +11,7 @@ from telegram.ext import CallbackContext
 from BL import citiesUtility, achievementUtility
 from DB import dbuser
 from Entities.User import TGUser
-from Resources import constants
+from Resources import constants, config
 from Resources.config import LOG, ADMIN_CHATID
 from Resources.constants import PROVINCES
 from Resources.messages import messages
@@ -81,7 +81,11 @@ class Message:
                 for ach in achievements_unlocked:
                     await self.send_achievement(ach['title'], ach['description'], ach_percentage[ach['ach_key']])
                     await asyncio.sleep(0.5)
-            await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
+            try:
+                if config.ENV == "debug":
+                    await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
+            except Exception as e:
+                logging.error(traceback.format_exc())
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             await self.context.bot.send_message(ADMIN_CHATID, traceback.format_exc())
@@ -105,7 +109,8 @@ class Message:
                         InlineKeyboardButton(text="Statistiche", web_app=WebAppInfo(self.statsurl)),
                         InlineKeyboardButton(text="Classifica", web_app=WebAppInfo(self.rankurl)),
                     ]
-                ]) if send_stats else None
+                ]) if send_stats else None,
+            disable_web_page_preview=True,
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
@@ -164,7 +169,10 @@ class AnswerQuery(Message):
 
     async def handlecallback(self):
         try:
-            await self.context.bot.send_message(LOG, "Callbackquery: {0}".format(self.query_data))
+            await self.context.bot.send_message(
+                LOG,
+                f"Da: ({self.chat_id}) {self.msg.effective_user.full_name}\nCallbackquery: {self.query_data}"
+            )
             if len(self.query_data) == 2:
                 msg_to_send = await self.get_list_by_province(self.query_data)
                 await self.edit_message_with_provinces(msg_to_send, self.query_data)

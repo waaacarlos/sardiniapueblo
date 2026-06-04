@@ -70,3 +70,11 @@ async def get_ranked():
 async def add_public_name(chatid, name):
     query = "UPDATE users SET public_name = $1 WHERE id = $2"
     return await fetch(query, name, chatid)
+
+
+async def get_list_count(chatid):
+    query = f"""select count(*)
+    from player_try
+    where player = {chatid}
+    and msg in('/list', '/list_province')"""
+    return await fetchval(query)
