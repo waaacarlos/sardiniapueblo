@@ -84,7 +84,7 @@ class Message:
             try:
                 if config.ENV == "debug":
                     await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
-            except Exception as e:
+            except Exception:
                 logging.error(traceback.format_exc())
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
@@ -126,38 +126,46 @@ class Message:
 
     async def send_message_with_provinces(self, text):
         message = await self.context.bot.send_message(
-            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=create_keyboard_province('CA')
+            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=await self.create_keyboard_province('CA')
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
 
     async def send_message_with_letters(self, text):
         message = await self.context.bot.send_message(
-            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=create_keyboard_alphabetic('A')
+            self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=await self.create_keyboard_alphabetic('A')
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
 
+    async def create_keyboard_province(self, selected=None):
+        prov_completed = await dbuser.get_province_completed(self.chat_id)
+        keys_ = [
+            InlineKeyboardButton(
+                text=i,
+                callback_data=i,
+                style='primary' if i == selected else 'success' if i in prov_completed else '')
+            for i in PROVINCES.keys()]
+        return InlineKeyboardMarkup(
+            inline_keyboard=[keys_[:4], keys_[4:]]
+        )
 
-def create_keyboard_province(selected=None):
-    keys_ = [InlineKeyboardButton(text=i, callback_data=i, style='success' if i == selected else 'primary') for i in
-             PROVINCES.keys()]
-    return InlineKeyboardMarkup(
-        inline_keyboard=[keys_[:4], keys_[4:]]
-    )
-
-
-def create_keyboard_alphabetic(selected=None):
-    keys_ = [
-        InlineKeyboardButton(text=i, callback_data=i, style='success' if i == selected else 'primary') for i in
-        [
-                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J', 'L',
-                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Z'
+    async def create_keyboard_alphabetic(self, selected=None):
+        letters_completed = await dbuser.get_letters_completed(self.chat_id)
+        keys_ = [
+            InlineKeyboardButton(
+                text=i,
+                callback_data=i,
+                style='primary' if i == selected else 'success' if i in letters_completed else '')
+            for i in
+            [
+                     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J', 'L',
+                     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Z'
+            ]
         ]
-    ]
-    return InlineKeyboardMarkup(
-        inline_keyboard=[keys_[:7], keys_[7:14], keys_[14:]]
-    )
+        return InlineKeyboardMarkup(
+            inline_keyboard=[keys_[:7], keys_[7:14], keys_[14:]]
+        )
 
 
 class AnswerQuery(Message):
@@ -184,7 +192,7 @@ class AnswerQuery(Message):
             raise ex
 
     async def edit_message_with_provinces(self, text, province="CA"):
-        keyboard_province = create_keyboard_province(province)
+        keyboard_province = await self.create_keyboard_province(province)
         if keyboard_province == self.update.callback_query.message.reply_markup:
             await self.context.bot.answer_callback_query(
                 callback_query_id=self.query_id, text=messages('already_selected')
@@ -201,7 +209,7 @@ class AnswerQuery(Message):
         return message.message_id
 
     async def edit_message_with_letter(self, text, letter="CA"):
-        keyboard_letter = create_keyboard_alphabetic(letter)
+        keyboard_letter = await self.create_keyboard_alphabetic(letter)
         if keyboard_letter == self.update.callback_query.message.reply_markup:
             await self.context.bot.answer_callback_query(
                 callback_query_id=self.query_id, text=messages('already_selected')

@@ -78,3 +78,29 @@ async def get_list_count(chatid):
     where player = {chatid}
     and msg in('/list', '/list_province')"""
     return await fetchval(query)
+
+
+async def get_letters_completed(chatid):
+    query = """with plf as (select substring(nome, 1, 1) as l, count(*) as cnt
+        from cities c
+        left outer join cities_found cf on c.id = cf.city 
+        where player = $1
+        group by substring(nome, 1, 1))
+        select array_agg(letter)
+        from plf
+        right outer join count_letters c on plf.l = letter
+        where c.cnt - plf.cnt = 0"""
+    return await fetchval(query, chatid) or []
+
+
+async def get_province_completed(chatid):
+    query = """with plf as (select provincia, count(*) as cnt
+        from cities c
+        left outer join cities_found cf on c.id = cf.city 
+        where player = $1
+        group by provincia)
+        select array_agg(plf.provincia)
+        from plf
+        right outer join count_province p on plf.provincia = p.provincia
+        where p.cnt - plf.cnt = 0"""
+    return await fetchval(query, chatid) or []
