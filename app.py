@@ -24,9 +24,9 @@ from DB import dbuser, dbcities, dbachievements
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
-ACHIEVEMENTS_PATH = Path(__file__).parent / "Resources" / "achievements.json"
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 TG_CHAT = os.getenv("ADMIN_CHAT_ID")
+LOG_CHAT = os.getenv("LOG_CHAT_ID")
 bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
 
 bearer = HTTPBearer()
