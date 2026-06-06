@@ -82,7 +82,7 @@ class Message:
                     await self.send_achievement(ach['title'], ach['description'], ach_percentage[ach['ach_key']])
                     await asyncio.sleep(0.5)
             try:
-                if config.ENV == "debug":
+                if config.ENV != "debug":
                     await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
             except Exception:
                 logging.error(traceback.format_exc())
