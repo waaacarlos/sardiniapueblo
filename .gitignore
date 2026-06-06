@@ -8,9 +8,9 @@
 github
 .gitignore
 github.pub
-webapp/__pycache__/app.cpython-312.pyc
 webapp/frontend/node_modules/
 /venv/
 webapp/frontend/.env
 .env
 */__pycache__/*
+*.pyc
