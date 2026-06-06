@@ -59,6 +59,11 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
+@app.post("/api/log")
+async def send_log(body: dict):
+    await bot.send_message(chat_id=LOG_CHAT, text=f"{body['message']}")
+
+
 @app.get("/api/generateotp")
 async def generate_otp():
     global OTP

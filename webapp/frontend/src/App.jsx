@@ -26,6 +26,18 @@ function App() {
   const [achievementsLoading, setAchievementsLoading] = useState(true);
 
   useEffect(() => {
+    fetch(`${API_URI}/api/log`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: "Webapp aperta " + window.location.search,
+      }),
+    });
+  }, []);
+
+  useEffect(() => {
     if (playerData) {
       fetch(`${API_URI}/api/player/cities?player_id=${playerData.id}`)
         .then((response) => response.json())
@@ -40,7 +52,9 @@ function App() {
       fetch(`${API_URI}/api/player/achievements?player_id=${playerData.id}`)
         .then((response) => response.json())
         .then((data) => {
-          setUnlockedAchievements(Array.isArray(data) ? data.filter((ach) => ach.unlocked).length : 0);
+          setUnlockedAchievements(
+            Array.isArray(data) ? data.filter((ach) => ach.unlocked).length : 0,
+          );
           setTotalAchievements(Array.isArray(data) ? data.length : 1);
         })
         .catch((error) =>
@@ -120,15 +134,14 @@ function App() {
     appbody = (
       <>
         <Typography variant="h5" align="center" sx={{ mt: 4 }}>
-        La sezione è temporaneamente disabilitata. 
+          La sezione è temporaneamente disabilitata.
         </Typography>
         <Typography variant="body1" align="center" sx={{ mt: 2 }}>
           Sto cercando di risolvere al più presto.
         </Typography>
       </>
-    )
-  }
-  else if (page === "ranked") {
+    );
+  } else if (page === "ranked") {
     appbody = (
       <Ranked
         playerId={playerId}
