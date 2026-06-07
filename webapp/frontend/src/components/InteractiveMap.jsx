@@ -11,6 +11,7 @@ import {
   CardMedia,
   CardActionArea,
   Skeleton,
+  LinearProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -26,6 +27,7 @@ import orSvg from "../../assets/or.svg?react";
 import otSvg from "../../assets/ot.svg?react";
 import ssSvg from "../../assets/ss.svg?react";
 import vsSvg from "../../assets/vs.svg?react";
+import PlayerProgressCard from "./PlayerProgressCard";
 
 async function getWikiThumbnail(wikiUrl, size = 300) {
   const title = decodeURIComponent(wikiUrl.split("/wiki/")[1]);
@@ -69,11 +71,59 @@ const SVG_ID_TO_CODE = Object.fromEntries(
   Object.entries(PROVINCE_MAP).map(([code, { svgId }]) => [svgId, code]),
 );
 
-function buildSardiniaCss(mapColors) {
-  return `
-    .interactive-map-root g[id] path { fill: ${mapColors.base} !important; cursor: pointer; }
-    .interactive-map-root g[id]:hover path { fill: ${mapColors.baseHover} !important; }
-  `;
+function hexToRgb(hex) {
+  const clean = hex.replace("#", "");
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
+  const value = parseInt(full, 16);
+  return {
+    r: (value >> 16) & 255,
+    g: (value >> 8) & 255,
+    b: value & 255,
+  };
+}
+
+function mixHex(colorA, colorB, t) {
+  const p = Math.max(0, Math.min(1, t));
+  const a = hexToRgb(colorA);
+  const b = hexToRgb(colorB);
+  const r = Math.round(a.r + (b.r - a.r) * p);
+  const g = Math.round(a.g + (b.g - a.g) * p);
+  const bCh = Math.round(a.b + (b.b - a.b) * p);
+  return "#" + [r, g, bCh].map((n) => n.toString(16).padStart(2, "0")).join("");
+}
+
+function buildSardiniaCss(mapColors, percentagesByCode) {
+  let css = "";
+
+  for (const [code, province] of Object.entries(PROVINCE_MAP)) {
+    const pct = percentagesByCode[code] ?? 0;
+    const t = pct / 100;
+
+    const fill = mixHex(mapColors.base, mapColors.found, t);
+    const hover = mixHex(mapColors.baseHover, mapColors.foundHover, t);
+
+    const escaped = CSS.escape(province.svgId);
+    css +=
+      ".interactive-map-root g#" +
+      escaped +
+      " path { fill: " +
+      fill +
+      " !important; cursor: pointer; }\n";
+    css +=
+      ".interactive-map-root g#" +
+      escaped +
+      ":hover path { fill: " +
+      hover +
+      " !important; }\n";
+  }
+
+  return css;
 }
 
 function buildProvinceCss(foundNames, selectedCityId, mapColors) {
@@ -123,7 +173,7 @@ function normalizeCityId(name) {
     .replace("Ò", "O_");
 }
 
-export default function InteractiveMap({ citiesFound }) {
+export default function InteractiveMap({ citiesFound, allCities }) {
   const theme = useTheme();
   const mapColors = theme.palette.app?.map;
   const mapRootRef = useRef(null);
@@ -134,6 +184,8 @@ export default function InteractiveMap({ citiesFound }) {
   const [loadingCard, setLoadingCard] = useState(false);
   const [imageReady, setImageReady] = useState(false);
 
+  const [provinceOverlays, setProvinceOverlays] = useState([]);
+
   const foundCount = selectedProvince
     ? citiesFound.filter((c) => c.provincia === selectedProvince).length
     : 0;
@@ -142,30 +194,98 @@ export default function InteractiveMap({ citiesFound }) {
     ? citiesFound.map((c) => c.nome)
     : [];
 
+  const percentagesByCode = Object.fromEntries(
+    Object.keys(PROVINCE_MAP).map((code) => {
+      const total = allCities.filter((c) => c.provincia === code).length;
+      const found = citiesFound.filter((c) => c.provincia === code).length;
+      const pct = total > 0 ? Math.round((found / total) * 100) : 0;
+      return [code, pct];
+    }),
+  );
+
   const MapSvg = selectedProvince
     ? PROVINCE_MAP[selectedProvince].Svg
     : sardiniaSvg;
   const mapCss = selectedProvince
     ? buildProvinceCss(foundInProvince, selectedCityId, mapColors)
-    : buildSardiniaCss(mapColors);
+    : buildSardiniaCss(mapColors, percentagesByCode);
 
   useEffect(() => {
-    const svgEl = mapRootRef.current?.querySelector("svg");
-    if (!svgEl) return;
+    const root = mapRootRef.current;
+    if (!root) return;
 
-    const hasViewBox = svgEl.hasAttribute("viewBox");
-    const widthAttr = svgEl.getAttribute("width");
-    const heightAttr = svgEl.getAttribute("height");
-    const width = widthAttr ? parseFloat(widthAttr) : NaN;
-    const height = heightAttr ? parseFloat(heightAttr) : NaN;
+    let frameId = 0;
+    let observer = null;
 
-    if (!hasViewBox && Number.isFinite(width) && Number.isFinite(height)) {
-      svgEl.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    const syncMapLayout = () => {
+      const svgEl = root.querySelector("svg");
+      if (!svgEl) return;
+
+      const hasViewBox = svgEl.hasAttribute("viewBox");
+      const widthAttr = svgEl.getAttribute("width");
+      const heightAttr = svgEl.getAttribute("height");
+      const width = widthAttr ? parseFloat(widthAttr) : NaN;
+      const height = heightAttr ? parseFloat(heightAttr) : NaN;
+
+      if (!hasViewBox && Number.isFinite(width) && Number.isFinite(height)) {
+        svgEl.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      }
+
+      svgEl.removeAttribute("width");
+      svgEl.removeAttribute("height");
+
+      if (selectedProvince) {
+        setProvinceOverlays([]);
+        return;
+      }
+
+      const rootRect = root.getBoundingClientRect();
+
+      const next = Object.entries(PROVINCE_MAP)
+        .map(([code, province]) => {
+          const group = svgEl.querySelector(`g#${CSS.escape(province.svgId)}`);
+          if (!group) return null;
+
+          const rect = group.getBoundingClientRect();
+
+          return {
+            code,
+            label: province.label,
+            left: rect.left - rootRect.left + rect.width / 2,
+            top: rect.top - rootRect.top + rect.height / 2,
+            count: allCities.filter((c) => c.provincia === code).length,
+            foundCount: citiesFound.filter((c) => c.provincia === code).length,
+            percentage: Math.round(
+              (citiesFound.filter((c) => c.provincia === code).length /
+                allCities.filter((c) => c.provincia === code).length) *
+                100,
+            ),
+          };
+        })
+        .filter(Boolean);
+
+      setProvinceOverlays(next);
+    };
+
+    const scheduleSync = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(syncMapLayout);
+    };
+
+    scheduleSync();
+
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(scheduleSync);
+      observer.observe(root);
     }
 
-    // Remove intrinsic dimensions so CSS can make the SVG fluid.
-    svgEl.removeAttribute("width");
-    svgEl.removeAttribute("height");
+    window.addEventListener("resize", scheduleSync);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      observer?.disconnect();
+      window.removeEventListener("resize", scheduleSync);
+    };
   }, [selectedProvince]);
 
   const handleMouseMove = useCallback((e) => {
@@ -429,34 +549,95 @@ export default function InteractiveMap({ citiesFound }) {
           </Card>
         )}
         <div className="map_background">
-          <Box
-            key={selectedProvince ?? "sardinia"} // Forza re-render quando cambia la provincia per aggiornare lo stile
-            ref={mapRootRef}
-            onClick={handleClick}
-            onMouseMove={handleMouseMove}
-            className="interactive-map-root"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              minHeight: "calc(100vh - 180px)",
-              animation: "fadeIn 0.35s ease",
-              "@keyframes fadeIn": {
-                from: { opacity: 0, transform: "scale(0.97)" },
-                to: { opacity: 1, transform: "scale(1)" },
-              },
-              "& svg": {
+          <Box sx={{ position: "relative", width: "100%" }}>
+            <Box
+              key={selectedProvince ?? "sardinia"} // Forza re-render quando cambia la provincia per aggiornare lo stile
+              ref={mapRootRef}
+              onClick={handleClick}
+              onMouseMove={handleMouseMove}
+              className="interactive-map-root"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
                 width: "100%",
-                height: "100%",
-                display: "block",
-                maxHeight: "calc(100vh - 180px)",
                 maxWidth: "100%",
-              },
-            }}
-          >
-            <style>{mapCss}</style>
-            <MapSvg />
+                animation: "fadeIn 0.35s ease",
+                "@keyframes fadeIn": {
+                  from: { opacity: 0, transform: "scale(0.97)" },
+                  to: { opacity: 1, transform: "scale(1)" },
+                },
+                "& svg": {
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  maxHeight: "calc(100vh - 180px)",
+                  maxWidth: "100%",
+                  marginInline: "auto",
+                },
+              }}
+            >
+              <style>{mapCss}</style>
+              <MapSvg />
+            </Box>
+            {!selectedProvince &&
+              provinceOverlays.map((province) => (
+                <Box
+                  key={province.code}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedProvince(province.code);
+                  }}
+                  sx={{
+                    position: "absolute",
+                    left: province.left,
+                    top: province.top,
+                    transform: "translate(-50%, -50%)",
+                    px: 1.5,
+                    py: 1,
+                    zIndex: 2,
+                    cursor: "pointer",
+                    textShadow: "0 0 40px black, 0 0 60px black",
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    borderRadius: 1,
+                    color: "#fff",
+                    fontSize: "0.75rem",
+                    textAlign: "center",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6" align="center">
+                      {province.label}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      align="center"
+                      sx={{
+                        lineHeight: 1,
+                        color: "text.secondary",
+                        fontSize: "0.65rem",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.5,
+                        }}
+                      >
+                        <Box sx={{ width: "100%", mr: 1 }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={province.percentage}
+                          />
+                        </Box>
+                        <Box>{province.percentage}%</Box>
+                      </Box>
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
           </Box>
         </div>
       </Box>

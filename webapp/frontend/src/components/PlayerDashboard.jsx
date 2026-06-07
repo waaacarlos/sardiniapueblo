@@ -6,6 +6,8 @@ import {
   DialogContent,
   Fab,
   Grid,
+  Typography,
+  Alert,
 } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -25,6 +27,7 @@ export default function PlayerDashboard({
   unlockedAchs,
   totalAchievements,
   achievementsLoading,
+  allCities,
 }) {
   const theme = useTheme();
 
@@ -39,6 +42,17 @@ export default function PlayerDashboard({
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
   const [safeTotalAchievements, setSafeTotalAchievements] = useState(1);
   const [mapOpen, setMapOpen] = useState(false);
+  const [showMapInfo, setShowMapInfo] = useState(false);
+
+  useEffect(() => {
+    setShowMapInfo(false);
+    if (mapOpen) {
+      setShowMapInfo(true);
+      setTimeout(() => {
+        setShowMapInfo(false);
+      }, 5000);
+    }
+  }, [mapOpen]);
 
   useEffect(() => {
     setSafeTotalAchievements(totalAchievements || 1);
@@ -183,7 +197,40 @@ export default function PlayerDashboard({
         fullWidth
       >
         <DialogContent>
-          <InteractiveMap citiesFound={citiesFound} />
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+            <Typography variant="h5" align="center">
+              Mappa interattiva
+            </Typography>
+          </Box>
+          <Box
+            sx={(theme) => ({
+              display: "none",
+              [theme.breakpoints.down(400)]: {
+                display: "block",
+              },
+            })}
+          >
+            <Alert severity="warning">
+              La risoluzione del tuo dispositivo è troppo bassa.
+            </Alert>
+          </Box>
+
+          <InteractiveMap citiesFound={citiesFound} allCities={allCities} />
+
+          <Alert
+            severity="info"
+            sx={{
+              mt: 2,
+              position: "fixed",
+              bottom: 16,
+              left: 16,
+              right: 16,
+              opacity: showMapInfo ? 1 : 0,
+              transition: "opacity 0.5s",
+            }}
+          >
+            Premi sulla mappa per visualizzare i dettagli.
+          </Alert>
         </DialogContent>
       </Dialog>
     </>

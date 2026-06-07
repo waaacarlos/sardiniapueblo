@@ -172,6 +172,7 @@ function App() {
           unlockedAchs={unlockedAchievements}
           totalAchievements={totalAchievements}
           achievementsLoading={achievementsLoading}
+          allCities={cities}
         />
       </Box>
     );
