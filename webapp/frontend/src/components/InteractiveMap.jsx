@@ -606,11 +606,14 @@ export default function InteractiveMap({ citiesFound, allCities }) {
                   }}
                 >
                   <Box>
-                    <Typography variant="h6" align="center">
+                    <Typography
+                      sx={{ fontSize: { xs: "0.7rem", md: "1rem" } }}
+                      align="center"
+                    >
                       {province.label}
                     </Typography>
                     <Typography
-                      variant="h6"
+                      variant="caption"
                       align="center"
                       sx={{
                         lineHeight: 1,
@@ -632,7 +635,7 @@ export default function InteractiveMap({ citiesFound, allCities }) {
                             value={province.percentage}
                           />
                         </Box>
-                        <Box>{province.percentage}%</Box>
+                        <Box sx={{ display: { xs: "none", md: "block" } }}>{province.percentage}%</Box>
                       </Box>
                     </Typography>
                   </Box>
