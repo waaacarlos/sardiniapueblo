@@ -26,7 +26,10 @@ async def insert_user_in_db(user: TGUser):
     if row:
         _user_exists_cache.add(user.id)
         return
-    await execute(user.insert_query())
+    insert_data = user.insert_query()
+    if insert_data:
+        query, params = insert_data
+        await execute(query, *params)
     _user_exists_cache.add(user.id)
 
 

@@ -34,7 +34,7 @@ async def close_db():
 
 
 async def fetch(query: str, *args):
-    logging.info(f"Fetching all {query}")
+    # logging.info(f"Fetching all {query}")
     try:
         async with pool.acquire() as conn:
             return await conn.fetch(query, *args)
@@ -44,7 +44,7 @@ async def fetch(query: str, *args):
 
 
 async def fetchrow(query: str, *args):
-    logging.info(f"Fetching row {query}")
+    # logging.info(f"Fetching row {query}")
     try:
         async with pool.acquire() as conn:
             return await conn.fetchrow(query, *args)
@@ -53,7 +53,7 @@ async def fetchrow(query: str, *args):
 
 
 async def execute(query: str, *args):
-    logging.info(f"Executing {query}")
+    # logging.info(f"Executing {query}")
     try:
         async with pool.acquire() as conn:
             await conn.execute(query, *args)
@@ -62,7 +62,7 @@ async def execute(query: str, *args):
 
 
 async def fetchval(query: str, *args):
-    logging.info(f"Fetching val {query}")
+    # logging.info(f"Fetching val {query}")
     try:
         async with pool.acquire() as conn:
             return await conn.fetchval(query, *args)
@@ -71,7 +71,7 @@ async def fetchval(query: str, *args):
 
 
 async def executemany(query: str, *args):
-    logging.info(f"Executing {query}")
+    # logging.info(f"Executing {query}")
     try:
         async with pool.acquire() as conn:
             return await conn.executemany(query, *args)

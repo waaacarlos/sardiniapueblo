@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { API_URI } from "../api";
 import {
   Box,
@@ -17,15 +17,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 
-import sardiniaSvg from "../../assets/sardinia.svg?raw";
-import caSvg from "../../assets/ca.svg?raw";
-import ciSvg from "../../assets/ci.svg?raw";
-import nuSvg from "../../assets/nu.svg?raw";
-import ogSvg from "../../assets/og.svg?raw";
-import orSvg from "../../assets/or.svg?raw";
-import otSvg from "../../assets/ot.svg?raw";
-import ssSvg from "../../assets/ss.svg?raw";
-import vsSvg from "../../assets/vs.svg?raw";
+import sardiniaSvg from "../../assets/sardinia.svg?react";
+import caSvg from "../../assets/ca.svg?react";
+import ciSvg from "../../assets/ci.svg?react";
+import nuSvg from "../../assets/nu.svg?react";
+import ogSvg from "../../assets/og.svg?react";
+import orSvg from "../../assets/or.svg?react";
+import otSvg from "../../assets/ot.svg?react";
+import ssSvg from "../../assets/ss.svg?react";
+import vsSvg from "../../assets/vs.svg?react";
 
 async function getWikiThumbnail(wikiUrl, size = 300) {
   const title = decodeURIComponent(wikiUrl.split("/wiki/")[1]);
@@ -55,39 +55,24 @@ function bull(char) {
 }
 
 const PROVINCE_MAP = {
-  OT: { svgId: "Olbia-Tempio", svg: otSvg, label: "Gallura Nord-Est Sardegna" },
-  SS: { svgId: "Sassari", svg: ssSvg, label: "Sassari" },
-  NU: { svgId: "Nuoro", svg: nuSvg, label: "Nuoro" },
-  OR: { svgId: "Oristano", svg: orSvg, label: "Oristano" },
-  OG: { svgId: "Ogliastra", svg: ogSvg, label: "Ogliastra" },
-  CA: { svgId: "Cagliari", svg: caSvg, label: "Cagliari" },
-  CI: { svgId: "Carbonia-Iglesias", svg: ciSvg, label: "Sulcis Iglesiente" },
-  VS: { svgId: "Medio_Campidano", svg: vsSvg, label: "Medio Campidano" },
+  OT: { svgId: "Olbia-Tempio", Svg: otSvg, label: "Gallura Nord-Est Sardegna" },
+  SS: { svgId: "Sassari", Svg: ssSvg, label: "Sassari" },
+  NU: { svgId: "Nuoro", Svg: nuSvg, label: "Nuoro" },
+  OR: { svgId: "Oristano", Svg: orSvg, label: "Oristano" },
+  OG: { svgId: "Ogliastra", Svg: ogSvg, label: "Ogliastra" },
+  CA: { svgId: "Cagliari", Svg: caSvg, label: "Cagliari" },
+  CI: { svgId: "Carbonia-Iglesias", Svg: ciSvg, label: "Sulcis Iglesiente" },
+  VS: { svgId: "Medio_Campidano", Svg: vsSvg, label: "Medio Campidano" },
 };
 
 const SVG_ID_TO_CODE = Object.fromEntries(
   Object.entries(PROVINCE_MAP).map(([code, { svgId }]) => [svgId, code]),
 );
 
-function injectStyle(svgText, css) {
-  let result = svgText;
-
-  // Inietta viewBox se assente, necessario per il CSS scaling
-  if (!result.includes("viewBox")) {
-    const w = result.match(/\bwidth="([^"]+)"/)?.[1];
-    const h = result.match(/\bheight="([^"]+)"/)?.[1];
-    if (w && h) {
-      result = result.replace("<svg", `<svg viewBox="0 0 ${w} ${h}"`);
-    }
-  }
-
-  return result.replace(/<svg([^>]*)>/, `<svg$1><style>${css}</style>`);
-}
-
 function buildSardiniaCss(mapColors) {
   return `
-    g[id] path { fill: ${mapColors.base} !important; cursor: pointer; }
-    g[id]:hover path { fill: ${mapColors.baseHover} !important; }
+    .interactive-map-root g[id] path { fill: ${mapColors.base} !important; cursor: pointer; }
+    .interactive-map-root g[id]:hover path { fill: ${mapColors.baseHover} !important; }
   `;
 }
 
@@ -107,16 +92,20 @@ function buildProvinceCss(foundNames, selectedCityId, mapColors) {
     ),
   );
   let css = `
-    g[id] path { fill: ${mapColors.neutral} !important; }
-    g[id]:hover path { fill: ${mapColors.neutralHover} !important; cursor: pointer; }
+    .interactive-map-root g[id] path { fill: ${mapColors.neutral} !important; }
+    .interactive-map-root g[id]:hover path { fill: ${mapColors.neutralHover} !important; cursor: pointer; }
   `;
+
+  const escapedSelected = selectedCityId ? CSS.escape(selectedCityId) : null;
+  if (escapedSelected) {
+    css += `.interactive-map-root g#${escapedSelected} path { fill: ${mapColors.selected} !important; stroke: ${mapColors.selectedStroke} !important; stroke-width: 1.5px !important; }\n`;
+    css += `.interactive-map-root g#${escapedSelected}:hover path { fill: ${mapColors.selectedHover} !important; }\n`;
+  }
+
   for (const name of foundSet) {
     const escaped = CSS.escape(name);
-    const escapedSelected = CSS.escape(selectedCityId);
-    css += `g#${escapedSelected} path { fill: ${mapColors.selected} !important; stroke: ${mapColors.selectedStroke} !important; stroke-width: 1.5px !important; }\n`;
-    css += `g#${escapedSelected}:hover path { fill: ${mapColors.selectedHover} !important; }\n`;
-    css += `g#${escaped} path { fill: ${mapColors.found} !important; }\n`;
-    css += `g#${escaped}:hover path { fill: ${mapColors.foundHover} !important; cursor: pointer; }\n`;
+    css += `.interactive-map-root g#${escaped} path { fill: ${mapColors.found} !important; }\n`;
+    css += `.interactive-map-root g#${escaped}:hover path { fill: ${mapColors.foundHover} !important; cursor: pointer; }\n`;
   }
   return css;
 }
@@ -137,6 +126,7 @@ function normalizeCityId(name) {
 export default function InteractiveMap({ citiesFound }) {
   const theme = useTheme();
   const mapColors = theme.palette.app?.map;
+  const mapRootRef = useRef(null);
   const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [cityCard, setCityCard] = useState(null);
@@ -152,12 +142,31 @@ export default function InteractiveMap({ citiesFound }) {
     ? citiesFound.map((c) => c.nome)
     : [];
 
-  const svgContent = selectedProvince
-    ? injectStyle(
-        PROVINCE_MAP[selectedProvince].svg,
-        buildProvinceCss(foundInProvince, selectedCityId, mapColors),
-      )
-    : injectStyle(sardiniaSvg, buildSardiniaCss(mapColors));
+  const MapSvg = selectedProvince
+    ? PROVINCE_MAP[selectedProvince].Svg
+    : sardiniaSvg;
+  const mapCss = selectedProvince
+    ? buildProvinceCss(foundInProvince, selectedCityId, mapColors)
+    : buildSardiniaCss(mapColors);
+
+  useEffect(() => {
+    const svgEl = mapRootRef.current?.querySelector("svg");
+    if (!svgEl) return;
+
+    const hasViewBox = svgEl.hasAttribute("viewBox");
+    const widthAttr = svgEl.getAttribute("width");
+    const heightAttr = svgEl.getAttribute("height");
+    const width = widthAttr ? parseFloat(widthAttr) : NaN;
+    const height = heightAttr ? parseFloat(heightAttr) : NaN;
+
+    if (!hasViewBox && Number.isFinite(width) && Number.isFinite(height)) {
+      svgEl.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    }
+
+    // Remove intrinsic dimensions so CSS can make the SVG fluid.
+    svgEl.removeAttribute("width");
+    svgEl.removeAttribute("height");
+  }, [selectedProvince]);
 
   const handleMouseMove = useCallback((e) => {
     const group = e.target.closest("g[id]");
@@ -422,26 +431,33 @@ export default function InteractiveMap({ citiesFound }) {
         <div className="map_background">
           <Box
             key={selectedProvince ?? "sardinia"} // Forza re-render quando cambia la provincia per aggiornare lo stile
+            ref={mapRootRef}
             onClick={handleClick}
             onMouseMove={handleMouseMove}
-            dangerouslySetInnerHTML={{ __html: svgContent }}
+            className="interactive-map-root"
             sx={{
               display: "flex",
               justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              minHeight: "calc(100vh - 180px)",
               animation: "fadeIn 0.35s ease",
               "@keyframes fadeIn": {
                 from: { opacity: 0, transform: "scale(0.97)" },
                 to: { opacity: 1, transform: "scale(1)" },
               },
               "& svg": {
-                width: "auto",
-                height: "auto",
+                width: "100%",
+                height: "100%",
                 display: "block",
                 maxHeight: "calc(100vh - 180px)",
                 maxWidth: "100%",
               },
             }}
-          ></Box>
+          >
+            <style>{mapCss}</style>
+            <MapSvg />
+          </Box>
         </div>
       </Box>
     </>
