@@ -9,7 +9,7 @@
   "reset": "Ho ripristinato tutti i tuoi progressi. Dovrai riscrivere tutti i comuni da capo.",
   "cities_found_by_prov": "Questo è l'elenco dei comuni della <b>{0}</b>:\n",
   "cities_found": "Questo è l'elenco dei comuni che iniziano con la {0}:\n",
-  "already_selected": "Hai già selezionato questa provincia.",
+  "already_selected": "Nessun aggiornamento.",
   "achievement_unlocked": "<blockquote><b>{0}</b>\n<i>{1}</i></blockquote>\nObiettivo sbloccato!",
   "stats": "Vedi i tuoi progressi <a href=\"{0}\">qui!</a>",
   "spaces_not_found": "Prova a scriverlo staccato...",

@@ -142,11 +142,12 @@ async def list_cities_by_letter(chat_id, letter='A'):
 
     msg_to_send = build_city_list(cities, msg_to_send)
 
+    found = len([i for i in cities if '*' not in i['all_names']])
     msg_to_send += f"\n{messages("cities_missing_count").format(
-        len(cities) - len([i for i in cities if '*' not in i['all_names']]),
+        len(cities) - found,
         letter
     )}"
-    return msg_to_send
+    return msg_to_send, found
 
 
 def build_city_list(cities, msg_to_send):
@@ -178,8 +179,9 @@ async def list_cities_by_prov(chat_id, province="CA"):  # da paginare?
 
     msg_to_send = build_city_list(cities, msg_to_send)
 
+    _count = len([i for i in cities if '*' not in i['all_names']])
     msg_to_send += f"\n{messages("cities_missing_count").format(
-        len(cities) - len([i for i in cities if '*' not in i['all_names']]),
+        len(cities) - _count,
         constants.PROVINCES[province]
     )}"
-    return msg_to_send
+    return msg_to_send, _count
