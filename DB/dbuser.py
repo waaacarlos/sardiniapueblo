@@ -21,7 +21,7 @@ async def insert_user_in_db(user: TGUser):
     if user.id in _user_exists_cache:
         return
     row = await fetchrow(
-        "SELECT 1 FROM users WHERE id = $1",
+        "SELECT 1 FROM users WHERE id = $1", user.id
     )
     if row:
         _user_exists_cache.add(user.id)
