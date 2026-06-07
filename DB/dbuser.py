@@ -60,9 +60,18 @@ async def remove_all_from_chatid(chat_id: int):
     return await fetchrow(query, chat_id)
 
 
-async def add_log(m_id, chat_id, msg, response):
-    query = """INSERT INTO player_try VALUES ($1, $2, $3, $4, NOW())"""
-    return await fetch(query, m_id, chat_id, msg, response)
+async def add_log(m_id, chat_id, msg, response, log_chat_id, search_case):
+    query = """
+        INSERT INTO player_try VALUES ($1, $2, $3, $4, NOW(), $5, $6)
+    """
+    return await fetch(query, m_id, chat_id, msg, response, log_chat_id, search_case)
+
+
+async def get_last_try(chatid):
+    query = """
+        SELECT * FROM player_try WHERE player = $1 order by send_time desc LIMIT 1
+    """
+    return await fetchrow(query, chatid)
 
 
 async def get_ranked():

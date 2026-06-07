@@ -1,14 +1,16 @@
 import logging
+from random import choice
 
 import DB.dbuser
 from BL import utility
 from BL.utility import normalize, starts_same
 from DB import dbcities, dbuser
 from Resources import constants
+from Resources.constants import SearchCase
 from Resources.messages import messages
 
 
-async def _build_city_info(city: dict, chat_id: int) -> str:
+async def _build_city_info(city: dict, chat_id: int) -> tuple[str, SearchCase]:
     city_info = messages("city").format(
         city['url'],
         city['nome'],
@@ -25,45 +27,55 @@ async def _build_city_info(city: dict, chat_id: int) -> str:
     points = await dbuser.get_player_points(chat_id)
     if points > 1:
         msg += "\n\n" + messages("found_count").format(points)
-    if not(points % 5):
+    if not points % 5:
         already_list = await dbuser.get_list_count(chat_id)
         if already_list == 0:
             msg += messages("list")
-    return msg
+    return msg, SearchCase.NEW_FOUND if result else SearchCase.ALREADY_FOUND
 
 
-async def _search_fallbacks(text: str, chat_id: int) -> str:
+async def _search_fallbacks(text: str, chat_id: int) -> tuple[str, SearchCase]:
+    last_try = await dbuser.get_last_try(chat_id)
+    _msg = ""
+
     # Controllo spazi
     city = await dbcities.search_city_space_free(text, chat_id)
     if city:
         if city['player']:
-            return messages("similar_found").format(city['nome'])
+            return messages("similar_found").format(city['nome']), SearchCase.SPACES_ALREADY_FOUND
         else:
             # Controllo apostrofo -- Se trova uguale a meno degli apostrofi, gliela diamo buona
             if text.upper().replace("'", "") == utility.normalize(city['nome'].upper().replace("'", "")):
                 return await search_city(city['nome'], chat_id)
+            if ('space' in last_try['search_case'].lower() and
+                    city['nome'].lower().replace(" ", "") == text.lower().replace(" ", "")):
+                _msg = choice(['retry', 'try again'])
             # Verifica cosa è scritto staccato e cosa no
             _cases = utility.find_spaces(city['nome'], text)
             if _cases == utility.FindSpace.SPACE:
-                _msgcase = "spaces_not_found"
+                return messages(_msg) + messages("spaces_not_found"), SearchCase.SPACES_NOT_FOUND
             elif _cases == utility.FindSpace.NO_SPACE:
-                _msgcase = "notspaces_not_found"
+                return messages(_msg) + messages("notspaces_not_found"), SearchCase.NOTSPACES_NOT_FOUND
             elif _cases == utility.FindSpace.MIXED_SPACE:
-                _msgcase = "mixedspaces_not_found"
+                return messages(_msg) + messages("mixedspaces_not_found"), SearchCase.MIXED_SPACES_NOT_FOUND
             elif _cases == utility.FindSpace.SPACE_MULTIPLE:
-                _msgcase = "spacesmult_not_found"
+                return messages(_msg) + messages("spacesmult_not_found"), SearchCase.SPACE_MULTIPLE_NOT_FOUND
             elif _cases == utility.FindSpace.NO_SPACE_MULTIPLE:
-                _msgcase = "notspacesmult_not_found"
+                return messages(_msg) + messages("notspacesmult_not_found"), SearchCase.NOT_SPACE_MULTIPLE_NOT_FOUND
             else:
                 raise NotImplementedError
-            return messages(_msgcase)
 
     # Controllo doppie
     city = await dbcities.search_city_doubles(text, chat_id)
     if city:
         if city['player']:
-            return messages("similar_found").format(city['nome'])
-        return messages("doubles_not_found")
+            return messages("similar_found").format(city['nome']), SearchCase.DOUBLES_ALREADY_FOUND
+        _msg = "doubles_not_found"
+        if last_try:
+            if (last_try['search_case'] == SearchCase.DOUBLES_NOT_FOUND.value and
+                    utility.normalize_consecutive(last_try['msg']) == utility.normalize_consecutive(text)):
+                _msg = "other_double"
+        return messages(_msg), SearchCase.DOUBLES_NOT_FOUND
 
     # Controllo nome parziale
     if len(text) > 3:
@@ -72,9 +84,9 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
         if cities_count == 1:
             city = cities[0]
             if city['player']:
-                return messages("similar_found").format(city['nome'])
+                return messages("similar_found").format(city['nome']), SearchCase.SUBNAME_ALREADY_FOUND
             hint = utility.subgroup(city['nome_norm'], text.strip().upper())
-            return messages("single_substring_not_found").format(hint)
+            return messages("single_substring_not_found").format(hint), SearchCase.SUBNAME_NOT_FOUND
         elif cities_count > 1:
             found = [i['nome'] for i in cities if i['player']]
             msg = messages("multiple_substring").format(cities_count, text.strip().upper())
@@ -89,7 +101,7 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
                     msg += f"\n{str(counter).zfill(2)}. <code>{hint}</code>"
                     if '*' not in hint:
                         msg += messages("all_hinted")
-            return msg
+            return msg, SearchCase.SUBNAME_MULTIPLE
     
     # Controllo simili
     if len(text) > 3:
@@ -98,12 +110,12 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
         if cities_count == 1:
             city = cities[0]
             if city['player']:
-                return messages("similar_found").format(city['nome'])
+                return messages("similar_found").format(city['nome']), SearchCase.SIMILAR_FOUND
             hint = utility.same_letters(city['nome_norm'], text.strip().upper())
             msg = messages("similar_city_hint")
             if '*' not in hint:
                 msg += messages("all_hinted")
-            return msg.format(hint)
+            return msg.format(hint), SearchCase.SIMILAR_NOT_FOUND
         elif cities_count > 1:
             found = [i['nome'] for i in cities if i['player']]
             msg = messages("multiple_similar_hint_count").format(cities_count)
@@ -118,11 +130,11 @@ async def _search_fallbacks(text: str, chat_id: int) -> str:
                     msg += f"\n{str(counter).zfill(2)}. <code>{hint}</code>"
                     if '*' not in hint:
                         msg += messages("all_hinted")
-            return msg
-    return messages("not_found")
+                return msg, SearchCase.SIMILAR_NOT_FOUND
+    return messages("not_found"), SearchCase.NOT_FOUND
 
 
-async def search_city(text: str, chat_id: int) -> str:
+async def search_city(text: str, chat_id: int) -> tuple[str, SearchCase]:
     text = normalize(text)
     city = await dbcities.found_city(text)
     if city:

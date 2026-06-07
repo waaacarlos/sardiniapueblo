@@ -120,3 +120,8 @@ def find_spaces(s1: str, s2: str) -> FindSpace:
     if len(b) > len(a):
         return FindSpace.NO_SPACE_MULTIPLE
     return FindSpace.MIXED_SPACE
+
+
+def normalize_consecutive(s):
+    s = s.lower()
+    return s[0] + ''.join(s[i] for i in range(1, len(s)) if s[i] != s[i-1])

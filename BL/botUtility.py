@@ -5,15 +5,15 @@ import traceback
 
 import telegram
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-from telegram.constants import ParseMode
+from telegram.constants import ParseMode, ReactionEmoji
 from telegram.ext import CallbackContext
 
 from BL import citiesUtility, achievementUtility
 from DB import dbuser
 from Entities.User import TGUser
-from Resources import constants, config
+from Resources import constants, reactions
 from Resources.config import LOG, ADMIN_CHATID
-from Resources.constants import PROVINCES
+from Resources.constants import PROVINCES, SearchCase
 from Resources.messages import messages
 
 results_logger = logging.getLogger("results")
@@ -41,42 +41,60 @@ class Message:
     async def handlechat(self):
         start_time = time.time()
         achievements_unlocked = []
+        _search_case = SearchCase.NONE
         try:
             try:
                 self.forwarded: telegram.Message = await self.context.bot.forward_message(
                     LOG, self.chat_id, self.message_id)
             except Exception as e:
                 await self.context.bot.send_message(LOG, str(e))
+            await self.context.bot.send_chat_action(self.chat_id, "typing")
             if self.text == "/start":
+                _search_case = SearchCase.START
                 msg_to_send = messages("hello")
                 await self.send_message(msg_to_send)
             elif self.text == "/help":
                 msg_to_send = messages("/help")
                 await self.send_message(msg_to_send)
             elif self.text == "/reset":
+                await self.set_reaction(ReactionEmoji.MOYAI)
                 msg_to_send = await citiesUtility.reset_user(self.chat_id)
                 await self.send_message(msg_to_send)
                 return
             elif self.text == "/list_provinces":
+                _search_case = SearchCase.SEARCHING
+                await self.set_reaction(reactions.searching())
                 msg_to_send, _count = await self.get_list_by_province()
                 m_id = await self.send_message_with_provinces(msg_to_send, _count)
                 await self.context.bot.pin_chat_message(self.chat_id, m_id)
             elif self.text == "/list":
+                _search_case = SearchCase.SEARCHING
+                await self.set_reaction(reactions.searching())
                 msg_to_send, found_number = await self.get_list_by_letter()
                 m_id = await self.send_message_with_letters(msg_to_send, found_number)
                 await self.context.bot.pin_chat_message(self.chat_id, m_id)
             elif self.text == "/stats":
+                _search_case = SearchCase.SEARCHING
+                await self.set_reaction(reactions.searching())
                 msg_to_send = messages("stats").format(self.statsurl)
                 await self.send_message(msg_to_send)
             elif self.text == "//":
+                await self.set_reaction(ReactionEmoji.GRINNING_FACE_WITH_ONE_LARGE_AND_ONE_SMALL_EYE)
                 raise NotImplementedError
             else:
-                msg_to_send = await citiesUtility.search_city(self.text, self.chat_id)
+                msg_to_send, _search_case = await citiesUtility.search_city(self.text, self.chat_id)
                 await self.send_message(msg_to_send, send_stats=True)
-                if messages("already_found") in msg_to_send:
+                if _search_case == SearchCase.ALREADY_FOUND:
                     achievements_unlocked.extend(
                         await achievementUtility.check_achievement(self.chat_id, "duplicate")
                     )
+                    await self.set_reaction(reactions.already_found())
+                elif _search_case == SearchCase.NOT_FOUND:
+                    await self.set_reaction(reactions.failure())
+                elif _search_case == SearchCase.NEW_FOUND:
+                    await self.set_reaction(reactions.success())
+                else:
+                    await self.set_reaction(reactions.almost())
             achievements_unlocked.extend(await achievementUtility.check_achievement(self.chat_id))
             if achievements_unlocked:
                 ach_percentage = await achievementUtility.get_percentage_ach()
@@ -84,8 +102,10 @@ class Message:
                     await self.send_achievement(ach['title'], ach['description'], ach_percentage[ach['ach_key']])
                     await asyncio.sleep(0.5)
             try:
-                if config.ENV != "debug":
-                    await dbuser.add_log(self.forwarded.message_id, self.chat_id, self.text, msg_to_send)
+                await dbuser.add_log(
+                    self.forwarded.message_id, self.chat_id, self.text, msg_to_send,
+                    int(LOG.replace("-100", "")), _search_case.value
+                )
             except Exception:
                 logging.error(traceback.format_exc())
         except Exception as ex:
@@ -96,6 +116,9 @@ class Message:
         finally:
             duration_ms = (time.time() - start_time) * 1000
             results_logger.info("handlechat latency chat=%s took %.1f ms", self.chat_id, duration_ms)
+
+    async def set_reaction(self, reaction):
+        await self.context.bot.set_message_reaction(self.chat_id, self.message_id, reaction)
 
     async def get_list_by_province(self, province="CA"):
         return await citiesUtility.list_cities_by_prov(self.chat_id, province)
