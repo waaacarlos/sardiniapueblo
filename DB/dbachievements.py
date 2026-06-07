@@ -23,7 +23,7 @@ async def get_achievements(chat_id=None, include_all=False):
     """
     args = []
     if chat_id is not None:
-        query += f"""
+        query += """
             left outer join user_achievements ua on ua.achievement = a.ach_key
             and player = $1
         """

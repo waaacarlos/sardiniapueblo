@@ -21,7 +21,7 @@ async def insert_user_in_db(user: TGUser):
     if user.id in _user_exists_cache:
         return
     row = await fetchrow(
-        f"SELECT 1 FROM users WHERE id = {user.id}",
+        "SELECT 1 FROM users WHERE id = $1",
     )
     if row:
         _user_exists_cache.add(user.id)
@@ -73,11 +73,11 @@ async def add_public_name(chatid, name):
 
 
 async def get_list_count(chatid):
-    query = f"""select count(*)
+    query = """select count(*)
     from player_try
-    where player = {chatid}
+    where player = $1
     and msg in('/list', '/list_province')"""
-    return await fetchval(query)
+    return await fetchval(query, chatid)
 
 
 async def get_letters_completed(chatid):

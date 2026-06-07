@@ -29,5 +29,5 @@
   "all_hinted": " (non ringraziarmi)",
   "ach_low_perc": "\n<i>Solo {0} ha sbloccato questo obiettivo!</i>",
   "ach_perc": "\n<i>{0} ha sbloccato questo obiettivo!</i>",
-  "list": "\n\nVerifica il tuo progresso con i comandi /list e /listprovince!"
+  "list": "\n\nVerifica il tuo progresso con i comandi /list e /list_provinces!"
 }
