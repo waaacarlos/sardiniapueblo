@@ -1,5 +1,5 @@
 import { useEffect, useState, useLayoutEffect, useRef } from "react";
-import { Fab } from "@mui/material";
+import { Fab, Pagination } from "@mui/material";
 import DataUsageIcon from "@mui/icons-material/DataUsage";
 import EditIcon from "@mui/icons-material/Edit";
 import { useTheme } from "@mui/material/styles";
@@ -159,46 +159,21 @@ export default function Ranked({ playerId, playerData, onPublicNameSaved }) {
   for (let i = 0; i < Math.ceil(rankingData?.length / 10); i++) {
     let page;
     if (i === 0) page = "TOP 10";
-    else page = i * 10 + 1 + "-" + (i + 1) * 10;
-    pagination.push(page);
+    else page = i * 10 + 1 + " " + (i + 1) * 10;
+    pagination.push(page.split(" "));
   }
 
   if (!playerId || (playerData && playerData.public_name && !editName))
     return (
       <Box className="ranked-container">
         {header}
-        <Grid container>
-          {pagination.map((page, i) => (
-            <Grid size="auto" key={i}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Paper
-                  onClick={() => setCurrentPage(i)}
-                  sx={{
-                    px: 2,
-                    mx: 1,
-                    borderRadius: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "1em",
-                    backgroundColor:
-                      i === currentPage
-                        ? rankingColors?.highlight
-                        : surfaceColors?.soft,
-                    boxShadow: shellShadow,
-                  }}
-                >
-                  {page}
-                </Paper>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
+        <Pagination
+          sx={{ mt: 2, mb: 1 }}
+          count={totalPages}
+          page={currentPage + 1}
+          onChange={(e, p) => setCurrentPage(p - 1)}
+          siblingCount={1}
+        />
         <Box
           sx={{
             width: "100%",
