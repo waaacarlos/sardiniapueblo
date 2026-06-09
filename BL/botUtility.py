@@ -83,7 +83,7 @@ class Message:
                 raise NotImplementedError
             else:
                 msg_to_send, _search_case = await citiesUtility.search_city(self.text, self.chat_id)
-                await self.send_message(msg_to_send, send_stats=True)
+                await self.send_message(msg_to_send, send_stats=True, disable_web_preview=_search_case == SearchCase.ALREADY_FOUND)
                 if _search_case == SearchCase.ALREADY_FOUND:
                     achievements_unlocked.extend(
                         await achievementUtility.check_achievement(self.chat_id, "duplicate")
@@ -126,7 +126,7 @@ class Message:
     async def get_list_by_letter(self, letter="A"):
         return await citiesUtility.list_cities_by_letter(self.chat_id, letter)
 
-    async def send_message(self, text, send_stats=False):
+    async def send_message(self, text, send_stats=False, disable_web_preview=False):
         message = await self.context.bot.send_message(
             self.chat_id, text, parse_mode=ParseMode.HTML, reply_markup=InlineKeyboardMarkup(
                 [
@@ -135,7 +135,7 @@ class Message:
                         InlineKeyboardButton(text="Classifica", web_app=WebAppInfo(self.rankurl)),
                     ]
                 ]) if send_stats else None,
-            disable_web_page_preview=True,
+            disable_web_page_preview=disable_web_preview,
         )
         await self.context.bot.forward_message(LOG, self.chat_id, message.message_id)
         return message.message_id
