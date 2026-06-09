@@ -286,7 +286,7 @@ export default function InteractiveMap({ citiesFound, allCities }) {
       observer?.disconnect();
       window.removeEventListener("resize", scheduleSync);
     };
-  }, [selectedProvince]);
+  }, [selectedProvince, citiesFound, allCities]);
 
   const handleMouseMove = useCallback((e) => {
     const group = e.target.closest("g[id]");
@@ -629,7 +629,7 @@ export default function InteractiveMap({ citiesFound, allCities }) {
                           gap: 0.5,
                         }}
                       >
-                        <Box sx={{ width: "100%", mr: 1 }}>
+                        <Box sx={{ width: "100%", minWidth: 100, mr: 1 }}>
                           <LinearProgress
                             variant="determinate"
                             value={province.percentage}

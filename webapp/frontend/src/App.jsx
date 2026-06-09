@@ -129,7 +129,7 @@ function App() {
         appbody = <h1>Loading...</h1>;
         break;
     }
-  } // TODO MOMENTANEO in attesa di aggiustare il server
+  } // TODO 
   else if (false) {
     appbody = (
       <>
@@ -180,7 +180,7 @@ function App() {
     appbody = (
       <Box sx={{ p: 2 }}>
         <Paper sx={{ p: 2, mb: 2 }}>
-          <InteractiveMap citiesFound={cities}></InteractiveMap>
+          <InteractiveMap citiesFound={cities} allCities={cities}></InteractiveMap>
         </Paper>
       </Box>
     );

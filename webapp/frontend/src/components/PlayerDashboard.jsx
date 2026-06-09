@@ -208,10 +208,14 @@ export default function PlayerDashboard({
               [theme.breakpoints.down(400)]: {
                 display: "block",
               },
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0
             })}
           >
             <Alert severity="warning">
-              La risoluzione del tuo dispositivo è troppo bassa.
+              La risoluzione del tuo dispositivo è troppo bassa. Potresti riscontrare difficoltà a visualizzare la mappa.
             </Alert>
           </Box>
 
