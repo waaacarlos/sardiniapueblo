@@ -1,25 +1,23 @@
 import json
 
-from DB import dbachievements, dbuser, dbcities
+from DB import dbachievements, dbuser
 from Resources.config import ABS_FILE_PATH
 
 
-async def check_achievement(player, event=None):
+async def check_achievement(player):
     unlocked = []
+    write_achs = get_write_achievements()
+
     achievements = await dbachievements.get_achievements(player)
-    cities_found = [i['id'] for i in await dbcities.found_player_all_cities(player)]
     points = await dbuser.get_player_points(player)
     for ach in achievements:
         key = ach['ach_key']
-        if event and not ach['category'] == 'write':
-            continue
         if ach['category'] == 'progress':
             if points >= ach['threshold']:
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         elif ach['category'] == 'city':
-            # counter_cities_found = await dbachievements.check_cities_achievements(player, ach['cities'])
-            if set(ach['cities']) <= set(cities_found):
+            if set(ach['cities']) <= set(ach['cities_found']):
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         elif ach['category'] == 'province':
@@ -28,7 +26,9 @@ async def check_achievement(player, event=None):
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         elif ach['category'] == 'write':
-            if ach['event'] == event:
+            _q = write_achs.get(ach['ach_key'])
+            result = await dbachievements.get_write_achievements(_q, player)
+            if result:
                 unlocked.append(ach)
                 await dbachievements.add_achievement(key, player)
         else:
@@ -38,3 +38,8 @@ async def check_achievement(player, event=None):
 
 async def get_percentage_ach():
     return {ach['achievement']: ach['percentage'] for ach in await dbachievements.get_percentage_ach()}
+
+
+def get_write_achievements():
+    with open(ABS_FILE_PATH + "Resources/achievements.json") as f:
+        return json.load(f)

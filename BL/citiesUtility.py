@@ -47,9 +47,10 @@ async def _search_fallbacks(text: str, chat_id: int) -> tuple[str, SearchCase]:
             # Controllo apostrofo -- Se trova uguale a meno degli apostrofi, gliela diamo buona
             if text.upper().replace("'", "") == utility.normalize(city['nome'].upper().replace("'", "")):
                 return await search_city(city['nome'], chat_id)
-            if ('space' in last_try['search_case'].lower() and
-                    city['nome'].lower().replace(" ", "") == text.lower().replace(" ", "")):
-                _msg = choice(['retry', 'try again'])
+            if last_try and last_try.get('search_case'):
+                if ('space' in last_try['search_case'].lower() and
+                        city['nome'].lower().replace(" ", "") == text.lower().replace(" ", "")):
+                    _msg = choice(['retry', 'try again'])
             # Verifica cosa è scritto staccato e cosa no
             _cases = utility.find_spaces(city['nome'], text)
             if _cases == utility.FindSpace.SPACE:
@@ -71,7 +72,7 @@ async def _search_fallbacks(text: str, chat_id: int) -> tuple[str, SearchCase]:
         if city['player']:
             return messages("similar_found").format(city['nome']), SearchCase.DOUBLES_ALREADY_FOUND
         _msg = "doubles_not_found"
-        if last_try:
+        if last_try and last_try.get('search_case'):
             if (last_try['search_case'] == SearchCase.DOUBLES_NOT_FOUND.value and
                     utility.normalize_consecutive(last_try['msg']) == utility.normalize_consecutive(text)):
                 _msg = "other_double"

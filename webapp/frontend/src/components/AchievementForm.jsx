@@ -24,7 +24,6 @@ function createEmptyForm() {
     threshold: "",
     cities: [],
     province: "",
-    event: "",
     title_visible: false,
     description_visible: false,
   };
@@ -53,7 +52,6 @@ function normalizeAchievementForForm(achievement, cities) {
     threshold: achievement.threshold ?? "",
     cities: selectedCities,
     province: achievement.province || "",
-    event: achievement.event || "",
     title_visible: achievement.title_visible ?? false,
     description_visible: achievement.description_visible ?? false,
   };
@@ -185,18 +183,6 @@ export default function AchievementForm({
             value={formData.province}
             onChange={handleChange}
             placeholder="Provincia"
-            fullWidth
-            required
-          />
-        )}
-
-        {formData.category === "write" && (
-          <TextField
-            label="Evento"
-            name="event"
-            value={formData.event}
-            onChange={handleChange}
-            placeholder="Evento"
             fullWidth
             required
           />

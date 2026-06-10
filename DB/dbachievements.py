@@ -14,28 +14,52 @@ def _normalize_achievement_payload(achievement):
 
 
 async def get_achievements(chat_id=None, include_all=False):
+    if not chat_id:
+        return await _get_achievements_anonymous()
+    return await _get_achievements_for_player(chat_id, include_all)
+
+
+async def _get_achievements_anonymous():
     query = """
-        SELECT a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event,
-            a.title_visible, a.description_visible,
-        array_remove(array_agg(ac.city), NULL) as cities
+        SELECT a.ach_key, a.title, a.description, a.category, a.threshold,
+               a.province, a.title_visible, a.description_visible,
+               NULL::boolean AS new_ach,
+               array_remove(array_agg(ac.city), NULL) AS cities,
+               NULL::text[] AS cities_found
         FROM public.achievements a
-        left join achievement_cities ac on ac.ach_key = a.ach_key
+        LEFT JOIN achievement_cities ac ON ac.ach_key = a.ach_key
+        GROUP BY a.ach_key, a.title, a.description, a.category, a.threshold,
+                 a.province, a.title_visible, a.description_visible
+        ORDER BY a.title
     """
-    args = []
-    if chat_id is not None:
-        query += """
-            left outer join user_achievements ua on ua.achievement = a.ach_key
-            and player = $1
-        """
-        if not include_all:
-            query += "where player is null\n"
-        args.append(chat_id)
+    return await fetch(query)
+
+
+async def _get_achievements_for_player(chat_id, include_all):
+    query = """
+        WITH last_try AS (
+            SELECT send_time FROM player_try
+            WHERE player = $1 ORDER BY send_time DESC LIMIT 1
+        )
+        SELECT a.ach_key, a.title, a.description, a.category, a.threshold,
+               a.province, a.title_visible, a.description_visible,
+               a.created > COALESCE(MAX(cf.found_time), lt.send_time) AS new_ach,
+               array_remove(array_agg(ac.city), NULL) AS cities,
+               array_remove(array_agg(cf.city), NULL) AS cities_found
+        FROM public.achievements a
+        CROSS JOIN last_try lt
+        LEFT JOIN achievement_cities ac ON ac.ach_key = a.ach_key
+        LEFT JOIN cities_found cf ON ac.city = cf.city AND cf.player = $1
+        LEFT JOIN user_achievements ua ON ua.achievement = a.ach_key AND ua.player = $1
+    """
+    if not include_all:
+        query += "WHERE ua.player IS NULL\n"
     query += """
-        group by a.ach_key, a.title, a.description, a.category, a.threshold, a.province, a.event,
-            a.title_visible, a.description_visible
-        order by a.title
+        GROUP BY a.ach_key, a.title, a.description, a.category, a.threshold,
+                 a.province, a.title_visible, a.description_visible, lt.send_time
+        ORDER BY a.title
     """
-    return await fetch(query, *args)
+    return await fetch(query, chat_id)
 
 
 async def get_player_achievements(chat_id):
@@ -52,6 +76,10 @@ async def get_player_achievements(chat_id):
     """
     result = await fetch(query, chat_id) or []
     return result
+
+
+async def get_write_achievements(query, chat_id):
+    return await fetchval(query, chat_id)
 
 
 async def add_achievement(achievement, chat_id):

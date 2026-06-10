@@ -72,12 +72,13 @@ async def add_city(city: str, chat_id: int):
 async def found_player_all_cities(chat_id: int):
     query = """
         SELECT c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, 
-                provincia, string_agg(t.nome, ', ') AS territorio
+                provincia, string_agg(t.nome, ', ') AS territorio, cf.found_time
         FROM cities c
         LEFT JOIN territori t on t.comuni = c.id
         JOIN cities_found cf on cf.city = c.id
         where player = $1
-        group by c.id, c.nome, c.url, c.nome_originale, c.popolazione, c.superficie, c.altitudine, provincia
+        group by c.id, c.nome, c.url, c.nome_originale, c.popolazione,
+            c.superficie, c.altitudine, provincia, cf.found_time
     """
     return await fetch(query, chat_id)
 
@@ -97,7 +98,7 @@ async def found_player_cities(chat_id: int, filter_clause: str, filter_value: st
             provincia
         FROM cities c
         WHERE {filter_clause}
-        ORDER BY nome
+        ORDER BY nome_norm
     """
     return await fetch(query, chat_id, filter_value)
 

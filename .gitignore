@@ -14,3 +14,4 @@ webapp/frontend/.env
 .env
 */__pycache__/*
 *.pyc
+/bonifica.py
