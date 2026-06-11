@@ -58,8 +58,7 @@ class Message:
                 await self.send_message(msg_to_send)
             elif self.text == "/reset":
                 await self.set_reaction(ReactionEmoji.MOYAI)
-                msg_to_send = await citiesUtility.reset_user(self.chat_id)
-                await self.send_message(msg_to_send)
+                await self.send_reset_message()
                 return
             elif self.text == "/list_provinces":
                 _search_case = SearchCase.SEARCHING
@@ -187,12 +186,35 @@ class Message:
                 style='primary' if i == selected else 'success' if i in letters_completed else '')
             for i in
             [
-                     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J', 'L',
-                     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Z'
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J', 'L',
+                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Z'
             ]
         ]
         return InlineKeyboardMarkup(
             inline_keyboard=[keys_[:7], keys_[7:14], keys_[14:]]
+        )
+
+    async def send_reset_message(self):
+        await self.context.bot.send_message(
+            self.chat_id,
+            messages('reset_question'),
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(
+                            text=messages('reset_confirm'),
+                            callback_data='reset;confirm',
+                            style='danger'
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            text=messages('reset_abort'),
+                            callback_data='reset;abort'
+                        )
+                    ]
+                ]
+            )
         )
 
 
@@ -211,25 +233,51 @@ class AnswerQuery(Message):
             )
             _querydata = self.query_data.split(";")
             _value = _querydata[0]
-            _count = -1
+            arg = -1
+
             if len(_querydata) == 2:
-                _count = int(_querydata[1])
+                arg = _querydata[1]
+
+            if _value == "reset":
+                await self.user_reset_action(arg)
+                return None
 
             if len(_value) == 2:
+                arg = int(arg)
                 msg_to_send, _newCount = await self.get_list_by_province(_value)
-                if _newCount == _count:
+                if _newCount == arg:
                     await self.context.bot.answer_callback_query(self.query_id, messages("already_selected"))
                     return None
                 await self.edit_message_with_provinces(msg_to_send, _value, _newCount)
             elif len(_value) == 1:
                 msg_to_send, _newCount = await self.get_list_by_letter(_value)
-                if _newCount == _count:
+                if _newCount == arg:
                     await self.context.bot.answer_callback_query(self.query_id, messages("already_selected"))
                     return None
                 await self.edit_message_with_letter(msg_to_send, _value, _newCount)
         except Exception as ex:
             await self.context.bot.send_message(LOG, traceback.format_exc())
             raise ex
+
+    async def user_reset_action(self, action):
+        if action == "confirm":
+            _msg = await citiesUtility.reset_user(self.chat_id)
+            await self.context.bot.answer_callback_query(
+                self.query_id,
+                _msg,
+                show_alert=True
+            )
+            await self.context.bot.edit_message_text(
+                chat_id=self.chat_id,
+                message_id=self.message_id,
+                text=_msg
+            )
+        elif action == "abort":
+            await self.context.bot.edit_message_text(
+                chat_id=self.chat_id,
+                message_id=self.message_id,
+                text=messages('reset_aborted')
+            )
 
     async def edit_message_with_provinces(self, text, province="CA", count=-1):
         keyboard_province = await self.create_keyboard_province(province, count)
