@@ -250,6 +250,7 @@ class AnswerQuery(Message):
                     return None
                 await self.edit_message_with_provinces(msg_to_send, _value, _newCount)
             elif len(_value) == 1:
+                arg = int(arg)
                 msg_to_send, _newCount = await self.get_list_by_letter(_value)
                 if _newCount == arg:
                     await self.context.bot.answer_callback_query(self.query_id, messages("already_selected"))
@@ -281,11 +282,6 @@ class AnswerQuery(Message):
 
     async def edit_message_with_provinces(self, text, province="CA", count=-1):
         keyboard_province = await self.create_keyboard_province(province, count)
-        if keyboard_province == self.update.callback_query.message.reply_markup:
-            await self.context.bot.answer_callback_query(
-                callback_query_id=self.query_id, text=messages('already_selected')
-            )
-            return None
         message = await self.context.bot.edit_message_text(
             chat_id=self.chat_id,
             text=text,
