@@ -140,7 +140,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.post("/api/log")
+@app.post("/sardiniapueblo/api/log")
 async def send_log(body: dict, request: Request):
     enforce_rate_limit(
         request,
@@ -160,7 +160,7 @@ async def send_log(body: dict, request: Request):
     await bot.send_message(chat_id=LOG_CHAT, text=message)
 
 
-@app.get("/api/generateotp")
+@app.get("/sardiniapueblo/api/generateotp")
 async def generate_otp(request: Request):
     enforce_rate_limit(
         request,
@@ -180,12 +180,12 @@ async def generate_otp(request: Request):
     return {"ok": True}
 
 
-@app.get("/api/me", dependencies=[Depends(require_auth)])
+@app.get("/sardiniapueblo/api/me", dependencies=[Depends(require_auth)])
 async def me():
     return {"authenticated": True}
 
 
-@app.get("/api/player")
+@app.get("/sardiniapueblo/api/player")
 async def player(player_id: int):
     player_info = await dbuser.get_user_details(player_id)
     if player_info:
@@ -194,27 +194,27 @@ async def player(player_id: int):
         raise HTTPException(status_code=404, detail="Player not found")
 
 
-@app.get("/api/player/cities")
+@app.get("/sardiniapueblo/api/player/cities")
 async def player_points(player_id: int):
     return await dbcities.found_player_all_cities(player_id)
 
 
-@app.get("/api/player/achievements")
+@app.get("/sardiniapueblo/api/player/achievements")
 async def player_achievements(player_id: int):
     return await dbachievements.get_player_achievements(player_id)
 
 
-@app.get("/api/city")
+@app.get("/sardiniapueblo/api/city")
 async def city(city_id: str):
     return await dbcities.found_city(city_id)
 
 
-@app.get("/api/all_cities")
+@app.get("/sardiniapueblo/api/all_cities")
 async def all_cities():
     return await dbcities.all_cities()
 
 
-@app.post("/api/login")
+@app.post("/sardiniapueblo/api/login")
 async def login(body: dict, request: Request):
     enforce_rate_limit(
         request,
@@ -252,43 +252,43 @@ async def login(body: dict, request: Request):
     return {"token": token}
 
 
-@app.post("/api/logout")
+@app.post("/sardiniapueblo/api/logout")
 async def logout():
     reset_otp_state()
     return {"ok": True}
 
 
-@app.get("/api/achievements")
+@app.get("/sardiniapueblo/api/achievements")
 async def get_achievements():
     return await dbachievements.get_achievements()
 
 
-@app.get("/api/achievements/{player_id}")
+@app.get("/sardiniapueblo/api/achievements/{player_id}")
 async def get_achievements_from_player(player_id: int):
     return await dbachievements.get_achievements(player_id, True)
 
 
-@app.post("/api/achievements", dependencies=[Depends(require_auth)])
+@app.post("/sardiniapueblo/api/achievements", dependencies=[Depends(require_auth)])
 async def insert_achievement(achievement: dict):
     return await dbachievements.insert_achievement(achievement)
 
 
-@app.delete("/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
+@app.delete("/sardiniapueblo/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
 async def delete_achievement(ach_key: str):
     return await dbachievements.delete_achievement(ach_key)
 
 
-@app.put("/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
+@app.put("/sardiniapueblo/api/achievements/{ach_key}", dependencies=[Depends(require_auth)])
 async def update_achievement(ach_key: str, achievement: dict):
     return await dbachievements.update_achievement(ach_key, achievement)
 
 
-@app.get("/api/getranked")
+@app.get("/sardiniapueblo/api/getranked")
 async def get_ranked():
     return await dbuser.get_ranked()
 
 
-@app.patch("/api/user/{chat_id}/public_name")
+@app.patch("/sardiniapueblo/api/user/{chat_id}/public_name")
 async def update_public_name(chat_id: int, args: dict):
     name = args.get("public_name")
     return await dbuser.add_public_name(chat_id, name)
